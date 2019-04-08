@@ -2,7 +2,8 @@
 node_modules
 /dist
 /node_modules
-
+vendor
+/vendor
 # local env files
 .env.local
 .env.*.local
