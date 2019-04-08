@@ -38,7 +38,7 @@
                     <input name="password" type="text" placeholder="Password">
                     <div class="row remeber">
                         <label><input name="rember" type="checkbox" value=""> Remember Me</label>
-                        <a href="home-1.html#">Forgot Password?</a>
+                        <a>Forgot Password?</a>
                     </div>
                     <div class="text-center button">
                         <input name="Login" type="button" value="Login Now">
@@ -58,7 +58,7 @@
                     <input name="password" type="text" placeholder="Password">
                     <input name="confirmpassword" type="text" placeholder="Confirm Password">
                     <div class="row new-login">
-                        Already have an account? <a href="home-1.html#">Login to your account! </a>
+                        Already have an account? <a>Login to your account! </a>
                     </div>
                     <div class="text-center button">
                         <input name="create-account" type="button" value="Create an Account">
