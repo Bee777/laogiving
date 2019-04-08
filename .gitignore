@@ -1,14 +1,22 @@
+.DS_Store
+node_modules
+/dist
 /node_modules
-/public/hot
-/public/storage
-/public/index
-/storage/*.key
-/vendor
-/.idea
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
 .idea
-.env
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*

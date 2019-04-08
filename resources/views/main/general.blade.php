@@ -12,11 +12,6 @@
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/style.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/laogiving.css{{$s['fresh_version']}}">
     {{-- @GeneratedResourcesTop--}}
-    <link href="{{url('/bundles')}}/generated/general/chunks/chunk-vendors.cc32edcc639d7048e593.js" rel=preload
-          as=script>
-    <link href="{{url('/bundles')}}/generated/general/css/app.81a813ab.css" rel=preload as=style>
-    <link href="{{url('/bundles')}}/generated/general/f279186e.bundle.js" rel=preload as=script>
-    <link href="{{url('/bundles')}}/generated/general/css/app.81a813ab.css" rel=stylesheet>
     {{-- @GeneratedResourcesTop--}}
 @endsection
 @section('scripts_footer')
@@ -67,7 +62,6 @@
         window.$ = jQuery;
     </script>
     {{-- @GeneratedResourcesBottom--}}
-    <script src="{{url('/bundles')}}/generated/general/chunks/chunk-vendors.cc32edcc639d7048e593.js"></script>
-    <script src="{{url('/bundles')}}/generated/general/f279186e.bundle.js"></script>
+    <script type="text/javascript" src="{{url('/bundles/generated')}}/general/general.9509a85eeccc8b7bd7ad.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection
