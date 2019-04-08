@@ -19,7 +19,8 @@
     <script src="{{url('/')}}/bundles/general/assets/js/bootstrap.min.js"></script>
     <script src="{{url('/')}}/bundles/general/assets/vendor/flexslider/jquery.flexslider-min.js"></script>
     <script src="{{url('/')}}/bundles/general/assets/vendor/owlcarousel/owl.carousel.js"></script>
-    <script>jQuery.noConflict();
+    <script>
+        jQuery.noConflict();
         jQuery(document).ready(function ($) {
             var owl = $("#owl-classes");
             owl.owlCarousel({
@@ -58,10 +59,13 @@
         jQuery('.fancybox').fancybox();
     </script>
     <script src={{url('/')}}/bundles/general/assets/js/wow.min.js></script>
-    <script>new WOW().init();
+    <script>
+        new WOW().init();
+        var baseRes = '/bundles/general/';
         window.$ = jQuery;
     </script>
     {{-- @GeneratedResourcesBottom--}}
-    <script type="text/javascript" src="{{url('/bundles/generated')}}/general/general.9509a85eeccc8b7bd7ad.bundle.js"></script>
+    <script type="text/javascript"
+            src="{{url('/bundles/generated')}}/general/general.9509a85eeccc8b7bd7ad.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection
