@@ -12,13 +12,13 @@ class SiteSeeder extends Seeder
      */
     public function run()
     {
-        Site::create(['key' => 'site_name', 'value' => 'Giving Laos']);
+        Site::create(['key' => 'site_name', 'value' => 'Laos Giving']);
 
         Site::create(['key' => 'email', 'value' => 'info@giving.la']);
 
         Site::create(['key' => 'email_logo', 'value' => 'email_logo.png']);
 
-        Site::create(['key' => 'fav_icon', 'value' => 'fav.png']);
+        Site::create(['key' => 'fav_icon', 'value' => 'favicon.png']);
 
         Site::create(['key' => 'website_logo', 'value' => 'logo.png']);
 

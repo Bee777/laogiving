@@ -28,6 +28,45 @@
                 </li>
             </ul>
         </div>
+
+        <div id="login-form" style="display:none;">
+            <div class="row">
+                <h3>Login</h3>
+                <p>Please Login to Create a New Course</p>
+                <form id="login" novalidate>
+                    <input name="email" type="text" placeholder="Email or Username">
+                    <input name="password" type="text" placeholder="Password">
+                    <div class="row remeber">
+                        <label><input name="rember" type="checkbox" value=""> Remember Me</label>
+                        <a href="home-1.html#">Forgot Password?</a>
+                    </div>
+                    <div class="text-center button">
+                        <input name="Login" type="button" value="Login Now">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="register-form" style="display:none;">
+            <div class="row">
+                <h3>Register</h3>
+                <p>Please Register to Create a New Account</p>
+                <form id="register" novalidate>
+                    <input name="name" type="text" placeholder="Name">
+                    <input name="username" type="text" placeholder="Username">
+                    <input name="email" type="text" placeholder="Email">
+                    <input name="password" type="text" placeholder="Password">
+                    <input name="confirmpassword" type="text" placeholder="Confirm Password">
+                    <div class="row new-login">
+                        Already have an account? <a href="home-1.html#">Login to your account! </a>
+                    </div>
+                    <div class="text-center button">
+                        <input name="create-account" type="button" value="Create an Account">
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
 </template>
 

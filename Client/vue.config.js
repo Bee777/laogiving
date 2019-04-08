@@ -57,10 +57,9 @@ module.exports = {
         contentBase: '../public/',
         historyApiFallback: true,
         noInfo: true,
-        host: 'localhost',
-        clientLogLevel: 'info'
+        host: 'localhost'
     },
-    indexPath: path.resolve('..', 'public', 'bundles', type),
-    outputDir: path.resolve('..', 'public', 'bundles', type),
-    publicPath: process.env.NODE_ENV === 'production' ? "{{url('/bundles')}}/" + type : '/',
+    indexPath: path.resolve('..', 'public', 'bundles', 'generated', type, 'index.html'),
+    outputDir: path.resolve('..', 'public', 'bundles', 'generated', type),
+    publicPath: process.env.NODE_ENV === 'production' ? "{{url('/bundles')}}/generated/" + type + '/' : '/',
 };
