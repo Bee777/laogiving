@@ -1,0 +1,11 @@
+@extends('layouts.app')
+@section('title', 'Home')
+@section('scripts_header')
+    <link rel="stylesheet" href="{{url('/')}}/css/general.css{{$s['fresh_version']}}">
+    <link rel="stylesheet" href="{{url('/')}}/css/style.css{{$s['fresh_version']}}">
+    <link href="{{url('/bundles')}}/general/css/0.ff505980b82b51130c14.chunk.css" rel="stylesheet">
+@endsection
+@section('scripts_footer')
+    @include('main.general.defaultData')
+    <script type="text/javascript" src="{{url('/bundles')}}/general/bab35385.bundle.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/3.9b3d8adff3b9ca4d5915.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/1.f42790d02100e390fbc6.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/5.b49a5e58cd4019ea2fb3.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/2.244a48e94ba384315d3b.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/4.295415610cd8b70478f1.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/6.5f903c6dca7959b3bdac.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/7.c4028ae7688c2388a346.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/8.ed681bccb925246dbb4c.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/9.a57ac0f5868e5b89801e.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/11.bc59321c6bedbc9ec21d.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/12.8e45719c620fb5f0889a.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/13.227272637d9b69dfb19d.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/10.a3d53a903694ac3d8443.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/14.bfa9bebfb1459e410270.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/15.6c023ffcf046a32e3413.js"></script><script type="text/javascript" src="{{url('/bundles')}}/general/chunks/0.fd16465f47c6b1e1e456.js"></script>
+@endsection
