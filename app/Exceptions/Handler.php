@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use League\OAuth2\Server\Exception\OAuthServerException;
 
 class Handler extends ExceptionHandler
 {
@@ -14,7 +15,7 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        OAuthServerException::class,
     ];
 
     /**
@@ -47,6 +48,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if (get_class($exception) === OAuthServerException::class) {
+            return $request->expectsJson()
+                ? response()->json(['token' => 'Unauthorized'], 401)
+                : redirect()->guest(route('login'));
+        }
         return parent::render($request, $exception);
     }
 

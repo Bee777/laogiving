@@ -14,10 +14,10 @@ var devSeverPort = {
     'organize': 9003,
 };
 var htmlIndexes = {
-    'general': '../public/bundles/index/general.html',
-    'admin': '../public/bundles/index/admin.html',
-    'volunteer': '../public/bundles/index/volunteer.html',
-    'organize': '../public/bundles/index/organize.html',
+    'general': '../public/bundles/general/index.html',
+    'admin': '../public/bundles/admin/index.html',
+    'volunteer': '../public/bundles/volunteer/index.html',
+    'organize': '../public/bundles/organize/index.html',
 };
 process.noDeprecation = true;
 type = process.argv[process.argv.length - 1].replace('--', '');

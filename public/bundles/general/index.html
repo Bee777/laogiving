@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, user-scalable=0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/css/general.css">
+    <!--Template CSS-->
+    <link href="/bundles/general/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/bundles/general/assets/css/linearicons-free.css">
+    <link rel="stylesheet" href="/bundles/general/assets/css/animate.css">
+    <link rel="stylesheet" href="/bundles/general/assets/vendor/flexslider/flexslider.css">
+    <link rel="stylesheet" href="/bundles/general/assets/vendor/owlcarousel/owl.carousel.css">
+    <link rel="stylesheet" href="/bundles/general/assets/vendor/fancybox/css/fancybox.css">
+    <link rel="stylesheet" href="/bundles/general/assets/css/global.css">
+    <link rel="stylesheet" href="/bundles/general/assets/css/style.css">
+    <link rel="stylesheet" href="/bundles/general/assets/css/laogiving.css">
+    <!--kindergarten-->
+    <!--Template CSS-->
+    <link rel="stylesheet" href="/css/vue-datetime.min.css"><!--vue date time-->
+    <link rel="stylesheet" href="/css/vue-toasted.min.css"><!--Toast-->
+    <link rel="stylesheet" href="/css/bolloon.css">
+
+    <link rel="shortcut icon" href="/assets/images/favicon.png"/>
+    <title>Home | Giving Laos</title>
+</head>
+
+<body>
+<div id="app">
+</div>
+<script type="text/javascript">
+    var baseUrl = 'http://localhost:8000';
+
+    var settings = JSON.parse(JSON.stringify({
+        "website_logo": "logo.png",
+        "site_name": "GivingLao.com",
+        "fresh_version": "?v5bfaeb853bc634a830a28575dc406b01"
+    }));
+
+    var latest_news = [];
+
+    var items = {posts: {}, mostViews: [], comingEvents: []};
+    var news = items;
+    var activities = items;
+    var events = items;
+
+    var contactInfo = {
+        "phone": "+852 20 557685867",
+        "email": "info@laogiving.com",
+        "address": "The Giving Helping People website in Laos PDR.",
+        "facebook": null,
+        "googleplus": null,
+        "twitter": null
+    };
+    var aboutInfo = {};
+
+</script>
+<script src="/js/jquery-1.11.2.min.js"></script>
+<!--Template Script-->
+
+<script src="/bundles/general/assets/js/bootstrap.min.js"></script>
+<script src="/bundles/general/assets/vendor/flexslider/jquery.flexslider-min.js"></script>
+<script src="/bundles/general/assets/vendor/owlcarousel/owl.carousel.js"></script>
+<script>
+    jQuery.noConflict();
+    jQuery(document).ready(function ($) {
+        var owl = $("#owl-classes");
+        owl.owlCarousel({
+
+            items: 3, //10 items above 1000px browser width
+            itemsDesktop: [1000, 3], //5 items between 1000px and 901px
+            itemsDesktopSmall: [900, 3], // 3 items betweem 900px and 601px
+            itemsTablet: [640, 2],
+            itemsMobile: [480, 1], // itemsMobile disabled - inherit from itemsTablet option
+            navigation: false,
+            pagination: true,
+            autoPlay: true
+        });
+
+        var owl = $("#owl-teachers");
+
+        owl.owlCarousel({
+
+            items: 2, //10 items above 1000px browser width
+            itemsDesktop: [1000, 2], //5 items between 1000px and 901px
+            itemsDesktopSmall: [900, 2], // 3 items betweem 900px and 601px
+            itemsTablet: [600, 1],
+            itemsMobile: [480, 1], // itemsMobile disabled - inherit from itemsTablet option
+            navigation: false,
+            pagination: true,
+            autoPlay: true
+        });
+
+    });
+</script>
+<script src="/bundles/general/assets/js/theme.js"></script>
+<script type="text/javascript" src="/bundles/general/assets/vendor/fancybox/js/jquery.fancybox.js"></script>
+<script type="text/javascript" src="/bundles/general/assets/vendor/fancybox/js/custom.fancybox.js"></script>
+<script>
+    jQuery.noConflict();
+    jQuery('.fancybox').fancybox();
+</script>
+
+<script src="/bundles/general/assets/js/wow.min.js"></script>
+<script>
+    new WOW().init();
+    window.$ = jQuery;
+</script>
+
+<!--Template Script-->
+
+<script type="text/javascript" src="/js/tiny/jquery.tinymce.min.js "></script>
+<script type="text/javascript" src="/js/tiny/tinymce.min.js"></script>
+<script type="text/javascript" src="/js/tiny/tinymce.setting.js"></script>
+<script type="text/javascript" src="/js/vue-toasted.min.js"></script><!--Toast-->
+<script type="text/javascript" src="/js/luxon/luxon.min.js"></script><!--Luxon-->
+<script type="text/javascript" src="/js/vue-datetime.min.js"></script><!--Datetime-->
+</body>
+</html>

@@ -2,7 +2,7 @@
     <div>
         <div id="flex" class="flexslider laogiving">
             <ul class="slides">
-                <li style="background:url(/bundles/general/assets/images/banner1.jpg) no-repeat center; background-size:cover;">
+                <li style="background:url(/bundles/general/assets/images/use_img/banner1.jpg) no-repeat center; background-size:cover;">
                     <div class="container">
                         <div class="row">
                             <div class="slide-caption">
@@ -14,7 +14,7 @@
                         </div>
                     </div>
                 </li>
-                <li style="background:url(/bundles/general/assets/images/banner7.jpg) no-repeat center; background-size:cover;">
+                <li style="background:url(/bundles/general/assets/images/use_img/banner_img7.jpg) no-repeat center; background-size:cover;">
                     <div class="container">
                         <div class="row">
                             <div class="slide-caption">
