@@ -18,9 +18,9 @@
     @yield('scripts_header')
     <base href="{{ url('/') }}">
     <meta name="description"
-          content="@yield('g_description') {{ $s['site_name'] }} the website for japanese students in laos">
+          content="@yield('g_description') {{ $s['site_name'] }} the website for communicate between Volunteers and Organizations in Laos">
     <meta name="keywords"
-          content="@yield('g_keywords'), {{ $s['site_name'] }}, website for japanese students, website students in laos">
+          content="@yield('g_keywords'), {{ $s['site_name'] }}, the website for communicate between Volunteers and Organizations in Laos">
     <meta name="author" content="Lao giving">
     <meta property="fb:app_id" content="116465732392262"/>
     <link rel="shortcut icon" href="{{ url('/') }}/assets/images/{{$s['fav_icon'] . $s['fresh_version']}}">
@@ -31,7 +31,7 @@
 <div id="app">
 </div>
 <noscript>
-    <div id="noscript-warning"><h2 class="title"> Jaol.com works best with JavaScript enabled. </h2></div>
+    <div id="noscript-warning"><h2 class="title"> LaosGiving.com works best with JavaScript enabled. </h2></div>
 </noscript>
 <!-- JavaScripts -->
 <script charset="utf-8">

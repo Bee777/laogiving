@@ -12,9 +12,11 @@ class SiteSeeder extends Seeder
      */
     public function run()
     {
-        Site::create(['key' => 'site_name', 'value' => 'Laos Giving']);
+        Site::create(['key' => 'site_name', 'value' => 'The Management Website for Communication between Volunteers and Organizations']);
 
         Site::create(['key' => 'email', 'value' => 'info@giving.la']);
+
+        Site::create(['key' => 'address', 'value' => 'Khamhoung, Xaythany District, Vientiane Capital, Laos PDR.']);
 
         Site::create(['key' => 'email_logo', 'value' => 'email_logo.png']);
 
@@ -22,6 +24,6 @@ class SiteSeeder extends Seeder
 
         Site::create(['key' => 'website_logo', 'value' => 'logo.png']);
 
-        Site::create(['key' => 'fresh_version', 'value' => '?vc95c3b0892a8c650a95b4e2bf4cb1fa9']);
+        Site::create(['key' => 'fresh_version', 'value' => '?vc45c3b0892a8c650a95b4e2bf4cb1fa9']);
     }
 }

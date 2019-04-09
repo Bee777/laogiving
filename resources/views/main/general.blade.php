@@ -1,5 +1,41 @@
 @extends('layouts.app')
 @section('title', 'Home')
+@section('g_description')ເວບໄຊຈັດການ ການສື່ສານລະຫວ່າງອາສາສະໝັກ ແລະອົງກອນຮັບອາສາສະໝັກ ຂອງປະເທດລາວ@stop
+@section('g_keywords')communicate between Volunteers and Organizations, Volunteers, Organizations, ອາສາສະໝັກ, ອົງກອນຮັບອາສາສະໝັກ, ການສື່ສານລະຫວ່າງອາສາສະໝັກ ແລະອົງກອນຮັບອາສາສະໝັກ, ເວບໄຊຈັດການ ການສື່ສານລະຫວ່າງອາສາສະໝັກ ແລະອົງກອນຮັບອາສາສະໝັກ ຂອງປະເທດລາວ
+@stop
+@section('meta_search')
+
+    <link rel="canonical" href="{{ urldecode(url()->full()) }}">
+    <meta property="og:url" content="{{ urldecode(url()->full()) }}"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title"
+          content="Home | {{ $s['site_name'] }}"/>
+    <meta property="og:description"
+          content="{{ $s['site_name'] }} ເວບໄຊຈັດການ ການສື່ສານລະຫວ່າງອາສາສະໝັກ ແລະອົງກອນຮັບອາສາສະໝັກ ຂອງປະເທດລາວ"/>
+    <meta property="og:image" content="{{ url('/') }}/assets/images/{{ $s['website_logo']  }}"/>
+
+    <meta property="og:site_name" content="{{ $s['site_name'] }}">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:type" content="image/png">
+
+    <meta name="twitter:title"
+          content="Home | {{ $s['site_name'] }}">
+    <meta name="twitter:description"
+          content="{{ $s['site_name'] }} ເວບໄຊຈັດການ ການສື່ສານລະຫວ່າງອາສາສະໝັກ ແລະອົງກອນຮັບອາສາສະໝັກ ຂອງປະເທດລາວ">
+    <meta name="twitter:image:src" content="{{ url('/') }}/assets/images/{{ $s['website_logo']  }}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="{{ $s['site_name'] }}">
+    <meta name="twitter:creator" content="{{ $s['site_name'] }}">
+    <meta name="twitter:image" content="{{ url('/') }}/assets/images/{{ $s['website_logo']  }}">
+    <meta name="twitter:domain" content="{{ url('/') }}">
+
+    <meta itemprop="name" content="Home | {{ $s['site_name'] }}">
+    <meta itemprop="description"
+          content="{{ $s['site_name'] }} ເວບໄຊຈັດການ ການສື່ສານລະຫວ່າງອາສາສະໝັກ ແລະອົງກອນຮັບອາສາສະໝັກ ຂອງປະເທດລາວ">
+    <meta itemprop="image" content="{{ url('/') }}/assets/images/{{ $s['website_logo']  }}">
+@stop
 @section('scripts_header')
     <link rel="stylesheet" href="{{url('/')}}/css/general.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/bootstrap.min.css">
