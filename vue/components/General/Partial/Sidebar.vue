@@ -10,21 +10,21 @@
                              :src="`${baseUrl}/assets/images/${s.website_logo}${s.fresh_version}`">
                     </div>
                     <div class="drawer-unlogin" v-if="!LoggedIn()">
-                        <router-link @click.native.prevent="maskClick()" :to="{ name: 'home' }">
+                        <router-link @click.native.prevent="maskClick()" :to="{ name: 'register' }">
                             <a class="drawer-seeker">
-                                <span class="line-bottom">Welcome to JAOL</span>
+                                <span>Log In</span>
                             </a>
                         </router-link>
                         <router-link @click.native.prevent="maskClick()" :to="{ name: 'login' }">
                             <a class="drawer-employer">
-                                <span>Sign In</span>
+                                <span>Sign Up</span>
                             </a>
                         </router-link>
                     </div>
                     <div class="drawer-unlogin" v-else>
                         <router-link @click.native.prevent="maskClick()" :to="{ name: 'home' }">
                             <a class="drawer-seeker">
-                                <span class="line-bottom">Welcome to JAOL</span>
+                                <span class="line-bottom">Welcome to Lao giving</span>
                             </a>
                         </router-link>
                         <router-link @click.native.prevent="maskClick()" :to="{ name: 'home' }">
@@ -161,12 +161,12 @@
             ...mapMutations(['setSidebar']),
             ...mapActions(['Logout']),
             removeClasses() {
-                this.jq("body").removeClass("hidden");
-                this.jq("html").removeClass("hidden");
+                this.jq("body").removeClass("hidden sidebar");
+                this.jq("html").removeClass("hidden sidebar");
             },
             addClasses() {
-                this.jq("html").addClass("hidden");
-                this.jq("body").addClass("hidden");
+                this.jq("html").addClass("hidden sidebar");
+                this.jq("body").addClass("hidden sidebar");
             },
             maskClick() {
                 this.removeClasses();
@@ -249,9 +249,9 @@
     /** box */
     .sidebar-drawer-box {
         width: 100%;
-        padding-top: 8px;
-        padding-bottom: 8px;
         color: #555;
+        margin: 0;
+        padding: 8px 0;
     }
 
     .sidebar-drawer-box li {

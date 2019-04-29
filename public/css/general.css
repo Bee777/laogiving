@@ -37,6 +37,7 @@ body {
 }
 
 .hidden {
+    display: block !important;
     padding-top: 0;
     position: relative;
     overflow: hidden !important;
@@ -44,6 +45,10 @@ body {
     height: auto;
     touch-action: none;
     touch-action: unset;
+}
+
+.hidden.sidebar {
+    display: block !important;
 }
 
 /**

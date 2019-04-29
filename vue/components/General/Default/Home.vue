@@ -1,72 +1,111 @@
 <template>
     <div>
-        <div id="flex" class="flexslider laogiving">
-            <ul class="slides">
-                <li style="background:url(/bundles/general/assets/images/use_img/banner1.jpg) no-repeat center; background-size:cover;">
+        <Carousel>
+            <template slot-scope="{ path }">
+                <li :style="`background:url(${path}/use_img/banner1.jpg) no-repeat center; background-size:cover;`">
                     <div class="container">
                         <div class="row">
                             <div class="slide-caption">
-                                <h2 data-animation="animated bounceInLeft"> An Innovative Graduate University of
-                                    Theology </h2>
+                                <h2 data-animation="animated bounceInLeft">
+                                    Give the Gift
+                                    today!
+                                    Every little bit counts. </h2>
                                 <a data-animation="animated zoomInUp"
-                                   class="btn btn-medium btn-blue">View Campus <i class="lnr lnr-arrow-right"></i></a>
+                                   class="btn btn-medium btn-blue">Browse Activities <i class="lnr lnr-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>
                 </li>
-                <li style="background:url(/bundles/general/assets/images/use_img/banner_img7.jpg) no-repeat center; background-size:cover;">
+                <li :style="`background:url(${path}/use_img/banner_img7.jpg) no-repeat center; background-size:cover;`">
                     <div class="container">
                         <div class="row">
                             <div class="slide-caption">
-                                <h2 data-animation="animated bounceInLeft"> An Innovative Graduate University of
-                                    Theology </h2>
+                                <h2 data-animation="animated bounceInLeft"> Beautify with a Heart, Let's Go Green </h2>
                                 <a data-animation="animated zoomInUp"
-                                   class="btn btn-medium btn-blue">View Campus <i class="lnr lnr-arrow-right"></i></a>
+                                   class="btn btn-medium btn-blue">Our News <i class="lnr lnr-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>
                 </li>
-            </ul>
-        </div>
-
-        <div id="login-form" style="display:none;">
-            <div class="row">
-                <h3>Login</h3>
-                <p>Please Login to Create a New Course</p>
-                <form id="login" novalidate>
-                    <input name="email" type="text" placeholder="Email or Username">
-                    <input name="password" type="text" placeholder="Password">
-                    <div class="row remeber">
-                        <label><input name="rember" type="checkbox" value=""> Remember Me</label>
-                        <a>Forgot Password?</a>
+            </template>
+        </Carousel>
+        <!--Portlet -->
+        <section class="about-with-slide">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 aboutus">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-7">
+                                <h3>All-in-one Giving</h3>
+                                <h4><span>We want to make giving simple, fun and meaningful for you. The possibilities are endless!</span>
+                                </h4>
+                                <p>Find a volunteer activity that you're interested in, to use the skills you have,
+                                    right here in Laos.</p>
+                                <a class="btn btn-medium btn-blue">BE A VOLUNTEER <i
+                                    class="lnr lnr-arrow-right"></i></a>
+                            </div>
+                            <div class="col-xs-12 col-sm-5">
+                                <div class="flexslider about-slide">
+                                    <ul class="slides">
+                                        <li><a><img :src="`${baseRes}assets/svg/ic-volunteer-db.svg`" alt=""></a></li>
+                                        <li><a><img :src="`${baseRes}assets/svg/ic-fundraise-db.svg`" alt=""></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-center button">
-                        <input name="Login" type="button" value="Login Now">
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
-
-        <div id="register-form" style="display:none;">
-            <div class="row">
-                <h3>Register</h3>
-                <p>Please Register to Create a New Account</p>
-                <form id="register" novalidate>
-                    <input name="name" type="text" placeholder="Name">
-                    <input name="username" type="text" placeholder="Username">
-                    <input name="email" type="text" placeholder="Email">
-                    <input name="password" type="text" placeholder="Password">
-                    <input name="confirmpassword" type="text" placeholder="Confirm Password">
-                    <div class="row new-login">
-                        Already have an account? <a>Login to your account! </a>
+        </section>
+        <!--Portlet -->
+        <!--News-->
+        <InHomeNews/>
+        <!--News-->
+        <!--Count Poster-->
+        <section class="our-features">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h3><span>OUR</span> Stage</h3>
+                        <ul>
+                            <li>Total number of volunteers and activities</li>
+                        </ul>
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 feature wow bounceInLeft">
+                            <div class="is-left-side ">
+                                <img alt="hours" :src="`${baseRes}assets/svg/ic-hours.svg`">
+                                <h3 class="bg-stats__stats">149</h3>
+                                <p>volunteer signups</p>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 feature wow bounceInLeft">
+                            <div class="is-right-side ">
+                                <img alt="hours" :src="`${baseRes}assets/svg/ic-home.svg`">
+                                <h3 class="bg-stats__stats">280</h3>
+                                <p>activities created.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-center button">
-                        <input name="create-account" type="button" value="Create an Account">
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
-
+        </section>
+        <!--Count Poster-->
+        <!--Causes-->
+        <InHomeCauses/>
+        <!--Causes-->
+        <section class="call-to-action">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="col-xs-12 col-sm-8">
+                            <h3>You can make a difference today!.</h3>
+                            <p>There's a lot more we can do, together.</p>
+                        </div>
+                        <a class="btn btn-medium btn-default pull-right">Learn More <i
+                            class="lnr lnr-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </template>
 
@@ -75,13 +114,20 @@
 <script>
     import Base from "@com/Bases/GeneralBase.js";
     import {mapActions} from 'vuex'
+    import Carousel from '@com/General/Partial/Carousel.vue'
+    import InHomeNews from '@com/General/Default/Includes/HomeNews.vue'
+    import InHomeCauses from '@com/General/Default/Includes/HomeExploreCauses.vue'
 
     export default Base.extend({
         name: "Home",
         data: () => ({
             contactInfo: {header_title: 'Contact Us Now'}//for contact form
         }),
-        components: {},
+        components: {
+            Carousel,
+            InHomeNews,
+            InHomeCauses
+        },
         methods: {
             ...mapActions(['postSendContact']),
             sendContact() {
@@ -105,18 +151,6 @@
                         }
                     });
             }
-        },
-        mounted() {
-            this.jq('.laogiving').flexslider({
-                animation: "fade",
-                start: () => {
-                    this.jq('body').removeClass('loading');
-                },
-                before: (slider) => {
-                    var $animateSlide = this.jq(slider).find("[data-animation ^= 'animated']");
-                    doAnimations($animateSlide);
-                }
-            });
         },
         created() {
             this.setPageTitle(`Home`);
