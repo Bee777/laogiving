@@ -1,20 +1,18 @@
 <template>
     <div class="nav-bar-fixed-container" ref="main-nav-bar">
-        <div :class="[{'nav-bar-fixed' : isFixedNav}]">
+        <div class="nav-bar" :class="[{'nav-bar-fixed' : isFixedNav}]">
             <!--TopNav-->
             <div class="header_meta header_meta_one flex flex-scale-auto" v-if="!isFixedNav">
                 <div class="full-width-percent">
                     <ul class="social">
-                        <li><a><i class="fab fa-twitter"></i></a></li>
                         <li><a><i class="fab fa-facebook"></i></a></li>
-                        <li><a><i class="fab fa-linkedin"></i></a></li>
-                        <li><a><i class="fab fa-pinterest-square"></i></a></li>
                         <li><a><i class="fab fa-instagram"></i></a></li>
                         <li><a><i class="fab fa-youtube"></i></a></li>
                     </ul>
                     <nav class="meta-login">
                         <ul>
-                            <li class="clock"><i class="lnr lnr-clock"></i>Mon - Fri : 8:00 - 12:00</li>
+                            <li><a  @click="Route({name:'about'})" class="cursor">About</a></li>
+                            <li><a  @click="Route({name:'contact'})" class="cursor">Contact Us</a></li>
                             <li class="call"><i class="lnr lnr-smartphone"></i>Call Us +731 234 5678</li>
                         </ul>
                     </nav>
@@ -22,7 +20,7 @@
             </div>
             <!--TopNav-->
             <!--MainTopNav-->
-            <header class="site-header home-one" id="masthead">
+            <header class="site-header home-one" id="masthead" ref="nav-bar">
                 <div>
                     <div v-if="navInputSearch.active" class="flex flex-scale-auto full-width-percent">
                         <div class="search-nav-container flex flex-center flex-items-center flex">
@@ -53,12 +51,12 @@
                             </div>
                             <div class="collapse navbar-collapse">
                                 <ul class="nav navbar-nav flex flex-wrap flex-end ">
-                                    <li><a class="na">Be a Volunteer</a></li>
-                                    <li><a>Create an Activity</a></li>
-                                    <li><a @click="activeNavInputSearch(true)" class="search-menu"><i
+                                    <li><a @click="Route({name: 'activities'})" class="cursor">Be a Volunteer</a></li>
+                                    <li><a class="cursor">Create an Activity</a></li>
+                                    <li><a @click="activeNavInputSearch(true)" class="search-menu cursor"><i
                                         class="material-icons">search</i></a></li>
-                                    <li><a class="menu-button">Log In</a></li>
-                                    <li><a class="menu-button">Sign Up</a></li>
+                                    <li><a class="menu-button ">Log In</a></li>
+                                    <li><a @click="Route({name: 'register'})" class="menu-button">Sign Up</a></li>
                                 </ul>
                             </div>
                         </nav>
@@ -81,7 +79,8 @@
                 isActive: '',
                 el: null,
                 lastScrollTop: 0,
-                navbarHeight: 180,
+                navbarHeight: 170,
+                fixedNavBarHeight: 64,
                 isFixedNav: false,
                 navInputSearch: {active: false, text: ''}
             };
@@ -103,6 +102,7 @@
             },
             toggleFixedNav(t) {
                 this.isFixedNav = t;
+                this.$emit('onNavbarFixed', {state: t, height: this.navbarHeight});
             },
             activeNavInputSearch(t) {
                 this.navInputSearch.active = t;
@@ -113,17 +113,27 @@
                 }
             },
             scrollNavHandler() {
+                //set scroll info
+                setTimeout(() => {
+                    this.navbarHeight = this.$refs['main-nav-bar'].clientHeight;
+                    this.fixedNavBarHeight = this.$refs['nav-bar'].clientHeight;
+                }, 100);
+
+                let nScroll = this.navbarHeight - this.fixedNavBarHeight,
+                    Scroll = this.navbarHeight + this.fixedNavBarHeight, st = 0;
                 this.el = this.jq(window);
+                //set scroll info
+
                 this.el.scroll(() => {
-                    let st = this.el.scrollTop();
+                    st = this.el.scrollTop();
                     if (st > this.lastScrollTop) {
                         // Scroll Down
-                        if (st > this.navbarHeight) {
+                        if (st > nScroll) {
                             this.toggleFixedNav(true);
                         }
                     } else {
                         // Scroll Up
-                        if (this.navbarHeight - st >= this.navbarHeight - 1) {
+                        if (st <= Scroll) {
                             this.toggleFixedNav(false);
                         }
                     }
@@ -135,6 +145,9 @@
                     this.el.off('scroll');
             },
         },
+        created() {
+            this.toggleFixedNav = this.$throttle(this.toggleFixedNav, 250);
+        },
         mounted() {
             this.scrollNavHandler();
         },
@@ -143,7 +156,4 @@
         }
     });
 </script>
-<style scoped>
-
-</style>
 

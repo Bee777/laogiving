@@ -3,6 +3,7 @@ import Vue from 'vue'
 import $utils from './utilities.js'
 import {crypter} from './encryter.js'
 import debounce from 'lodash/debounce'
+import throttle from  'lodash/throttle'
 
 /*** @DataSpecific Init ***/
 let encrypter = crypter(), cipter, decipher, jsEncode = encrypter.jsEncode;
@@ -19,6 +20,7 @@ export function createInit() {
     Vue.use(Vuex);
     Vue.prototype.jq = $;
     Vue.prototype.debounce = debounce;
+    Vue.prototype.$throttle = throttle;
     //check if slot exists
     Vue.prototype.hasSlot = function (name = 'default') {
         return !!this.$slots[name] || !!this.$scopedSlots[name];

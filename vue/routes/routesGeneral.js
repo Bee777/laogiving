@@ -4,14 +4,12 @@ import Register from '@com/General/Register.vue'
 import Registered from '@com/General/Registered.vue'
 import FinishedResetPassword from '@com/General/FinishedResetPassword.vue'
 import Home from '@com/General/Default/Home.vue'
-import About from '@com/General/Default/about.vue'
-import News from '@com/General/Default/News.vue'
-import Contact from '@com/General/Default/contact.vue'
-import Activity from '@com/General/Default/activity.vue'
-import Event from '@com/General/Default/event.vue'
-import NewsSingle from '@com/General/Default/Single/NewsSingle.vue'
-import ActivitySingle from '@com/General/Default/Single/ActivitySingle.vue'
-import EventSingle from '@com/General/Default/Single/EventSingle.vue'
+const About = ()=> import('@com/General/Default/About.vue')
+const Contact = ()=> import('@com/General/Default/Contact.vue')
+const News = ()=> import('@com/General/Pages/News.vue');
+import Activities from '@com/General/Pages/Activities.vue'
+import NewsSingle from '@com/General/Pages/Single/NewsSingle.vue'
+import ActivitySingle from  '@com/General/Pages/Single/ActivitySingle.vue'
 
 const metas = {
     guestMeta: {
@@ -116,6 +114,16 @@ export default [
         },
     },
     {
+        path: '/contact',
+        name: 'contact',
+        component: Contact,
+        meta: {
+            ...metas.df({
+                hideNavFooter: false,
+            })
+        },
+    },
+    {
         path: '/posts/news',
         name: 'news',
         component: News,
@@ -138,7 +146,7 @@ export default [
     {
         path: '/posts/activities',
         name: 'activities',
-        component: Activity,
+        component: Activities,
         meta: {
             ...metas.df({
                 hideNavFooter: false,
@@ -146,7 +154,7 @@ export default [
         },
     },
     {
-        path: '/posts/activities/single/:id',
+        path: '/posts/volunteer-activity/:id',
         name: 'activity-single',
         component: ActivitySingle,
         meta: {
@@ -154,35 +162,5 @@ export default [
                 hideNavFooter: false,
             })
         },
-    },
-    {
-        path: '/posts/events',
-        name: 'events',
-        component: Event,
-        meta: {
-            ...metas.df({
-                hideNavFooter: false,
-            })
-        },
-    },
-    {
-        path: '/posts/events/single/:id',
-        name: 'event-single',
-        component: EventSingle,
-        meta: {
-            ...metas.df({
-                hideNavFooter: false,
-            })
-        },
-    },
-    {
-        path: '/contact',
-        name: 'contact',
-        component: Contact,
-        meta: {
-            ...metas.df({
-                hideNavFooter: false,
-            })
-        },
-    },
+    }
 ];

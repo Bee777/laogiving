@@ -15,10 +15,7 @@
                         </aside>
                         <aside class="widget socialmedia-widget">
                             <ul class="social">
-                                <li><a><i class="fab fa-twitter"></i></a></li>
                                 <li><a><i class="fab fa-facebook"></i></a></li>
-                                <li><a><i class="fab fa-linkedin"></i></a></li>
-                                <li><a><i class="fab fa-pinterest-square"></i></a></li>
                                 <li><a><i class="fab fa-instagram"></i></a></li>
                                 <li><a><i class="fab fa-youtube"></i></a></li>
                             </ul>

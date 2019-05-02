@@ -10,7 +10,7 @@
                                     Give the Gift
                                     today!
                                     Every little bit counts. </h2>
-                                <a data-animation="animated zoomInUp"
+                                <a @click="Route({'name': 'activities'})" data-animation="animated zoomInUp"
                                    class="btn btn-medium btn-blue">Browse Activities <i class="lnr lnr-arrow-right"></i></a>
                             </div>
                         </div>
@@ -21,7 +21,7 @@
                         <div class="row">
                             <div class="slide-caption">
                                 <h2 data-animation="animated bounceInLeft"> Beautify with a Heart, Let's Go Green </h2>
-                                <a data-animation="animated zoomInUp"
+                                <a @click="Route({name: 'news'})" data-animation="animated zoomInUp"
                                    class="btn btn-medium btn-blue">Our News <i class="lnr lnr-arrow-right"></i></a>
                             </div>
                         </div>
@@ -41,14 +41,13 @@
                                 </h4>
                                 <p>Find a volunteer activity that you're interested in, to use the skills you have,
                                     right here in Laos.</p>
-                                <a class="btn btn-medium btn-blue">BE A VOLUNTEER <i
+                                <a  @click="Route({name:'activities'})" class="btn btn-medium btn-blue">BE A VOLUNTEER <i
                                     class="lnr lnr-arrow-right"></i></a>
                             </div>
                             <div class="col-xs-12 col-sm-5">
-                                <div class="flexslider about-slide">
+                                <div class="about-slide">
                                     <ul class="slides">
                                         <li><a><img :src="`${baseRes}assets/svg/ic-volunteer-db.svg`" alt=""></a></li>
-                                        <li><a><img :src="`${baseRes}assets/svg/ic-fundraise-db.svg`" alt=""></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -70,14 +69,14 @@
                         <ul>
                             <li>Total number of volunteers and activities</li>
                         </ul>
-                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 feature wow bounceInLeft">
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 feature">
                             <div class="is-left-side ">
                                 <img alt="hours" :src="`${baseRes}assets/svg/ic-hours.svg`">
                                 <h3 class="bg-stats__stats">149</h3>
                                 <p>volunteer signups</p>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 feature wow bounceInLeft">
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 feature">
                             <div class="is-right-side ">
                                 <img alt="hours" :src="`${baseRes}assets/svg/ic-home.svg`">
                                 <h3 class="bg-stats__stats">280</h3>
@@ -100,7 +99,7 @@
                             <h3>You can make a difference today!.</h3>
                             <p>There's a lot more we can do, together.</p>
                         </div>
-                        <a class="btn btn-medium btn-default pull-right">Learn More <i
+                        <a @click="Route({name:'about'})" class="btn btn-medium btn-default pull-right">Learn More <i
                             class="lnr lnr-arrow-right"></i></a>
                     </div>
                 </div>

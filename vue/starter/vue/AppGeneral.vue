@@ -1,7 +1,8 @@
 <template>
     <div>
-        <Navbar v-if="!$route.meta.hideNavFooter"/>
-        <div id="general-main-container" :class="[(isMobile && $route.meta.navFixed) ? 'add-padding-top-content': '']">
+        <Navbar @onNavbarFixed="(t)=> this.fixedNav = t" v-if="!$route.meta.hideNavFooter"/>
+        <div :style="getStyles()" id="general-main-container"
+             :class="[(isMobile && $route.meta.navFixed) ? 'add-padding-top-content': '']">
             <router-view></router-view>
         </div>
         <Footer v-if="!$route.meta.hideNavFooter"/>
@@ -13,7 +14,7 @@
     </div>
 </template>
 <script>
-    import {mapState, mapActions, mapMutations} from 'vuex'
+    import {mapActions, mapMutations, mapState} from 'vuex'
     import Navbar from '@com/General/Partial/Navbar.vue';
     import Sidebar from '@com/General/Partial/Sidebar.vue';
     import Footer from '@com/General/Partial/Footer.vue';
@@ -31,6 +32,7 @@
                 breakPoint: 0,
                 windowHeight: 0,
                 limitBreakPoint: 1023,
+                fixedNav: {},
             }
         },
         computed: {
@@ -51,6 +53,9 @@
                     this.setMobile({isMobile: false, currentWidth: this.breakPoint, currentHeight: this.windowHeight});
                 }
             },
+            getStyles() {
+                return this.fixedNav.state ? `padding-top: ${this.fixedNav.height}px !important;` : '';
+            }
         },
         mounted() {
             this.breakPoint = this.$el.clientWidth;
@@ -74,4 +79,7 @@
     }
 </script>
 <style scoped>
+    #general-main-container {
+        min-height: 699px;
+    }
 </style>
