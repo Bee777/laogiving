@@ -3,19 +3,21 @@
         <div class="nav-bar" :class="[{'nav-bar-fixed' : isFixedNav}]">
             <!--TopNav-->
             <div class="header_meta header_meta_one flex flex-scale-auto" v-if="!isFixedNav">
-                <div class="full-width-percent">
-                    <ul class="social">
-                        <li><a><i class="fab fa-facebook"></i></a></li>
-                        <li><a><i class="fab fa-instagram"></i></a></li>
-                        <li><a><i class="fab fa-youtube"></i></a></li>
-                    </ul>
-                    <nav class="meta-login">
-                        <ul>
-                            <li><a  @click="Route({name:'about'})" class="cursor">About</a></li>
-                            <li><a  @click="Route({name:'contact'})" class="cursor">Contact Us</a></li>
-                            <li class="call"><i class="lnr lnr-smartphone"></i>Call Us +731 234 5678</li>
+                <div class="full-width-percent bg-smoke">
+                    <div class="pd-l-15">
+                        <ul class="social">
+                            <li><a><i class="fab fa-facebook"></i></a></li>
+                            <li><a><i class="fab fa-instagram"></i></a></li>
+                            <li><a><i class="fab fa-youtube"></i></a></li>
                         </ul>
-                    </nav>
+                        <nav class="meta-login">
+                            <ul>
+                                <li><a @click="Route({name:'about'})" class="cursor">About</a></li>
+                                <li><a @click="Route({name:'contact'})" class="cursor">Contact Us</a></li>
+                                <li class="call"><i class="lnr lnr-smartphone"></i>Call Us +731 234 5678</li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
             <!--TopNav-->
@@ -52,11 +54,38 @@
                             <div class="collapse navbar-collapse">
                                 <ul class="nav navbar-nav flex flex-wrap flex-end ">
                                     <li><a @click="Route({name: 'activities'})" class="cursor">Be a Volunteer</a></li>
-                                    <li><a class="cursor">Create an Activity</a></li>
+                                    <template v-if="LoggedIn()">
+                                        <template v-if="authUserInfo.decodedType === 'organize'
+                                        || authUserInfo.decodedType === 'admin'
+                                        || authUserInfo.decodedType === 'super_admin'">
+                                            <li><a href="/organize/me/create-activity" class="cursor">Create an
+                                                Activity</a></li>
+                                        </template>
+
+                                        <template v-if="authUserInfo.decodedType === 'volunteer'
+                                        || authUserInfo.decodedType === 'admin'
+                                        || authUserInfo.decodedType === 'super_admin'">
+                                            <li><a href="/vounteer/me" class="cursor">My Account</a></li>
+                                        </template>
+
+                                    </template>
+                                    <template v-else>
+                                        <li><a @click="$modal.show('signin')" class="cursor">Create an
+                                            Activity</a></li>
+                                    </template>
+                                    <template v-if="!LoggedIn()">
+                                        <li><a @click="$modal.show('signin')" class="menu-button ">Log In</a></li>
+                                        <li><a @click="Route({name: 'register-overview'})" class="menu-button">Sign
+                                            Up</a>
+                                        </li>
+                                    </template>
+                                    <template v-else>
+                                        <li><a @click="Logout()" class="menu-button">Sign
+                                            Out</a>
+                                        </li>
+                                    </template>
                                     <li><a @click="activeNavInputSearch(true)" class="search-menu cursor"><i
                                         class="material-icons">search</i></a></li>
-                                    <li><a class="menu-button ">Log In</a></li>
-                                    <li><a @click="Route({name: 'register'})" class="menu-button">Sign Up</a></li>
                                 </ul>
                             </div>
                         </nav>
@@ -91,7 +120,7 @@
             },
         },
         computed: {
-            ...mapState(['isMobile', 'isSidebar']),
+            ...mapState(['isMobile', 'isSidebar', 'authUserInfo']),
         },
         methods: {
             ...mapMutations(['setSidebar']),

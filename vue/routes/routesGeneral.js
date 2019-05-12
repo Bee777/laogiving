@@ -1,15 +1,16 @@
-import Login from '@com/General/Login.vue'
-import ResetPassword from '@com/General/ResetPassword.vue'
-import Register from '@com/General/Register.vue'
-import Registered from '@com/General/Registered.vue'
-import FinishedResetPassword from '@com/General/FinishedResetPassword.vue'
+import ResetPassword from '@com/General/Default/ResetPassword.vue'
+import RegisterOverview from '@com/General/Default/RegisterOverview.vue'
+import Register from '@com/General/Default/Register.vue'
+import Registered from '@com/General/Default/Registered.vue'
+import FinishedResetPassword from '@com/General/Default/FinishedResetPassword.vue'
 import Home from '@com/General/Default/Home.vue'
 const About = ()=> import('@com/General/Default/About.vue')
 const Contact = ()=> import('@com/General/Default/Contact.vue')
-const News = ()=> import('@com/General/Pages/News.vue');
+const News = ()=> import('@com/General/Pages/News.vue')
 import Activities from '@com/General/Pages/Activities.vue'
 import NewsSingle from '@com/General/Pages/Single/NewsSingle.vue'
 import ActivitySingle from  '@com/General/Pages/Single/ActivitySingle.vue'
+import CompanyProfile from  '@com/General/Pages/CompanyProfile.vue'
 
 const metas = {
     guestMeta: {
@@ -37,12 +38,12 @@ const metas = {
 
 export default [
     {
-        path: "/login",
-        component: Login,
-        name: 'login',
+        path: "/register_overview",
+        component: RegisterOverview,
+        name: 'register-overview',
         meta: {
             ...metas.guestMeta, ...metas.df({
-                navFixed: false,
+                hideNavFooter: false,
             })
         },
     },
@@ -52,7 +53,7 @@ export default [
         name: 'register',
         meta: {
             ...metas.guestMeta, ...metas.df({
-                navFixed: false,
+                hideNavFooter: false,
             })
         },
     },
@@ -157,6 +158,16 @@ export default [
         path: '/posts/volunteer-activity/:id',
         name: 'activity-single',
         component: ActivitySingle,
+        meta: {
+            ...metas.df({
+                hideNavFooter: false,
+            })
+        },
+    },
+    {
+        path: '/organisation/profile/:id',
+        name: 'organize-profile',
+        component: CompanyProfile,
         meta: {
             ...metas.df({
                 hideNavFooter: false,

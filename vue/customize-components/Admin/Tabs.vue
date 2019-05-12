@@ -116,7 +116,8 @@
                 return (this.navControlWidth * 2);
             },
             setItemsCanDisplay() {// set items that can display per window width
-                let inc = 0, w = 0;
+                let inc = 0;
+                var w = 0;
                 for (let el in this.$refs) {
                     if (this.$utils.isEmptyVar(this.$refs[el]))
                         continue;
@@ -200,7 +201,8 @@
                 }, 560);
             },
             getNextWidths(el) {// get next sibling tab items width from current el
-                let Inc = 0, w = 0, sb = el.nextSibling;
+                let Inc = 0, sb = el.nextSibling;
+                var w = 0;
                 while (this.$utils.containsClassName(sb, "admin-tab-item") && Inc <= this.tabs.length) {
                     let rectSb = this.$utils.getElBouningClientRect(sb);
                     if (rectSb) {
@@ -212,7 +214,8 @@
                 return this.$utils.MathAbsRound(w, 0.1);
             },
             getPrevWidths(el) {// get prev sibling tab items width from current el
-                let Inc = 0, w = 0, sb = el.previousSibling;
+                let Inc = 0, sb = el.previousSibling;
+                var w = 0;
                 while (this.$utils.containsClassName(sb, "admin-tab-item") && Inc <= this.tabs.length) {
                     let rectSb = this.$utils.getElBouningClientRect(sb);
                     if (rectSb) {

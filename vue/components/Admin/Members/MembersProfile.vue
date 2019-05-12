@@ -163,10 +163,10 @@
 
 <script>
     import {mapActions} from 'vuex'
-    import UserBase from '@bases/UserBase.js'
+    import AdminBase from '@bases/AdminBase.js'
     import SearchInput from '@cus-com/Admin/SearchInput.vue'
 
-    export default UserBase.extend({
+    export default AdminBase.extend({
         name: "MembersProfile",
         components: {
             SearchInput

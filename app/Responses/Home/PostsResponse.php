@@ -9,10 +9,8 @@
 namespace App\Responses\Home;
 
 
-use App\Banner;
-use App\Dictionary;
 use App\Http\Controllers\Helpers\Helpers;
-use App\Posts;
+use App\Models\Posts;
 use App\Traits\DefaultData;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\DB;
@@ -57,31 +55,6 @@ class PostsResponse implements Responsable
         $paginateLimit = ($request->exists('limit') && !empty($request->get('limit'))) ? $request->get('limit') : 6;
         $paginateLimit = Helpers::isNumber($paginateLimit) ? $paginateLimit : 6;
         $text = $request->get('q');
-
-        //@for dictionaries only
-        if ($type === 'dictionary') {
-            $fields = ['id', 'lao', 'japanese', 'description', 'updated_at'];
-            $request->request->add(['fields' => $fields]);
-            $data = Dictionary::select($fields);
-            /**@Query */
-            $data->where(function ($query) use ($request, $text) {
-                foreach ($request->fields as $k => $f) {
-                    if ($f === 'updated_at') {
-                        if (Helpers::isEngText($text)) {
-                            $query->orWhere($f, 'LIKE', "%{$text}%");
-                        } else {
-                            continue;
-                        }
-                    }
-                    $query->orWhere($f, 'LIKE', "%{$text}%");
-                }
-            });
-            /**@Query */
-            $data = $data->orderBy('id', 'desc')->paginate($paginateLimit);
-            $data->appends(['limit' => $paginateLimit, 'q' => $text]);
-            return ['posts' => $data, 'mostViews' => [], 'comingEvents' => []];
-        }
-        //@for dictionaries only
 
         $fields = ['id', 'title', 'type', 'image', 'description', 'status', 'place', 'hosted_by', 'start_date', 'deadline', 'updated_at', 'user_id',];
         $request->request->add(['fields' => $fields]);

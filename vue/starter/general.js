@@ -4,7 +4,9 @@ import store from '@store/generalStore';
 import VueRouter from 'vue-router';
 import routes from '@route/routesGeneral';
 import VueCarousel from 'vue-carousel';
+import VModal from 'vue-js-modal'
 
+Vue.use(VModal);
 /**
  * @Component load
  */

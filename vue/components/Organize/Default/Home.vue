@@ -1,0 +1,1119 @@
+<template>
+    <div>
+        <main class="laogiving activity pad clearfix">
+
+            <section class="company-profile__head">
+                <div class="cWidth-1200 company-profile__head-title-logo object-fit">
+                    <div class="company-profile__logo">
+                        <img alt="" src="https://www.giving.sg/image/organization_logo?img_id=9128818&1557070447000">
+                    </div>
+                    <div class="company-profile__title-views-ctn"><h2 class="h2">Bee Organisation</h2>
+                        <div
+                            class="font-dark-grey mt-16 body-txt--small flex flex-ctn--dir-col-tablet-landscape-up-row">
+                            <div class="mr-0-tablet-landscape-up-24">
+                                <span class="company-profile__views">6 views </span>
+
+                                <div class="social-list mt-8">
+                                    <a class="button-ctn button--icon button--ghost "
+                                       title="Facebook"> <i class="material-icons button--icon__icon">share</i>
+                                        <span class="button--icon__name">SHARE</span>
+                                    </a>
+                                    <label class="btn-checkbox-btn btn-checkbox-btn--save ">
+                                        <input type="checkbox" name="saving-bookmark">
+                                        <span class="button-ctn button--icon button--ghost">
+                                      <i class="material-icons ico-save button--icon__icon">bookmark_border</i>
+                                      <span class="button--icon__name">SAVE</span>
+                                    </span>
+                                    </label>
+                                    <a class="button-ctn button--icon button--ghost "
+                                       title="Link copy to clipboard"> <i
+                                        class="material-icons button--icon__icon">link</i>
+                                        <span class="button--icon__name">LINK</span>
+                                    </a>
+                                </div>
+
+                            </div>
+                            <div class="mr-0-tablet-landscape-up-24">
+                                <div class="mb-8 company-profile__info ios-switch__on-content is-visible">
+                                    <em>Your organisation profile is set to be visible to public but your organisation
+                                        is not live yet</em>
+                                </div>
+                                <div class="mb-8 company-profile__info ios-switch__off-content ">
+                                    <em>Your organisation profile is not visible to public</em>
+                                </div>
+
+                                <div
+                                    class="flex-ctn flex-ctn--align-center flex-ctn--stack-res flex-ctn--just-center flex-ctn--just-start-tablet-landscape-up">
+                                    <div class="company-profile__switch">
+                                        <label class="ios-switch">
+                                            <input type="checkbox" id="chkIsOrgPrivate"
+                                                   class="js-ios-switch__checkbox ios-switch__checkbox " checked="">
+                                            <span class="ios-switch__off">PRIVATE</span>
+                                            <div class="ios-switch__base"></div>
+                                            <span class="ios-switch__on">PUBLIC</span> </label></div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Tabs-->
+                <div class="cWidth-1200 company-profile__nav clearfix">
+                    <nav class="hori-scroll-nav">
+                        <ul class="hori-scroll-nav__list tabs list">
+                            <li><a
+                                @click="setRouteTab('dashboard')"
+                                :class="[{' is-active': tab===0}]"
+                                class="cursor text-link text-link--no-underline text-link--black tabs__a  ">Dashboard</a>
+                            </li>
+                            <li><a
+                                @click="setRouteTab('our-volunteering')"
+                                :class="[{' is-active': tab===1}]"
+                                class="cursor text-link text-link--no-underline text-link--black tabs__a  ">Our
+                                Volunteering</a>
+                            </li>
+                            <li><a @click="setRouteTab('members')"
+                                   :class="[{' is-active': tab===2}]"
+                                   class="cursor text-link text-link--no-underline text-link--black tabs__a home ">Members</a>
+                            </li>
+
+                            <li><a @click="setRouteTab('saved')"
+                                   :class="[{' is-active': tab===3}]"
+                                   class="cursor text-link text-link--no-underline text-link--black tabs__a home ">Saved</a>
+                            </li>
+
+                            <li><a @click="setRouteTab('profile')"
+                                   :class="[{' is-active': tab===4}]"
+                                   class="cursor text-link text-link--no-underline text-link--black tabs__a home ">Profile</a>
+                            </li>
+                            <li><a @click="setRouteTab('account')"
+                                   :class="[{' is-active': tab===5}]"
+                                   class="cursor text-link text-link--no-underline text-link--black tabs__a home ">Account</a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                </div>
+                <!--Tabs-->
+            </section>
+
+            <!--Tabs Content-->
+            <!--Dashboard-->
+
+            <div class="cWidth-1200 mb-40 plr-16neg" v-show="tab===0">
+                <div
+                    class="flex flex-ctn--just-spc-btw flex-ctn--align-center flex-ctn--dir-col-custom-1024-up-row mt-40">
+                    <span class="body-txt body-txt--small font-mid-grey body-txt--italic mb-16-custom-1024-up-0">Updated as of 9/5/2019</span>
+                    <div class="month-range">
+                        <span class="month-range__title">Showing data for</span>
+                        <select v-model="volunteering.filter" class="select-ctn select--small"
+                                :class="[{'is-hidden': volunteering.filter==='customMonth'}]">
+                            <option selected="selected" value="this1Month">This month</option>
+                            <option value="past1Month">Past 1 month</option>
+                            <option value="past3Month">Past 3 months</option>
+                            <option value="past6Month">Past 6 months</option>
+                            <option value="customMonth">Custom</option>
+                        </select>
+                        <div class="month-range__body " :class="[{'is-hidden': volunteering.filter !== 'customMonth'}]">
+                            <!-- is-hidden-->
+                            <div class="month-range__item">
+                                <select class="month-range__month select-ctn select--small select--font-small">
+                                    <option value="0">Jan</option>
+                                    <option value="1">Feb</option>
+                                    <option value="2">Mar</option>
+                                    <option value="3">Apr</option>
+                                    <option value="4">May</option>
+                                    <option value="5">Jun</option>
+                                    <option value="6">July</option>
+                                    <option value="7">Aug</option>
+                                    <option value="8">Sept</option>
+                                    <option value="9">Oct</option>
+                                    <option value="10">Nov</option>
+                                    <option value="11">Dec</option>
+                                </select>
+                                <select class="month-range__year select-ctn select--small select--font-small">
+                                    <option value="2019">2019</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2015">2015</option>
+                                </select>
+                            </div>
+                            <div class="month-range__to">to</div>
+                            <div class="month-range__item">
+                                <select class="month-range__month select-ctn select--small select--font-small">
+                                    <option value="0">Jan</option>
+                                    <option value="1">Feb</option>
+                                    <option value="2">Mar</option>
+                                    <option value="3">Apr</option>
+                                    <option value="4">May</option>
+                                    <option value="5">Jun</option>
+                                    <option value="6">July</option>
+                                    <option value="7">Aug</option>
+                                    <option value="8">Sept</option>
+                                    <option value="9">Oct</option>
+                                    <option value="10">Nov</option>
+                                    <option value="11">Dec</option>
+                                </select>
+                                <select class="month-range__year select-ctn select--small select--font-small">
+                                    <option value="2019">2019</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2015">2015</option>
+                                </select>
+                            </div>
+                            <div class="month-range__btns">
+                                <button class="button-ctn mr-16">UPDATE</button>
+                                <button @click="volunteering.filter='this1Month'"
+                                        class="button-ctn button--ghost cancel">CANCEL
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-ctn mb-40 mlr-16neg">
+                    <div class="data-ctn__card">
+                        <div class="data-ctn__title">Volunteer Opportunities</div>
+                        <div class="data-ctn__details">
+                            <div class="data-ctn__amount uf_volunteerHours">5</div>
+                            <div class="dark-grey">volunteer opportunities</div>
+                            <div class="mt-16 mb-16">Find out how many opportunities have been created and how many
+                                hours will be raised.
+                            </div>
+                            <i class="data-ctn__card-icon ico ico--large ico-clock-db"></i>
+                            <div class="data-ctn__cta">
+                                <button @click="Route({name: 'create-activity'})" class="button-ctn button--ghost">
+                                    CREATE AN ACTIVITY
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="data-ctn__card">
+                        <div class="data-ctn__title">My Volunteers</div>
+                        <div class="data-ctn__details">
+                            <div class="data-ctn__amount uf_volunteerHours">1</div>
+                            <div class="dark-grey">volunteer(s)</div>
+                            <div class="mt-16 mb-16">Find out how active your individual volunteers are.</div>
+                            <i class="data-ctn__card-icon ico ico--large ico-volunteering-db"></i>
+                            <div class="data-ctn__cta">
+                                <button @click="Route({name: 'home', query: {'active_page': 'members'}})"
+                                        class="button-ctn button--ghost">
+                                    VIEW MEMBERS
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <!--EndDashboard-->
+            <!--Volunteering-->
+            <div class="ctn" v-show="tab===1">
+                <div class="cWidth-1200 clearfix">
+                    <div class="volunteer-admin__container" id="my-volunteer-activities">
+                        <form class="form">
+                            <div
+                                class="volunteer-admin__container-nav grid-12 grid-custom-1024-up-3 pt-16-custom-1024-up-86">
+                                <div class="nav-acdr" :class="[{'is-expanded' : toggleRadio}]">
+                                    <div class="nav-acdr__head" @click="toggleRadio=!toggleRadio"><span
+                                        class="nav-acdr__title">Live</span> <span
+                                        class="nav-acdr__stats live-count">3</span></div>
+                                    <div class="nav-acdr__body">
+                                        <div class="nav-acdr__grp nav-acdr__grp--single">
+                                            <div class="radio-filters radio-filters--blk"><label
+                                                class="radio-filters__lbl">
+                                                <input type="radio" checked=""
+                                                       name="filter_status"
+                                                       class="radio-filters__radio" value="LIVE">
+                                                <span class="radio-filters__text-left">Current Opportunities</span>
+                                                <span class="radio-filters__text-right live-count">2</span>
+                                                <div class="radio-filters--blk__hilite"></div>
+                                            </label>
+                                            </div>
+                                        </div>
+                                        <div class="nav-acdr__grp nav-acdr__grp--single">
+                                            <div class="radio-filters radio-filters--blk">
+                                                <label class="radio-filters__lbl">
+                                                    <input type="radio"
+                                                           name="filter_status"
+                                                           class="radio-filters__radio" value="CLOSED">
+                                                    <span class="radio-filters__text-left">Past Opportunities</span>
+                                                    <span class="radio-filters__text-right closed-count">5</span>
+                                                    <div class="radio-filters--blk__hilite"></div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="nav-acdr__grp nav-acdr__grp--single">
+                                            <div class="radio-filters radio-filters--blk">
+                                                <label class="radio-filters__lbl">
+                                                    <input type="radio"
+                                                           name="filter_status"
+                                                           class="radio-filters__radio" value="DRAFT">
+                                                    <span class="radio-filters__text-left">Drafts</span>
+                                                    <span class="radio-filters__text-right cancelled-count">0</span>
+                                                    <div class="radio-filters--blk__hilite"></div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="nav-acdr__grp nav-acdr__grp--single">
+                                            <div class="radio-filters radio-filters--blk">
+                                                <label class="radio-filters__lbl">
+                                                    <input type="radio"
+                                                           name="filter_status"
+                                                           class="radio-filters__radio" value="CANCELLED">
+                                                    <span class="radio-filters__text-left">Cancelled</span>
+                                                    <span class="radio-filters__text-right cancelled-count">0</span>
+                                                    <div class="radio-filters--blk__hilite"></div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="grid-12 grid-custom-1024-up-9-last">
+                                <!--Controls-->
+                                <div class="volunteer-admin__container-controls">
+
+                                    <button @click="Route({name: 'create-activity'})" class="button-ctn">CREATE NEW</button>
+                                    <button @click="Route({name: 'all-volunteers'})" class="button-ctn button--ghost">
+                                        VIEW ALL VOLUNTEERS
+                                    </button>
+
+                                    <div id="sortSelectButton" class="search-result__sort-filter">
+                                        <div class="select-btn selectInButton">
+
+
+                                            <label class="mb-0 select-btn__lbl">
+                                            <span
+                                                class="select-btn__lbl-lbl mr-8 font-mid-grey body-txt body-txt--small"
+                                                style="padding-bottom:10px">Sort By</span>
+                                            </label>
+                                            <select name="" id="sort-listing"
+                                                    class="select-ctn select--small select-btn__select">
+                                                <option data-path=".volunteer-activity-name" value="title">
+                                                    Alphabetical
+                                                </option>
+                                                <option data-path=".volunteer-upcoming-datetime" value="date">Date
+                                                </option>
+                                                <option data-path=".volunteer-upcoming-datetime" value="date">Show
+                                                    latest
+                                                    first
+                                                </option>
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Controls-->
+                                <!--Loading-->
+                                <div class="preloader" id="loadingPartialGif" style="display: none;">
+                                    <div style="text-align: center;">Loading now..</div>
+                                    <div class="preloader-ctn" role="dialog" id="js-flex-ctn--preloader-modal">
+                                        <svg version="1.1" id="" class="preloader-ctn__svg"
+                                             xmlns="http://www.w3.org/2000/svg"
+                                             xmlns:xlink="http://www.w3.org/1999/xlink"
+                                             x="0px" y="0px" width="40px" height="40px" viewBox="0 0 50 50"
+                                             style="enable-background: new 0 0 50 50;" xml:space="preserve">
+                                        <path class="preloader-ctn__loader" fill="#000"
+                                              d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z"></path>
+                                    </svg>
+                                    </div>
+                                </div>
+                                <!--Loading-->
+                                <!--Items-->
+                                <div class="volunteer-cards-wrapper volunteer-cards-container">
+
+                                    <div
+                                        class="rounded-card--header-solid rounded-card--gray-border volunteer-card no-box-shadow">
+                                        <div
+                                            class="rounded-card--header-solid__header rounded-card--gray-border__header flex-ctn flex-ctn--just-spc-btw flex-ctn--dir-col-tablet-portrait-up-row">
+                                            <div>
+                                                <div
+                                                    class="flex-ctn flex-ctn--dir-col-tablet-portrait-up-row flex-ctn--just-start-mobile-tablet-portrait-up-center">
+                                                    <a href="/volunteer-event?event_activity_id=9109822"
+                                                       style="text-decoration: none;"><h3
+                                                        class="h3 mr-16 volunteer-activity-name">FOH Volunteers for
+                                                        TheatreWorks' Production</h3></a>
+                                                </div>
+
+
+                                                <div class="flag-obj mb-8 mt-8">
+                                                    <div class="flag-obj__item flag-obj__item--top dark-grey"><i
+                                                        class="material-icons">place</i></div>
+                                                    <div class="flag-obj__item"><p
+                                                        class="pb-8 volunteer-activity-location">
+                                                        88 GEYLANG BAHRU</p></div>
+                                                </div>
+
+                                                <div class="flag-obj mb-8 mt-8">
+                                                    <div class="flag-obj__item flag-obj__item--top dark-grey"><i
+                                                        class="material-icons">event</i></div>
+                                                    <div class="flag-obj__item"><p class="pb-8">1 active
+                                                        opportunity</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flag-obj mb-8 mt-8">
+                                                    <div class="flag-obj__item flag-obj__item--top dark-grey"><i
+                                                        class="material-icons">group</i></div>
+                                                    <div class="flag-obj__item"><p class="font-orange pb-8">0 signup
+                                                        pending confirmation</p></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-ctn flex-ctn--align-center">
+                                                <button
+                                                    class="button-ctn button--103 button--small ml-40-mr-16 edit-volunteer-button">
+                                                    EDIT
+                                                </button>
+                                                <button
+                                                    class="button-ctn button--ghost button--103 button--small duplicate-volunteer-button">
+                                                    DUPLICATE
+                                                </button>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="rounded-card--header-solid__body rounded-card--gray-border__body">
+                                            <ul class="list volunteer-admin__list">
+                                                <li class="0 volunteer-activity-li event-li">
+                                                    <div class="flag-obj mb-8 ">
+                                                        <div class="flag-obj__item flag-obj__item--top"><i
+                                                            class="ico material-icons">event</i></div>
+                                                        <div class="flag-obj__item flag-obj__item-with-button"><a
+                                                            href="/volunteer-event?event_activity_id=9109822"
+                                                            style="text-decoration: none;"><h4
+                                                            class="mt-0 h4">08/05/2019 to 22/05/2019 </h4></a>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="flag-obj">
+                                                        <div class="flag-obj__item flag-obj__item--top"><i
+                                                            class="ico material-icons">group</i></div>
+                                                        <div class="flag-obj__item flag-obj__item-with-button"><p
+                                                            class="font-green m-0">Registration open</p>
+                                                            <p class="m-0">Front of House: 1/10</p>
+                                                            <button @click="Route({name: 'manage-sign-up-volunteers'})"
+                                                                    class="button-ctn button--ghost button--small manage-signup-button">
+                                                                MANAGE
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                <!--Items-->
+                                <nav
+                                    class="flex-ctn flex-ctn--dir-col-rev-tablet-portrait-up-row mt-16-tablet-portrait-up-40 relative pagination-nav-bar">
+                                    <ul class="pagi mt-16-tablet-portrait-up-0">
+                                        <li class="pagi__item" data-role="page-prev"><a href="#"><span
+                                            class="ico ico-page-prev"></span></a></li>
+                                        <li class="pagi__item is-active" data-role="page-num"><a href="#">1</a></li>
+                                        <li class="pagi__item" data-role="page-next"><a href="#"><span
+                                            class="ico ico-page-next"></span></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--EndVolunteering-->
+            <!--Members-->
+            <Members v-show="tab===2"/>
+            <!--EndMembers-->
+            <!--Saved Activities-->
+            <div v-show="tab===3" class="container">
+                <main class="activity">
+                    <div class="cWidth-1200 search-result__body">
+                        <div class="row">
+                            <!--Aside left-->
+                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                <div class="aside-container">
+                                    <!--Head-->
+                                    <div class="search-result__aside-head">
+                                        <div class="flag-obj flag-obj--full">
+                                            <div class="flag-obj__item"><span
+                                                class="body-txt font-mid-grey">Filter By</span>
+                                            </div>
+                                            <div class="flag-obj__item text-right"><a
+                                                class="text-link body-txt--smaller bold js-clear-filters js-clear-filters-btn">CLEAR
+                                                ALL</a></div>
+                                        </div>
+                                    </div>
+                                    <!--Head-->
+                                    <!--Filters-->
+                                    <div class="res-ctn search-result__mobile-menu">
+                                        <div class="res-ctn__bd lock-body">
+                                            <div class="hide-desktop-up">
+                                                <div class="flag-obj flag-obj--full">
+                                                    <div class="flag-obj__item bold font-black">Filters</div>
+                                                    <div class="flag-obj__item text-right"><a
+                                                        class="res-ctn-hide-btn button-ctn button--ghost"> DONE </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="search-result__banner ">
+                                                <a class="h6 text-link--white text-link--no-underline">CLEAR ALL</a>
+                                            </div>
+                                            <!--Filter Items-->
+                                            <!--Radio Item-->
+                                            <div class="filter-item is-expanded">
+                                                <div class="title-head">
+                                                    CATEGORIES
+                                                    <i class="material-icons title-head-icon">keyboard_arrow_down</i>
+                                                </div>
+                                                <div class=" title-body title-body-collapsible">
+                                                    <div class="radio-filters">
+                                                        <label class="radio-filters__lbl">
+                                                            <input type="radio" name="categories"
+                                                                   class="radio-filters__radio callSearch categoriesType targetCategory"
+                                                                   data-target="adHoc">
+                                                            <span
+                                                                class="radio-filters__text-left">Ad Hoc Volunteering</span>
+                                                            <span class="radio-filters__text-right">124</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio-filters">
+                                                        <label class="radio-filters__lbl">
+                                                            <input type="radio" name="categories"
+                                                                   class="radio-filters__radio callSearch categoriesType targetCategory"
+                                                                   data-target="adHoc">
+                                                            <span
+                                                                class="radio-filters__text-left">Regular Volunteering</span>
+                                                            <span class="radio-filters__text-right">253</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--Radio Item-->
+                                            <!--Checkbox Item-->
+                                            <div class="filter-item is-expanded">
+                                                <div class="title-head">
+                                                    CAUSES
+                                                    <i class="material-icons title-head-icon">keyboard_arrow_down</i>
+                                                </div>
+                                                <div class=" title-body title-body-collapsible">
+                                                    <ul class="checkbox-list" style="max-height: none;">
+                                                        <li class="title-child">
+                                                            <label class="checkbox-list__checkbox">
+                                                                <input type="checkbox">
+                                                                <span class="checkbox-list__lbl-spn">
+                                                Animal Welfare
+                                            </span>
+                                                            </label>
+                                                        </li>
+                                                        <li class="title-child">
+                                                            <label class="checkbox-list__checkbox">
+                                                                <input type="checkbox">
+                                                                <span class="checkbox-list__lbl-spn">
+                                               Arts & Heritage
+                                            </span>
+                                                            </label>
+                                                        </li>
+                                                        <li class="title-child">
+                                                            <label class="checkbox-list__checkbox">
+                                                                <input type="checkbox">
+                                                                <span class="checkbox-list__lbl-spn">
+                                                Children & Youth
+                                            </span>
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <!--Checkbox Item-->
+                                            <!--Radio Item ver2-->
+                                            <div class="filter-item is-expanded">
+                                                <div class="title-head">
+                                                    DATE
+                                                    <i class="material-icons title-head-icon">keyboard_arrow_down</i>
+                                                </div>
+                                                <div class=" title-body title-body-collapsible">
+                                                    <ul class="radio-btn--large list--bot-space-large"
+                                                        style="max-height: none;">
+                                                        <li>
+                                                            <label class="radio-btn__lbl">
+                                                                <input name="date-range" class="radio-btn__radio"
+                                                                       type="radio">
+                                                                <span class="radio-btn__value">
+                                                All Dates
+                                            </span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label class="radio-btn__lbl">
+                                                                <input name="date-range" class="radio-btn__radio"
+                                                                       type="radio">
+                                                                <span class="radio-btn__value">
+                                                Tomorrow
+                                            </span>
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <!--Radio Item ver2-->
+                                            <!--Filter Items-->
+                                        </div>
+                                    </div>
+                                    <!--Overlay @is-visible-->
+                                    <div class=" ovrly"></div>
+                                    <!--Overlay-->
+                                    <!--Filters-->
+                                </div>
+                            </div>
+                            <!--Aside left-->
+                            <!--List Items-->
+                            <div class="col-xs-12 col-sm-12 col-md-9">
+                                <div class="search-result__main">
+                                    <div class="search-result__main-head">
+                                        <p class="font-black bold caps search-result__result">
+                                            <strong>377 </strong>
+                                            <span>RESULTS FOUND</span>
+                                        </p>
+                                        <div class="search-result__sort-filter">
+                                            <a class="btn sort-filter">
+                                                <i class="material-icons">filter_list</i>
+                                                FILTERS
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" v-for="i in 3">
+                                            <!--CardItem-->
+                                            <div class="card card--flex">
+                                                <div class="card__head">
+                                                    <div class="gradient-over-image">
+                                                        <div
+                                                            :style="`background-image: url(https://www.giving.sg/image/logo?img_id=9040323);`"
+                                                            class="gradient-over-image__image--bg gradient-over-image__image">
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="stats card__head-overlay font-white font-white"><span
+                                                        class="stats__num">30</span> <span
+                                                        class="stats__des">openings</span>
+                                                    </div>
+                                                </div>
+                                                <!--Card Body-->
+                                                <div class="card__body">
+                                                    <h2 class="card__title break-word truncate">
+                                                        FOH Volunteers for TheatreWorks' Production
+                                                    </h2>
+                                                    <div class="media-by">
+                                                        <p
+                                                            class="body-txt body-txt--smaller body-txt--no-letter-space font-mid-grey break-word">
+                                                            by <span
+                                                            class="bold break-word">TheatreWorks (Singapore) Limited</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="media-obj mt-16">
+                                                        <div class="media-obj__asset"><i
+                                                            class="material-icons ico--small">event</i></div>
+                                                        <div
+                                                            class="media-obj__main media-obj__main--small-spacing body-txt body-txt--small">
+                                                            Thu, 02 May 2019
+                                                            <!--<span-->
+                                                            <!--class="other-date-label">+3 other dates</span>-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="media-obj mt-16">
+                                                        <div class="media-obj__asset"><i
+                                                            class="material-icons ico--small">query_builder</i></div>
+                                                        <div
+                                                            class="media-obj__main media-obj__main--small-spacing body-txt body-txt--small">
+                                                            6:00 PM to 10:00 PM
+                                                        </div>
+                                                    </div>
+                                                    <div class="media-obj mt-16">
+                                                        <div class="media-obj__asset"><i
+                                                            class="material-icons ico--small">place</i></div>
+                                                        <div
+                                                            class="media-obj__main media-obj__main--small-spacing body-txt body-txt--small">
+                                                            River Valley
+                                                        </div>
+                                                    </div>
+                                                    <div class="media-obj mt-16">
+                                                        <div class="media-obj__asset"><i
+                                                            class="material-icons ico--small">group</i></div>
+                                                        <div
+                                                            class="media-obj__main media-obj__main--small-spacing body-txt body-txt--small">
+                                                            Suitable for: Open to All
+                                                        </div>
+                                                    </div>
+                                                    <div class="card__cta">
+                                                        <button class="btn button--no-bg button--full">LEARN MORE
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <!--Card Body-->
+                                                <!--Card Link-->
+                                                <div>
+                                                    <a class="card__link" href="/posts/volunteer-activity/1"
+                                                       target="_blank"></a>
+                                                </div>
+                                                <!--Card Link-->
+                                            </div>
+                                            <!--CardItem-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--List Items-->
+                    </div>
+                </main>
+            </div>
+            <!--Saved EndActivities-->
+            <!--OrganizeProfile-->
+            <div v-show="tab===4">
+                <OrganizeProfile @editProfileClicked="()=> { setRouteProfile('true') }" v-if="!isEditProfile"/>
+                <EditOrganizeProfile @cancelEditProfile="()=> {setRouteProfile(''); $utils.scrollToY('html,body', 2); }"
+                                     v-if="isEditProfile"/>
+            </div>
+            <!--ENDOrganizeProfile-->
+            <!--Account-->
+            <div class="ctn" v-show="tab===5">
+                <div class="cWidth-1200 mt-40 mb-40">
+
+                    <div
+                        class="rounded-card rounded-card__body--responsive rounded-card--height-auto rounded-card--full rounded-card--clean-tablet-portrait-down account">
+                        <div class="rounded-card__body rounded-card__body--responsive rounded-card__body">
+                            <form>
+                                <h3 class="h3 mb-8 font-dark-grey">Basic Info</h3>
+                                <div class="input-ctrl">
+                                    <label class="lbl">Logo</label>
+                                    <div class="file-upload file-upload--w270">
+                                        <div class="file-upload__holder">
+                                            <div class="file-upload__spacer"></div>
+                                            <div class="file-upload__image lfr-change-logo">
+                                                <img class="img-placeholder"
+                                                     :src="`https://www.giving.sg/image/organization_logo?img_id=9128818&1557070447000`">
+                                                <a
+                                                    class="button-ctn button--small button--icon file-upload__cancel imageUploadBtn"><i
+                                                    class="ico ico-upload button--icon__icon"></i></a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-ctrl">
+                                    <label class="lbl" for="displayName">Display Name</label>
+                                    <input type="text"
+                                           name="displayName"
+                                           id="displayName"
+                                           placeholder=""
+                                           disabled
+                                           class="form-control input-ctn field-required"
+                                           value="Bee Organization">
+                                    <label for="displayName" class="error-msg"></label>
+                                </div>
+
+                                <div class="input-ctrl success">
+                                    <div class="datepicker clearfix">
+                                        <label class="lbl"
+                                               for="dateOfBirth">Organisation/Group
+                                            Registration Date
+                                        </label>
+                                        <div class="controls">
+                                            <input
+                                                type="text" class="input-ctn pickadate-datepicker picker__input valid"
+                                                name="dateOfBirth" id="dateOfBirth"
+                                                placeholder="dd/mm/yyyy" maxlength="10" data-value="09/12/2018"
+                                                readonly="">
+                                            <label for="dateOfBirth" class="error-msg"
+                                                   style="display: block;"></label>
+                                        </div>
+                                        <div class="error"><label class="error-msg"></label></div>
+                                    </div>
+                                </div>
+
+                                <hr class="hr">
+
+                                <form class="form" novalidate="novalidate">
+                                    <h3 class="h3 mb-8 font-dark-grey">Organisation/Group Information</h3>
+
+                                    <div class="input-ctrl success"><label
+                                        class="lbl" for="employeeSize">Employee/Group Size </label>
+                                        <div class="controls"><select
+                                            name="employeeSize"
+                                            class="select-ctn select--full select-giving span12 valid"
+                                            id="employeeSize">
+                                            <option disabled="">Select employee/group size</option>
+                                            <option>1 - 10</option>
+                                            <option selected="">11 - 50</option>
+                                            <option>51 - 200</option>
+                                            <option>Over 200</option>
+                                        </select><label for="employeeSize" class="error-msg"
+                                                        style="display: block;"></label></div>
+                                    </div>
+
+                                    <hr class="hr">
+                                </form>
+
+                                <form class="form" novalidate="novalidate">
+                                    <h3 class="h3 mb-8 font-dark-grey">Address</h3>
+                                    <div class="input-ctrl">
+                                        <label class="lbl" for="address">Current</label>
+                                        <textarea maxlength="150" rows="5" class="textarea-ctn" id="address"></textarea>
+                                    </div>
+
+                                    <hr class="hr">
+                                </form>
+
+                                <form class="form" novalidate="novalidate">
+                                    <h3 class="h3 mb-8 font-dark-grey">About Organisation/Group</h3>
+                                    <div class="input-ctrl">
+                                        <label class="lbl" for="summary">Description
+                                            of Organisation/Group
+                                        </label>
+                                        <div class="controls">
+										<textarea class="span12 textarea-ctn" rows="8" style="height: 250px"
+                                                  name="summary" id="summary"
+                                                  placeholder="Describe your organisation" maxlength="1500">National Neuroscience Institute (NNI) is the national specialist centre and regional centre for clinical referrals for the management and treatment of the neurosciences, as well as for education and research conducted in the field.
+
+Offering a comprehensive range of Neurology, Neurosurgery and Neuroradiology services using the latest technology and experience of our healthcare professionals, NNI is at the forefront of neuroscience care in Singapore and across the region.
+
+NNI operates directly from two campuses; Tan Tock Seng Hospital and Singapore General Hospital (SGH), as well as provides specialty services to most other hospitals in Singapore.
+
+We are a member of the SingHealth (Singapore Health Services) Group, an integrated healthcare delivery network which offers a complete range of multi-disciplinary and integrated medical care. The Group comprises hospitals, national specialty centres and a network of polyclinics.</textarea>
+                                            <label id="summary-count"></label>
+                                            <label for="summary" class="help-block error-msg"></label>
+                                        </div>
+                                    </div>
+
+                                    <hr class="hr">
+                                </form>
+
+                                <h3 class="h3 font-dark-grey">Our Causes</h3>
+                                <div class="error-msg">You have not select anything</div>
+                                <label class="lbl">Please select at least ONE and at most FOUR causes</label>
+                                <div class="ctn gallery gallery-tablet-portrait-up-6 mt-24 clearfix"
+                                     id="orgCausesSelection">
+                                    <ul class="gallery__item checkbox-list">
+
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26746">
+                                            <div class="checkbox-list__lbl-spn">Animal
+                                                Welfare
+                                            </div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26747">
+                                            <div class="checkbox-list__lbl-spn">Arts
+                                                &amp; Heritage
+                                            </div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26748">
+                                            <div class="checkbox-list__lbl-spn">
+                                                Children &amp; Youth
+                                            </div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26749">
+                                            <div class="checkbox-list__lbl-spn">Community</div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   checked
+                                                   value="26750">
+                                            <div class="checkbox-list__lbl-spn">Disability
+                                            </div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26751"
+                                                   checked>
+                                            <div class="checkbox-list__lbl-spn">Education</div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26752">
+                                            <div class="checkbox-list__lbl-spn">Elderly</div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26753">
+                                            <div class="checkbox-list__lbl-spn" data-content="Environment">Environment
+                                            </div>
+                                        </label></li>
+                                    </ul>
+                                    <ul class="gallery__item checkbox-list">
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26754">
+                                            <div class="checkbox-list__lbl-spn" data-content="Families">Families</div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26755">
+                                            <div class="checkbox-list__lbl-spn" data-content="Health">Health</div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="1637026">
+                                            <div class="checkbox-list__lbl-spn" data-content="Humanitarian">
+                                                Humanitarian
+                                            </div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26756">
+                                            <div class="checkbox-list__lbl-spn" data-content="Social Service">Social
+                                                Service
+                                            </div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26745"
+                                                   checked>
+                                            <div class="checkbox-list__lbl-spn" data-content="Sports">Sports</div>
+                                        </label></li>
+                                        <li><label class="checkbox-list__checkbox">
+                                            <input type="checkbox"
+                                                   name="causeBox[]"
+                                                   value="26757">
+                                            <div class="checkbox-list__lbl-spn" data-content="Women &amp; Girls">Women
+                                                &amp; Girls
+                                            </div>
+                                        </label></li>
+                                    </ul>
+                                </div>
+
+                                <hr class="hr">
+                                <form class="form">
+                                    <h3 class="h3 mb-8 font-dark-grey">Contact Info</h3>
+                                    <div class="input-ctrl"><label class="lbl" for="pubEnquiryPerson">Contact
+                                        Person </label>
+                                        <div class="controls"><input
+                                            name="pubEnquiryPerson"
+                                            id="pubEnquiryPerson" placeholder="Contact Person"
+                                            class="form-control field-required input-ctn" type="text"
+                                            value="Volunteer Co-ordinator">
+                                            <label for="pubEnquiryPerson"
+                                                   class="help-block error-msg"></label>
+                                        </div>
+                                    </div>
+                                    <div class="input-ctrl">
+                                        <label class="lbl" for="email">Email</label> <input
+                                        name="email" id="email" placeholder=""
+                                        class="form-control input-ctn field-required" type="email"
+                                        value="beeostin@gmail.com">
+                                        <label for="email" id="emailError" class="error-msg"></label>
+                                    </div>
+                                    <div class="input-ctrl">
+                                        <label class="lbl" for="pubEnquiryContact">Contact Number
+                                        </label>
+                                        <div class="controls">
+                                            <input name="pubEnquiryContact"
+                                                   id="pubEnquiryContact" placeholder="Contact Number"
+                                                   class="form-control input-ctn" type="text"
+                                                   value="63577091">
+                                            <label for="pubEnquiryContact"
+                                                   class="help-block error-msg"></label>
+                                        </div>
+                                    </div>
+                                    <hr class="hr">
+                                </form>
+
+                                <form id="orgOnlineInfo" novalidate="novalidate">
+                                    <div class="input-ctrl">
+                                        <label class="lbl" for="webURL">Website (Optional)</label>
+                                        <div class="controls">
+                                            <input name="webURL" id="webURL"
+                                                   placeholder="Website" class="form-control input-ctn"
+                                                   type="text" value="">
+                                            <label for="webURL"
+                                                   class="help-block error-msg"></label>
+                                        </div>
+                                    </div>
+                                    <div class="input-ctrl">
+                                        <label class="lbl" for="givingUrl">URL in LaoGiving.la</label>
+                                        <div class="controls">
+                                            <input name="givingUrl" id="givingUrl"
+                                                   placeholder="URL in LaoGiving.la i.e.redcross"
+                                                   class="form-control input-ctn" type="text"
+                                                   value="bee-organisation">
+                                            <label for="givingUrl" id="givingUrlError"
+                                                   class="help-block error-msg"></label>
+                                        </div>
+                                    </div>
+                                    <div class="input-ctrl"><label class="lbl" for="facebookLink">Facebook Link
+                                        (Optional)</label>
+                                        <div class="controls"> facebook.com/ <input
+                                            name="facebookLink" id="facebookLink"
+                                            placeholder="e.g. NVPCla" class="form-control p-bot0 input-ctn"
+                                            type="text" value="" style="width: 78%">
+                                            <label for="facebookLink" class="help-block error-msg"></label>
+                                        </div>
+                                    </div>
+                                    <hr class="hr">
+                                </form>
+
+
+                                <h3 class="h3 font-dark-grey passwordLabel">Change Password (Optional)</h3>
+                                <div class="input-ctrl passwordLabel " id="controlCurrent">
+                                    <label class="lbl">Current Password</label>
+                                    <div class="controls input-ctrl error">
+                                        <input name="currentPassword"
+                                               id="currentPassword" placeholder="" class="form-control input-ctn"
+                                               type="password"
+                                               maxlength="24">
+                                        <label for="currentPassword" style="display: block" id="currentPwdError"
+                                               class="error-msg">Password must contain 8-24 characters, with at least a
+                                            number</label>
+                                        <span class="help-block"></span><br>
+                                    </div>
+                                </div>
+
+                                <div class="input-ctrl passwordLabel" id="controlNew">
+                                    <label class="lbl">New Password</label>
+                                    <div class="controls input-ctrl">
+                                        <input name="newPassword"
+                                               id="newPassword" placeholder="" class="form-control input-ctn"
+                                               type="password"
+                                               maxlength="24">
+                                        <label
+                                            class="error-msg"></label>
+                                        <span class="help-block"></span><br>
+                                    </div>
+                                </div>
+
+                                <div class="input-ctrl passwordLabel">
+                                    <label class="lbl">Confirm New Password</label>
+                                    <div class="controls input-ctrl">
+                                        <input name="confirmNewPassword" placeholder="" class="form-control input-ctn"
+                                               type="password"
+                                               maxlength="24">
+                                        <label
+                                            class="error-msg"></label>
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+
+                                <hr class="hr">
+
+                                <div class="text-right text-center-tablet-portrait-down">
+                                    <button class="mr-16 button-ctn button--135 button--ghost button--large">
+                                        CLEAR
+                                        <span class="show-tablet-portrait-up-inline">CHANGES</span>
+                                    </button>
+                                    <button class="button-ctn button--135 button--large">SAVE
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--EndAccount-->
+            <!--Tabs Content-->
+
+        </main>
+    </div>
+</template>
+
+<style>
+</style>
+<script>
+    import Base from "@com/Bases/OrganizeBase.js";
+    import Members from "@com/Organize/Default/Includes/Members.vue"
+    import OrganizeProfile from "@com/Organize/Default/Includes/OrganizeProfile.vue"
+    import EditOrganizeProfile from '@com/Organize/Default/Includes/EditOrganizeProfile.vue'
+
+    import {mapActions} from 'vuex'
+
+    export default Base.extend({
+        name: "Home",
+        components: {
+            Members,
+            OrganizeProfile,
+            EditOrganizeProfile
+        },
+        data: () => ({
+            tab: 0,
+            tabs: {dashboard: 0, 'our-volunteering': 1, members: 2, saved: 3, profile: 4, account: 5},
+            volunteering: {filter: 'this1Month'},
+            toggleRadio: false,
+            toggleDetail: false,
+            isEditProfile: false,
+        }),
+        watch: {
+            '$route.query': function (n, o) {
+                this.setTab();
+            }
+        },
+        methods: {
+            setTab() {
+                let tab = this.$route.query.active_page;
+                if (tab && typeof this.tabs[tab] !== "undefined") {
+                    this.tab = this.tabs[tab];
+                    this.isEditProfile = this.$route.query.edit === 'true';
+                }
+            },
+            setRouteTab(n) {
+                this.Route({name: 'home', query: {active_page: n}});
+            },
+            setRouteProfile(n) {
+                this.Route({name: 'home', query: {active_page: 'profile', edit: n}});
+            },
+            setDatePicker() {
+                let dateOfBirthPickerEl = this.jq('#dateOfBirth');
+                dateOfBirthPickerEl.on('mousedown', function (e) {
+                    e.preventDefault();
+                });
+                dateOfBirthPickerEl.pickadate({
+                    selectMonths: true,
+                    selectYears: 80,
+                    formatSubmit: 'dd/mm/yyyy',
+                    today: false,
+                    max: new Date(),
+                    onOpen: () => {
+                    },
+                    onClose: function () {
+                        console.log(this.get('select', 'yyyy-mm-dd'))
+                    }
+                });
+            }
+        },
+        mounted() {
+            this.setDatePicker();
+        },
+        created() {
+            this.setPageTitle(`Dashboard`);
+            this.setTab();
+        }
+    });
+</script>
+
+

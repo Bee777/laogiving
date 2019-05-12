@@ -43,7 +43,14 @@
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/animate.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/vendor/flexslider/flexslider.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/vendor/owlcarousel/owl.carousel.css">
+    <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/swiper.min.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/vendor/fancybox/css/fancybox.css">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/default.css"
+          id="theme_base">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/default.date.css"
+          id="theme_date">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/default.time.css"
+          id="theme_time">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/global.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/style.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/laogiving.css{{$s['fresh_version']}}">
@@ -55,12 +62,16 @@
     <script src="{{url('/')}}/bundles/general/assets/js/bootstrap.min.js"></script>
     <script src="{{url('/')}}/bundles/general/assets/vendor/flexslider/jquery.flexslider-min.js"></script>
     <script src="{{url('/')}}/bundles/general/assets/vendor/owlcarousel/owl.carousel.js"></script>
+    <script src="{{url('/')}}/bundles/general/assets/js/swiper.min.js"></script>
+    <script src="{{url('/')}}/bundles/general/assets/plugins/pickadate/picker.js"></script>
+    <script src="{{url('/')}}/bundles/general/assets/plugins/pickadate/picker.date.js"></script>
+    <script src="{{url('/')}}/bundles/general/assets/plugins/pickadate/picker.time.js"></script>
+    <script src="{{url('/')}}/bundles/general/assets/plugins/pickadate/legacy.js"></script>
     <script>
         jQuery.noConflict();
         jQuery(document).ready(function ($) {
             var owl = $("#owl-classes");
             owl.owlCarousel({
-
                 items: 3, //10 items above 1000px browser width
                 itemsDesktop: [1000, 3], //5 items between 1000px and 901px
                 itemsDesktopSmall: [900, 3], // 3 items betweem 900px and 601px
@@ -101,6 +112,7 @@
         window.$ = jQuery;
     </script>
     {{-- @GeneratedResourcesBottom--}}
-    <script type="text/javascript" src="{{url('/bundles/generated')}}/general/general.75c55398cc65017446b4.bundle.js"></script>
+    <script type="text/javascript"
+            src="{{url('/bundles/generated')}}/general/general.9df9dd8a109c4afa0a15.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection

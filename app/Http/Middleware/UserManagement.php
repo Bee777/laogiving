@@ -22,24 +22,9 @@ class UserManagement
         if (isset($user) && $user) {
             $typeUser = $user->type_of_user->name;
             foreach ($types as $type) {
-                switch ($type) {
-                    case 'super_admin':
-                        if ($typeUser === $type) { # check request user type
-
-                            return $this->setResponse($response);
-                        }
-                        break;
-                    case 'admin':
-                        if ($typeUser === $type) { # check request user type
-                            return $this->setResponse($response);
-                        }
-                        break;
-                    case 'user':
-                        if ($typeUser === $type) { # check request user type
-                            return $this->setResponse($response);
-                        }
-                        break;
-                }//end switch
+                if ($typeUser === $type) { # check request user type
+                    return $this->setResponse($response);
+                }
             }// end foreach
         }
         // Failed from permission

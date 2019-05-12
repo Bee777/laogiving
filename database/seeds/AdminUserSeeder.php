@@ -18,7 +18,7 @@ class AdminUserSeeder extends Seeder
         //super admin
         $user = new User([
             'name' => 'Super Admin',
-            'email' => 'supepr_admin@giving.la',
+            'email' => 'super_admin@giving.la',
             'password' => Hash::make('admin123'),
         ]);
         $user->save();

@@ -14,7 +14,8 @@
 Route::get('/', 'HomeController@index')->name('get.home.index');
 
 Route::get('/login', 'HomeController@index')->name('get.home.login');
-Route::get('/aGlkZGVuLXJlZ2lzdGVyLXBhZ2UtQGphb2w', 'HomeController@index')->name('get.home.register');
+Route::get('/register', 'HomeController@index')->name('get.home.register');
+Route::get('/register_overview', 'HomeController@index')->name('get.home.register');
 
 Route::get('/register-successfully', 'HomeController@index')->name('get.home.register-successfully');
 
@@ -25,31 +26,30 @@ Route::group(['prefix' => 'posts/{type}'], function () {
     Route::get('/', 'HomeController@responsePosts')->name('get.home.posts');
     Route::get('/single/{id}', 'HomeController@responsePostsSingle')->name('get.home.posts.single');
 });
+Route::get('posts/volunteer-activity/{id}', 'HomeController@index')->name('get.home.volunteer.activity');
+Route::get('/organisation/profile/{id}', 'HomeController@index')->name('get.home.organize.profile');
 /**@Posts */
-Route::get('/forum', 'HomeController@index')->name('get.home.forum');
-Route::get('/organization-charts', 'HomeController@index')->name('get.home.organization-charts');
-Route::get('/dictionary', 'HomeController@dictionary')->name('get.home.dictionary');
-Route::get('/dictionary/single/{id}', 'HomeController@singeDictionary')->name('get.home.dictionary.single');
 
 /**@ResetPasswordForm */
 Route::get('password/reset/{token}', 'HomeController@index')->name('password.reset');
 Route::get('/reset-password-successfully', 'HomeController@index')->name('get.home.reset-password-successfully');
 /**@ResetPasswordForm */
 
-/***** @UserRoutes ***** */
-Route::group(['prefix' => 'users/me', 'middleware' => []], function () {
-    Route::get('/', 'UserController@index')->name('get.user.index');
-    Route::get('/profile-settings', 'UserController@index')->name('get.user.profileSettings');
-    Route::get('/members-profile', 'UserController@index')->name('get.user.membersProfile');
-    Route::get('/members-profile/{id}', 'UserController@index')->name('get.user.singleMemberProfile');
-    Route::get('/dictionary', 'UserController@index')->name('get.user.dictionary');
-    Route::get('/news', 'UserController@index')->name('get.user.news');
-    Route::get('/activity', 'UserController@index')->name('get..user.activity');
-    Route::get('/event', 'UserController@index')->name('get.user.event');
-    Route::get('/scholarship', 'UserController@index')->name('get.user.scholarship');
-    Route::get('/download-files', 'UserController@index')->name('get.user.downloadFile');
+/***** @VolunteerRoutes ***** */
+$user_prefixs = ['volunteer', 'organize', 'admin'];
+Route::group(['prefix' => $user_prefixs[0] . '/me', 'middleware' => []], function () use ($user_prefixs) {
+    Route::get('/', ucfirst($user_prefixs[0]) . 'Controller@index')->name("get.{$user_prefixs[0]}.index");
 });
-/***** @UserRoutes ***** */
+/***** @VolunteerRoutes ***** */
+
+/***** @OrganizeRoutes ***** */
+Route::group(['prefix' => $user_prefixs[1] . '/me', 'middleware' => []], function () use ($user_prefixs) {
+    Route::get('/', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.index");
+    Route::get('/all-volunteers', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.all-volunteers");
+    Route::get('/manage-sign-up-volunteers', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.manage-sign-up-volunteers");
+    Route::get('/create-activity', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.create-activity");
+});
+/***** @VolunteerRoutes ***** */
 
 
 

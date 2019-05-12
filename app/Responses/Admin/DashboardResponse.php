@@ -8,12 +8,8 @@
 
 namespace App\Responses\Admin;
 
-
-use App\Dictionary;
-use App\EducationDegree;
 use App\Http\Controllers\Helpers\Helpers;
-use App\MemberCareer;
-use App\Posts;
+use App\Models\Posts;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
 
@@ -35,7 +31,7 @@ class DashboardResponse implements Responsable
             $data['scholarships_count'] = $this->getPostsCount('scholarship');
             $data['activities_count'] = $this->getPostsCount('activity')['all'];
             $data['news_count'] = $this->getPostsCount('news')['all'];
-            $data['dictionaries_count'] = Dictionary::count();
+            $data['dictionaries_count'] = 0;
 
             if (User::isAdminUser($request->user())) {
                 $data['members_government_none_government_count'] = $this->getMembersGovernmentNoneGovernmentCount();
@@ -56,24 +52,8 @@ class DashboardResponse implements Responsable
 
     public function getMembersGovernmentNoneGovernmentCount()
     {
-        $query = User::join('user_types', 'user_types.user_id', 'users.id')
-            ->join('member_careers', 'member_careers.user_id', '=', 'users.id')
-            ->join('organizes', 'organizes.id', '=', 'member_careers.organize_id')
-            ->whereIn('user_types.type_user_id', User::getNonAdminUserIds());
-
-        $government = clone $query;
-        $government = $government->where('organizes.government_organize', 'yes')->get();
-        $government_count = $government->filter(function ($data) {
-            $currentCareerEndDate = MemberCareer::where('user_id', $data->user_id)->max('end_date');
-            return $currentCareerEndDate === $data->end_date;
-        })->count();
-
-        $none_government = clone $query;
-        $none_government = $none_government->where('organizes.government_organize', 'no')->get();
-        $none_government_count = $none_government->filter(function ($data) {
-            $currentCareerEndDate = MemberCareer::where('user_id', $data->user_id)->max('end_date');
-            return $currentCareerEndDate === $data->end_date;
-        })->count();
+        $government_count = 0;
+        $none_government_count = 0;
 
         $data = [];
         $data['government'] = [
@@ -96,12 +76,12 @@ class DashboardResponse implements Responsable
             ->join('education_degrees', 'education_degrees.id', '=', 'member_educations.education_degree_id')
             ->whereIn('user_types.type_user_id', User::getNonAdminUserIds());
 
-        $degrees = EducationDegree::orderBy('id', 'desc')->get();
+        $degrees = ['Degree 1', 'Degree 2', 'Degree 3'];
         foreach ($degrees as $degree) {
             $temp = clone $query;
             $data[] = [
-                'title' => $degree->name,
-                'count' => ['text' => 'Members', 'value' => $temp->where('education_degrees.id', $degree->id)->count()]
+                'title' => $degree,
+                'count' => ['text' => 'Members', 'value' => 0]
             ];
             unset($temp);
         }

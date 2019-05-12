@@ -10,12 +10,10 @@
                              :src="`${baseUrl}/assets/images/${s.website_logo}${s.fresh_version}`">
                     </div>
                     <div class="drawer-unlogin" v-if="!LoggedIn()">
-                        <router-link @click.native.prevent="maskClick()" :to="{ name: 'register' }">
-                            <a class="drawer-seeker">
-                                <span>Log In</span>
-                            </a>
-                        </router-link>
-                        <router-link @click.native.prevent="maskClick()" :to="{ name: 'login' }">
+                        <a @click="LoginModal()" class="drawer-seeker cursor">
+                            <span>Log In</span>
+                        </a>
+                        <router-link @click.native.prevent="maskClick()" :to="{ name: 'register-overview' }">
                             <a class="drawer-employer">
                                 <span>Sign Up</span>
                             </a>
@@ -24,14 +22,12 @@
                     <div class="drawer-unlogin" v-else>
                         <router-link @click.native.prevent="maskClick()" :to="{ name: 'home' }">
                             <a class="drawer-seeker">
-                                <span class="line-bottom">Welcome to Lao giving</span>
+                                <span class="line-bottom">Lao giving</span>
                             </a>
                         </router-link>
-                        <router-link @click.native.prevent="maskClick()" :to="{ name: 'home' }">
-                            <a @click="GoToDashboardPage()" class="drawer-employer">
-                                <span>Dashboard</span>
-                            </a>
-                        </router-link>
+                        <a @click="GoToAccountPage(true)" class="drawer-employer cursor">
+                            <span>My Account</span>
+                        </a>
                     </div>
                 </div>
                 <ul class="sidebar-drawer-box">
@@ -44,18 +40,20 @@
                                 <span>Home</span>
                             </router-link>
                         </li>
+                        <li :class="isRoute('dashboard')" v-if="LoggedIn()">
+                            <a class="cursor" @click="GoToAccountPage()">
+                                <i class="sidebar-icon-md material-icons">
+                                    dashboard
+                                </i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
                         <li :class="isRoute('news')">
                             <router-link :to="{name:'news' }" @click.native.prevent="maskClick()">
                                 <i class="sidebar-icon-md material-icons">
                                     rss_feed
                                 </i>
                                 <span>News</span>
-                            </router-link>
-                        </li>
-                        <li :class="isRoute('scholarships')">
-                            <router-link :to="{name: 'scholarships'}" @click.native.prevent="maskClick()">
-                                <i class="sidebar-icon-md material-icons">school</i>
-                                <span>Scholarships</span>
                             </router-link>
                         </li>
                         <li :class="isRoute('activities')">
@@ -66,42 +64,10 @@
                                 <span>Activities</span>
                             </router-link>
                         </li>
-                        <li :class="isRoute('events')">
-                            <router-link :to="{ name: 'events' }" @click.native.prevent="maskClick()">
-                                <i class="sidebar-icon-md material-icons">
-                                    today
-                                </i>
-                                <span>Event</span>
-                            </router-link>
-                        </li>
-                        <!--<li :class="isRoute('forum')">-->
-                        <!--<router-link :to="{ name: 'forum' }" @click.native.prevent="maskClick()">-->
-                        <!--<i class="sidebar-icon-md material-icons">-->
-                        <!--forum-->
-                        <!--</i>-->
-                        <!--<span>Forum</span>-->
-                        <!--</router-link>-->
-                        <!--</li>-->
-                        <li :class="isRoute('dictionary')">
-                            <router-link :to="{ name: 'dictionary' }" @click.native.prevent="maskClick()">
-                                <i class="sidebar-icon-md material-icons">
-                                    library_books
-                                </i>
-                                <span>Dictionary</span>
-                            </router-link>
-                        </li>
                     </template>
                 </ul>
 
                 <ul class="sidebar-drawer-box">
-                    <li :class="isRoute('organize-charts')">
-                        <router-link :to="{ name: 'organize-charts' }" @click.native.prevent="maskClick()">
-                            <i class="sidebar-icon-md material-icons">
-                                bubble_chart
-                            </i>
-                            <span>Board Committee</span>
-                        </router-link>
-                    </li>
                     <li :class="isRoute('contact')">
                         <router-link :to="{ name: 'contact' }" @click.native.prevent="maskClick()">
                             <i class="sidebar-icon-md material-icons">
@@ -183,8 +149,24 @@
                 this.Route({name: 'home'});
                 this.maskClick();
             },
-            GoToDashboardPage() {
-                this.$utils.Location('/admin/me');
+            GoToAccountPage(t) {
+                this.maskClick();
+                let type = this.authUserInfo.decodedType, active_page = 'account';
+                if (!this.LoggedIn()) {
+                    this.$utils.Location('/');
+                    return;
+                }
+                if (type === 'admin'
+                    || type === 'super_admin') {
+                    this.$utils.Location('/admin/me');
+                } else if (type === 'organize') {
+                    this.$utils.Location('/organize/me?active_page=' + (t ? active_page : ''));
+                } else {
+                    this.$utils.Location('/volunteer/me?active_page=' + (t ? active_page : ''));
+                }
+            },
+            LoginModal() {
+                this.$modal.show('signin');
                 this.maskClick();
             }
         },

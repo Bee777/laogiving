@@ -162,14 +162,14 @@
 </template>
 
 <script>
-    import UserBase from '@bases/UserBase.js'
+    import AdminBase from '@bases/AdminBase.js'
 
-    import EducationProfile from '@com/User/Member/EducationProfile.vue'
-    import CareerProfile from '@com/User/Member/CareerProfile.vue'
+    import EducationProfile from '@com/Admin/Members/EducationProfile.vue'
+    import CareerProfile from '@com/Admin/Members/CareerProfile.vue'
 
     import {mapActions} from 'vuex'
 
-    export default UserBase.extend({
+    export default AdminBase.extend({
         name: "SingleMemberProfile",
         data: () => ({
             title: 'Member Profile',

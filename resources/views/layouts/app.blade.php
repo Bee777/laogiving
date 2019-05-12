@@ -9,12 +9,6 @@
     <title>@yield('title') | {{$s['site_name']}}</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    {{--CSS--}}
-    <link rel="stylesheet" href="{{url('/')}}/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="{{url('/')}}/css/bulma.css">
-    <link rel="stylesheet" href="{{url('/')}}/css/vue-toasted.min.css"><!--Toast-->
-    <link rel="stylesheet" href="{{url('/')}}/css/vue-multiselect.min.css">  <!--Multi select-->
-    <link rel="stylesheet" href="{{url('/')}}/css/bolloon.css">
     @yield('scripts_header')
     <base href="{{ url('/') }}">
     <meta name="description"
@@ -25,7 +19,7 @@
     <meta property="fb:app_id" content="116465732392262"/>
     <link rel="shortcut icon" href="{{ url('/') }}/assets/images/{{$s['fav_icon'] . $s['fresh_version']}}">
     @yield('meta_search')
-    {{--CSS--}}
+
 </head>
 <body>
 <div id="app">

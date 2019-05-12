@@ -10,7 +10,7 @@ namespace App\Responses;
 
 use App\Http\Controllers\Helpers\Helpers;
 use Illuminate\Contracts\Support\Responsable;
-use App\Banner;
+use App\Models\Banner;
 use Image;
 
 class BannerResponse implements Responsable

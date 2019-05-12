@@ -152,7 +152,7 @@
                             <div class="row">
                                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" v-for="i in 3">
                                     <!--CardItem-->
-                                    <div class="card card--flex">
+                                    <div class="card card--flex no-margin-lr">
                                         <div class="card__head">
                                             <div class="gradient-over-image">
                                                 <div

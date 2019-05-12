@@ -8,11 +8,8 @@
 
 namespace App\Responses\Home;
 
-
-use App\Banner;
-use App\Dictionary;
 use App\Http\Controllers\Helpers\Helpers;
-use App\Posts;
+use App\Models\Posts;
 use App\Traits\DefaultData;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\DB;
@@ -45,16 +42,6 @@ class SinglePostsResponse implements Responsable
         $post = Posts::where('type', $type)->whereIn('status', ['open', 'close'])->where('id', $this->id)->first();
         $post_type_name = ucfirst($this->type);
         if (Helpers::isAjax($request)) {
-            //@for dictionaries only
-            if ($type === 'dictionary') {
-                $fields = ['id', 'lao', 'japanese', 'description', 'updated_at'];
-                $data = Dictionary::select($fields)->where('id', $this->id)->first();
-                if (!isset($data)) {
-                    return response()->json(['success' => false, 'msg' => 'The post does not exits!.']);
-                }
-                return ['data' => $data, 'others' => []];
-            }
-            //@for dictionaries only
             if (!isset($post)) {
                 return response()->json(['success' => false, 'msg' => 'The post does not exits!.']);
             }

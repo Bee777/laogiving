@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Department;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Helpers\Helpers;
 use App\Jobs\SendUserChangeStatus;
-use App\Organize;
-use App\Posts;
+use App\Models\Posts;
 use App\Responses\IndexAdminResponse;
 use App\Responses\ContactInfoResponse;
 use App\Responses\AboutInfoResponse;
@@ -23,16 +21,11 @@ use App\Responses\BannerResponse;
 use App\Responses\FileResponse;
 use App\Responses\SponsorResponse;
 
-use App\Site;
+use App\Models\Site;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Dictionary;
-
-use App\SiteImage;
-
-use App\News;
 
 
 class AdminController extends Controller
