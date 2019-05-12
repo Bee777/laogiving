@@ -16,7 +16,7 @@
                         </div>
                         <form name="loginform" v-on:submit.prevent method="post" class="activity">
                             <label> Email
-                                <input v-model="user.email" autocomplete="username email" name="email" value=""
+                                <input v-model="user.email" class="input-ctn" autocomplete="username email" name="email" value=""
                                        type="text">
                             </label>
 
@@ -28,6 +28,7 @@
                                                title="Your password must be between 8-24 characters with at least one number. Only special characters @$!%*?&amp;+-.=^_|~ are accepted.">?</span>
                                 <input @keyup.enter="Login({userInfo: user, refreshPage: true})" v-model="user.password"
                                        autocomplete="current-password" name="password" value=""
+                                       class="input-ctn"
                                        type="password">
                             </label>
 

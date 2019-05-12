@@ -146,7 +146,7 @@
                 setTimeout(() => {
                     this.navbarHeight = this.$refs['main-nav-bar'].clientHeight;
                     this.fixedNavBarHeight = this.$refs['nav-bar'].clientHeight;
-                }, 100);
+                }, 120);
 
                 let nScroll = this.navbarHeight - this.fixedNavBarHeight,
                     Scroll = this.navbarHeight + this.fixedNavBarHeight, st = 0;
@@ -175,7 +175,6 @@
             },
         },
         created() {
-            this.toggleFixedNav = this.$throttle(this.toggleFixedNav, 250);
         },
         mounted() {
             this.scrollNavHandler();
