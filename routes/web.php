@@ -14,6 +14,8 @@
 Route::get('/', 'HomeController@index')->name('get.home.index');
 
 Route::get('/login', 'HomeController@index')->name('get.home.login');
+Route::get('/logout', 'Auth\LoginController@sessionLogout')->name('logout');
+Route::get('/users-logout', 'HomeController@index')->name('get.home.users-logout');
 Route::get('/register', 'HomeController@index')->name('get.home.register');
 Route::get('/register_overview', 'HomeController@index')->name('get.home.register');
 
