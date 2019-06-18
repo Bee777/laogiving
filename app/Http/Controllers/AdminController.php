@@ -195,78 +195,6 @@ class AdminController extends Controller
     /**
      * @Responses FileAction
      */
-    /**
-     * @Responses SponsorAction
-     */
-    public function insertSponsor(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:191',
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-        ]);
-        return new SponsorResponse("insert");
-    }
-
-    public function updateSponsor(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:191',
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-        ]);
-        return new SponsorResponse('update');
-    }
-
-    public function deleteSponsor()
-    {
-        return new SponsorResponse('delete');
-    }
-    /**
-     * @Responses SponsorAction
-     */
-    /**
-     * @Responses DictionaryAction
-     */
-
-    public function SaveDictionary(Request $request)
-    {
-        $this->validate($request, [
-            'lao' => 'required|string|max:191',
-            'japanese' => 'required|string|max:191',
-            'description' => 'required|string|max:191',
-        ]);
-        $dictionary = new Dictionary();
-        $dictionary->lao = $request->get('lao');
-        $dictionary->japanese = $request->get('japanese');
-        $dictionary->description = $request->get('description');
-        $dictionary->save();
-
-        return response()->json(['success' => true, 'msg' => 'The dictionary saved successfully!.', 'data' => $dictionary]);
-    }
-
-    public function UpdateDictionary(Request $request, $id)
-    {
-        $this->validate($request, [
-            'lao' => 'required|string|max:191',
-            'japanese' => 'required|string|max:191',
-            'description' => 'required|string|max:191',
-        ]);
-        $dictionary = Dictionary::find($id);
-        $dictionary->lao = $request->get('lao');
-        $dictionary->japanese = $request->get('japanese');
-        $dictionary->description = $request->get('description');
-        $dictionary->save();
-        return response()->json(['success' => true, 'msg' => 'The dictionary updated successfully!.', 'data' => $dictionary]);
-    }
-
-    public function DeleteDictionary($id)
-    {
-        $dictionary = Dictionary::find($id);
-        $dictionary->delete();
-        return response()->json(['success' => true, 'msg' => 'The dictionary deleted successfully!.']);
-    }
-    /**
-     * @Responses DictionaryAction
-     */
 
     /**
      * @Responses ContactAction
@@ -274,7 +202,7 @@ class AdminController extends Controller
 
     public function getContactInfo(Request $request)
     {
-        return new ContactInfoResponse("get");
+        return new ContactInfoResponse('get');
     }
 
     public function manageContactInfo(Request $request)
@@ -284,7 +212,7 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:191',
             'address' => 'required|string',
         ]);
-        return new ContactInfoResponse("manage");
+        return new ContactInfoResponse('manage');
     }
     /**
      * @Responses ContactAction

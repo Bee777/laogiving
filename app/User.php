@@ -57,6 +57,14 @@ class User extends Authenticatable
      * @StartActions
      */
 
+    public function hasActions($name): bool
+    {
+        //the value of an array means user type id
+        $actions = [
+
+        ];
+        return (isset($actions[$name]) && in_array($this->userType->type_user_id, $actions[$name], true));
+    }
     /**
      * @todo delete user all related user information
      * @return bool

@@ -43,7 +43,7 @@
         watch: {
             'authUserInfo': function (n, o) {
                 if (!(this.$route.meta.allows && this.$route.meta.allows.includes(n.decodedType))) {
-                    this.$utils.Location(`/${n.decodedType}/me`);
+                    this.$utils.Location(`/${String(n.decodedType).replace(/_/g, '-')}/me`);
                 }
             }
         },

@@ -10,6 +10,7 @@ namespace App\Responses;
 
 
 use App\Http\Controllers\Helpers\Helpers;
+use App\Models\Site;
 use Illuminate\Contracts\Support\Responsable;
 use App\AboutJaol;
 
@@ -30,24 +31,24 @@ class AboutInfoResponse implements Responsable
     public function toResponse($request)
     {
         if (Helpers::isAjax($request)) {
-
-            if($this->actionType==='get'){
-               $data = AboutJaol::first();
+            $data = null;
+            if ($this->actionType === 'get') {
+                $data = Site::selectRaw('value as description')->where('key', 'description')->first();
             }
 
-            if($this->actionType==='manage'){
-                $info = AboutJaol::first();
-                if(!isset($info)){
-                    $info = new AboutJaol();
+            if ($this->actionType === 'manage') {
+                $info = Site::where('key', 'description')->first();
+                if (!isset($info)) {
+                    $info = new Site();
+                    $info->key = 'description';
                 }
                 $data = $info;
-                $info->description =$request->get('description');
+                $info->value = $request->get('description');
                 $info->save();
-
-
             }
-            return response()->json(['success' => true, "data" => $data]);
+            return response()->json(['success' => true, 'data' => $data]);
         }
+        return response()->json(['success' => true, 'data' => null]);
     }
 
 }

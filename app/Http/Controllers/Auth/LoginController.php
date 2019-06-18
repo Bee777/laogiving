@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -118,6 +119,34 @@ class LoginController extends Controller
             'email' => 'required|string|email|max:191',
             'password' => 'required|string|min:6|max:191',
         ]);
+    }
+
+    public function userAutoLogin(Request $request, $confirmation_token)
+    {
+        $this->validate($request, [
+            'redirect_url' => 'required|string'
+        ]);
+
+        if (strlen($confirmation_token) > 218) {
+            return redirect('/');
+        }
+        if ($user = $request->user()) {
+            $this->clearConfirmationCode($user);
+            return redirect($request->get('redirect_url'));
+        }
+        $user = User::where('confirmation_code', $confirmation_token)->first();
+        if (isset($user)) {
+            $this->clearConfirmationCode($user);
+            auth()->login($user);
+            return redirect($request->get('redirect_url'));
+        }
+        return redirect('/');
+    }
+
+    public function clearConfirmationCode($user)
+    {
+        $user->confirmation_code = null;
+        $user->save();
     }
 
     /**
