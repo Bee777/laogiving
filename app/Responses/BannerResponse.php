@@ -33,9 +33,9 @@ class BannerResponse implements Responsable
      */
     public function get($request)
     {
-        $fields = ['id', 'name', 'order', 'link', 'image', 'created_at', 'updated_at'];
+        $fields = ['id', 'title', 'order', 'link_name', 'link', 'image', 'created_at', 'updated_at'];
         $request->request->add(['fields' => $fields]);
-        $text = $this->options["text"];
+        $text = $this->options['text'];
         $paginateLimit = $this->options['limit'];
         $data = Banner::select($fields);
         $data->where(function ($query) use ($request, $text) {
@@ -77,8 +77,9 @@ class BannerResponse implements Responsable
                     $img->save($location)->destroy();
                 }
                 $info = new Banner();
-                $info->name = $request->get('name');
+                $info->title = $request->get('title');
                 $info->order = $request->get('order');
+                $info->link_name = $request->get('link_name');
                 $info->link = $request->get('link');
                 $info->image = $img_filename;
                 $info->save();
@@ -103,8 +104,9 @@ class BannerResponse implements Responsable
                         }
                         Helpers::removeFile($this->uploadPath . $info->image);
                     }
-                    $info->name = $request->get('name');
+                    $info->title = $request->get('title');
                     $info->order = $request->get('order');
+                    $info->link_name = $request->get('link_name');
                     $info->link = $request->get('link');
                     $info->image = $img_filename ?? $info->image;
                     $info->save();
@@ -119,7 +121,7 @@ class BannerResponse implements Responsable
                     $data = $info;
                 }
             }
-            return response()->json(['success' => true, "data" => $data]);
+            return response()->json(['success' => true, 'data' => $data]);
         }
     }
 }

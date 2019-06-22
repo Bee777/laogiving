@@ -50,16 +50,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="boiler"><p>&nbsp;</p>
-                    <p>&nbsp;</p><b>LaoGiving.la is created and powered by the <a href="https://www.nvpc.org.sg">National
-                        Volunteer &amp; Philanthropy Centre (NVPC).</a></b><br> The National Volunteer &amp;
-                        Philanthropy Centre (NVPC) is an independent, not-for-profit organisation that advocates giving
-                        in Singapore. Our vision is to be a Giving Nation and to cultivate a strong culture of
-                        contribution where giving is part of every Lao’s DNA. NVPC is also a proud supporter of
-                        the #LGCares movement, which believes in building a more caring and inclusive home for all. By
-                        inspiring and supporting one another, we can show the world that we are a nation with a big
-                        heart.
-                    <p>&nbsp;</p></div>
+                <div class="boiler" v-html="s.description"></div>
             </div>
         </main>
     </div>

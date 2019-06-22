@@ -7,13 +7,13 @@
           <MasterSingleDetailCard
             :isLoading="about.loading"
             @onBackButtonClick="onBackButtonClick"
-            :header="{ title: 'About Jaol', content: '<p> Changes about Jaol information.</p>'}"
-            :menuItem="{ name: 'About Jaol', icon: 'account_circle'}"
+            :header="{ title: 'About Site', content: '<p> Changes about site information.</p>'}"
+            :menuItem="{ name: 'About Site', icon: 'account_circle'}"
           >
             <div class="details is-edit">
               <form @submit.prevent class="admin-form admin-template-form">
                 <div class="layout-align-space-around-start layout-row">
-                  <Editor id="about_jaol_editor" @editorMounted="(ed)=> editor = ed" v-model="about.description" :label="'About Jaol Description'"/>
+                  <Editor id="about_jaol_editor" @editorMounted="(ed)=> editor = ed" v-model="about.description" :label="'About Site Description'"/>
                 </div>
                 <div class="actions">
                   <div class="layout-align-end-center layout-row">
@@ -34,8 +34,8 @@ import { mapActions } from "vuex";
 export default AdminBase.extend({
   name: "AboutInfo",
   data: () => ({
-    title: "About Jaol information",
-    tabs: [{ name: "About Jaol" }],
+    title: "About information",
+    tabs: [{ name: "About" }],
     about: { loading: true },
     editor: null,
   }),

@@ -37,6 +37,7 @@
     <meta itemprop="image" content="{{ url('/') }}/assets/images/{{ $s['website_logo']  }}">
 @stop
 @section('scripts_header')
+    <link rel="stylesheet" href="{{url('/')}}/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="{{url('/')}}/css/general.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/bootstrap.min.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/linearicons-free.css">
@@ -76,6 +77,6 @@
     </script>
     {{-- @GeneratedResourcesBottom--}}
     <script type="text/javascript"
-            src="{{url('/bundles/generated')}}/organize/organize.e97e39c9b280cd28b291.bundle.js"></script>
+            src="{{url('/bundles/generated')}}/organize/organize.355b7a6d89a6f4b170b6.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection

@@ -32,7 +32,7 @@
                                 information is safe and secure with us.
                             </div>
                             <hr class="hr-text grey" data-content="Sign up with email">
-                            <form>
+                            <form @submit.prevent>
                                 <fieldset class="fieldset">
                                     <div class="row-fluid clearfix">
                                         <div class="input-ctrl">
@@ -40,9 +40,8 @@
                                             </label>
                                             <input id="firstName" type="text" class="input-ctn"
                                                    placeholder="e.g. John Tan" name="name"
-                                                   value="">
-                                            <label for="firstName" class="error-msg" style="display: block;">Please
-                                                enter your name.</label>
+                                                   v-model="user.name">
+                                            <label v-if="validated().name" for="firstName" class="error-msg" style="display: block;">{{ validated().name }}</label>
                                         </div>
                                         <div class="input-ctrl">
                                             <label class="lbl">Email
@@ -50,7 +49,8 @@
                                             <input id="email" type="email" class="input-ctn"
                                                    placeholder="e.g. john@laogiving.la" name="email"
                                                    autocomplete="username"
-                                                   value="">
+                                                   v-model="user.email">
+                                            <label v-if="validated().email" for="firstName" class="error-msg" style="display: block;">{{ validated().email }}</label>
                                         </div>
                                         <div class="input-ctrl">
                                             <label class="lbl">
@@ -59,8 +59,10 @@
                                                                title="Your password must be between 8-24 characters with at least one number. Only special characters @$!%*?&amp;+-.=^_|~ are accepted.">?</span>
                                             </label>
                                             <input id="password" placeholder="Your password" class="input-ctn"
-                                                   autocomplete="current-password" name="password" value=""
+                                                   autocomplete="current-password" name="password"
+                                                   v-model="user.password"
                                                    type="password">
+                                            <label v-if="validated().password" for="firstName" class="error-msg" style="display: block;">{{ validated().password }}</label>
                                         </div>
                                     </div>
                                     <div class="body-txt body-txt--smaller body-txt--no-letter-space pt-8 text-center">
@@ -68,15 +70,22 @@
                                             <label for="_signup_agree"
                                                    class="checkbox">
                                                 <input id="_signup_agree" class="field form-control" type="checkbox"
-                                                       value="false">
+                                                       v-model="user.receive_news">
                                                 Receive giving news and other good stories from us!
                                             </label>
                                         </div>
                                         <div style="width: 100%;" class="pt-24 ">
                                             <div class="control-group">
-                                                <button type="submit"
+                                                <button v-if="!validated().loading" type="submit"
+                                                        @click="RegisterUser()"
                                                         class="button-ctn button--large button--full">SIGN UP
                                                 </button>
+
+                                                <button v-else type="submit"
+                                                        @click="RegisterUser()"
+                                                        class="button-ctn button--large button--full">PLEASE WAIT...
+                                                </button>
+
                                             </div>
                                         </div>
                                         <div
@@ -111,16 +120,20 @@
             return {
                 ...mapGetters(['validated']),
                 type: 'volunteer',
-                allows: {volunteer: 'volunteer', organize: 'organize'}
+                allows: {volunteer: 'volunteer', organize: 'organize'},
+                user: {},
             }
         },
         methods: {
             ...mapActions(['register', 'setPageTitle']),
             RegisterUser() {
+                this.user.type = this.type;
                 this.register(this.user)
                     .then(res => {
                         this.Route({name: 'registered'}, 1000);
-                    });
+                    }).catch(e => {
+                    console.log(e);
+                });
             },
             getTypeRegister() {
                 if (!(this.$route.query.type && this.allows[this.$route.query.type])) {

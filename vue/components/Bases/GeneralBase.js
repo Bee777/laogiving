@@ -119,7 +119,7 @@ export default Vue.extend({
                 }
             }
             return res;
-        }
+        },
         /***@SinglePost*/
     },
     created() {

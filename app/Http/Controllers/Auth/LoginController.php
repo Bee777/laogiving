@@ -163,4 +163,22 @@ class LoginController extends Controller
             'auth_failed' => [trans('auth.failed')],
         ]);
     }
+
+    /**
+     * Log the user out of the application.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function sessionLogout(Request $request)
+    {
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        return $this->loggedOut($request) ?: redirect('/users-logout');
+    }
+
+
 }

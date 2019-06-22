@@ -31,7 +31,7 @@ class ContactInfoResponse implements Responsable
     public function toResponse($request)
     {
         if (Helpers::isAjax($request)) {
-            $keys = ['phone', 'email', 'address', 'facebook', 'twitter'];
+            $keys = ['phone', 'email', 'address', 'facebook', 'twitter', 'instagram', 'youtube', 'google_map'];
             $data = [];
             if ($this->actionType === 'get') {
                 $data = Site::whereIn('key', $keys)->get();

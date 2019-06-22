@@ -196,12 +196,12 @@
     export default AdminBase.extend({
         name: "news",
         data: () => ({
-            title: "News",
+            title: "ຂ່າວສານ",
             type: "news",
             watchers: true,
             tabs: [{name: "News"}],
             headers: [
-                {class: "th-sortable", name: "News title", width: "35%"},
+                {class: "th-sortable", name: "Title", width: "35%"},
                 {class: "hide-xs th-sortable", name: "Image", width: "10%"},
                 {class: "hide-xs th-sortable", name: "Author", width: "20%"},
                 {class: "th-sortable", name: "Status", width: "100"},

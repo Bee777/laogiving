@@ -95,7 +95,6 @@ class PostsResponse implements Responsable
         $types = [
             'activities' => 'activity', 'news' => 'news',
             'events' => 'event', 'scholarships' => 'scholarship',
-            'dictionaries' => 'dictionary',
         ];
         return $types[$title] ?? '';
     }

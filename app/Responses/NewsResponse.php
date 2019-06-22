@@ -10,13 +10,13 @@ namespace App\Responses;
 
 use App\Http\Controllers\Helpers\Helpers;
 use Illuminate\Contracts\Support\Responsable;
-use App\Posts;
+use App\Models\Posts;
 use Image;
 
 class NewsResponse implements Responsable
 {
 
-    protected $actionType = "get";
+    protected $actionType = 'get';
     protected $options = [];
     protected $uploadPath = '/assets/images/posts/';
 
@@ -35,7 +35,7 @@ class NewsResponse implements Responsable
     {
         $fields = ['id', 'title', 'status', 'image', 'description', 'user_id', 'created_at', 'updated_at'];
         $request->request->add(['fields' => $fields]);
-        $text = $this->options["text"];
+        $text = $this->options['text'];
         $paginateLimit = $this->options['limit'];
         $data = Posts::select($fields)->where('type', 'news');
         $data->where(function ($query) use ($request, $text) {
@@ -120,7 +120,7 @@ class NewsResponse implements Responsable
                     $data = $info;
                 }
             }
-            return response()->json(['success' => true, "data" => $data]);
+            return response()->json(['success' => true, 'data' => $data]);
         }
     }
 }

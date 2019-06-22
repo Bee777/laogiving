@@ -2,23 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Dictionary;
-use App\Posts;
+
+use App\Models\Posts;
 use App\Responses\Admin\DashboardResponse;
-use App\Responses\FileResponse;
 use App\Responses\IndexUserResponse;
-use App\Responses\User\MemberCareersManage;
-use App\Responses\User\MemberEducationsManage;
-use App\Responses\User\SearchMembersProfile;
-use App\Responses\User\UserActivityResponse;
 use App\Responses\User\UserCredentials;
-use App\Responses\User\UserEventResponse;
 use App\Responses\User\UserNewsResponse;
 use App\Responses\User\UserProfileManage;
 use App\Responses\User\UserProfileOptions;
 use App\Responses\User\UserProfileSingle;
-use App\Responses\User\UserScholarshipResponse;
-use App\Site;
+use App\Models\Site;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Helpers\Helpers;
 use Illuminate\Http\JsonResponse;
@@ -42,7 +35,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('api-mode-user-management:super_admin,admin,user', $this->excepts);
+        $this->middleware('api-mode-user-management:super_admin,admin,volunteer,organize', $this->excepts);
     }
 
     /**
@@ -80,191 +73,6 @@ class UserController extends Controller
         return response()->json(['success' => true, 'data' => $data]);
     }
 
-    /**
-     * @Responses DictionaryAction
-     */
-
-    public function SaveDictionary(Request $request)
-    {
-        $this->validate($request, [
-            'lao' => 'required|string|max:191',
-            'japanese' => 'required|string|max:191',
-            'description' => 'required|string|max:191',
-        ]);
-        $dictionary = new Dictionary();
-        $dictionary->lao = $request->get('lao');
-        $dictionary->japanese = $request->get('japanese');
-        $dictionary->description = $request->get('description');
-        $dictionary->save();
-
-        return response()->json(['success' => true, 'msg' => 'The dictionary saved successfully!.', 'data' => $dictionary]);
-    }
-
-    public function UpdateDictionary(Request $request, $id)
-    {
-        $this->validate($request, [
-            'lao' => 'required|string|max:191',
-            'japanese' => 'required|string|max:191',
-            'description' => 'required|string|max:191',
-        ]);
-        $dictionary = Dictionary::find($id);
-        $dictionary->lao = $request->get('lao');
-        $dictionary->japanese = $request->get('japanese');
-        $dictionary->description = $request->get('description');
-        $dictionary->save();
-        return response()->json(['success' => true, 'msg' => 'The dictionary updated successfully!.', 'data' => $dictionary]);
-    }
-
-    public function DeleteDictionary($id)
-    {
-        $dictionary = Dictionary::find($id);
-        $dictionary->delete();
-        return response()->json(['success' => true, 'msg' => 'The dictionary deleted successfully!.']);
-    }
-    /**
-     * @Responses DictionaryAction
-     */
-
-    /**
-     * @Responses NewsAction
-     */
-    public function insertNews(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-            'description' => 'required|string',
-        ]);
-        return new UserNewsResponse('insert');
-    }
-
-    public function updateNews(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-            'description' => 'required|string',
-        ]);
-        return new UserNewsResponse('update');
-    }
-
-    public function deleteNews()
-    {
-        return new UserNewsResponse('delete');
-    }
-    /**
-     * @Responses NewsAction
-     */
-    /**
-     * @Responses ActivityAction
-     */
-
-    public function insertActivity(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-            'activity_date' => 'required',
-            'description' => 'required|string',
-        ]);
-        return new UserActivityResponse('insert');
-    }
-
-    public function updateActivity(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-            'activity_date' => 'required',
-            'description' => 'required|string',
-        ]);
-        return new UserActivityResponse('update');
-    }
-
-    public function deleteActivity()
-    {
-        return new UserActivityResponse('delete');
-    }
-    /**
-     * @Responses ActivityAction
-     */
-    /**
-     * @Responses EventAction
-     */
-
-    public function insertEvent(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-            'start_event' => 'required',
-            'end_event' => 'required',
-            'place' => 'required',
-            'hosted_by' => 'required',
-            'description' => 'required|string',
-        ]);
-        return new UserEventResponse('insert');
-    }
-
-    public function updateEvent(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-            'start_event' => 'required',
-            'end_event' => 'required',
-            'place' => 'required',
-            'hosted_by' => 'required',
-            'description' => 'required|string',
-        ]);
-        return new UserEventResponse('update');
-    }
-
-    public function deleteEvent()
-    {
-        return new UserEventResponse('delete');
-    }
-    /**
-     * @Responses EventAction
-     */
-    /**
-     * @Responses ScholarshipAction
-     */
-    public function insertScholarship(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-            'deadline' => 'required',
-            'place' => 'required',
-            'scholarship_type' => 'required|string',
-            'description' => 'required|string',
-        ]);
-        return new UserScholarshipResponse('insert');
-    }
-
-    public function updateScholarship(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-            'scholarship_deadline' => 'required',
-            'place' => 'required',
-            'scholarship_type' => 'required|string',
-            'description' => 'required|string',
-        ]);
-        return new UserScholarshipResponse('update');
-    }
-
-    public function deleteScholarship()
-    {
-        return new UserScholarshipResponse('delete');
-    }
-    /**
-     * @Responses ScholarshipAction
-     */
-
-
     /****@ResponsesSearches api and action  *** */
     /**
      * @param Request $request
@@ -279,33 +87,8 @@ class UserController extends Controller
         $paginateLimit = Helpers::isNumber($paginateLimit) ? $paginateLimit : 10;
         $text = $request->get('q');
 
-        if ($type === 'dictionaries') {
-            $fields = ['id', 'lao', 'japanese', 'description', 'created_at', 'updated_at'];
-            $request->request->add(['fields' => $fields]);
-            $data = Dictionary::select($fields);
-            $data->where(function ($query) use ($request, $text) {
-                foreach ($request->fields as $k => $f) {
-                    if ($f === 'created_at' || $f === 'updated_at') {
-                        if (Helpers::isEngText($text)) {
-                            $query->orWhere($f, 'LIKE', "%{$text}%");
-                        } else {
-                            continue;
-                        }
-                    }
-                    $query->orWhere($f, 'LIKE', "%{$text}%");
-                }
-            });
-            $data = $data->orderBy('created_at', 'desc')->paginate($paginateLimit);
-        } else if ($type === 'news') {
+        if ($type === 'news') {
             $data = (new UserNewsResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'activity') {
-            $data = (new UserActivityResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'event') {
-            $data = (new UserEventResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'scholarship') {
-            $data = (new UserScholarshipResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'downloadFiles') {
-            $data = (new FileResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
         }
         if (count($data) > 0) {
             $data->appends(['limit' => $request->exists('limit'), 'q' => $request->get('q')]);
@@ -313,13 +96,6 @@ class UserController extends Controller
         return response()->json(['data' => $data]);
     }
     /****@ResponsesSearches api and action  ** */
-
-    /****@ResponsesMembersProfileSearch api and action  ** */
-    public function responseSearchMembersProfile(Request $request): SearchMembersProfile
-    {
-        return new SearchMembersProfile();
-    }
-    /****@ResponsesMembersProfileSearch api and action  ** */
 
     /****@ResponsesUserProfile  api and action  *** */
     public function responseProfileOptions(Request $request): UserProfileOptions
@@ -339,27 +115,6 @@ class UserController extends Controller
     }
 
     /****@ResponsesUserProfile  api and action  *** */
-
-    /*** @ResponsesMemberEducationsProfile */
-    public function responseActionManageMemberEducations(Request $request)
-    {
-        $this->validate($request, [
-            'educations' => 'array',
-        ]);
-        return new MemberEducationsManage();
-    }
-
-    /*** @ResponsesMemberEducationsProfile */
-
-    /*** @ResponsesManageMemberCareers */
-    public function responseActionManageMemberCareers(Request $request)
-    {
-        $this->validate($request, [
-            'careers' => 'array',
-        ]);
-        return new MemberCareersManage();
-    }
-    /*** @ResponsesManageMemberCareers */
 
     /****@ResponsesUserCredentials  api and action  *** */
 

@@ -46,13 +46,14 @@
                                 <a class="btn btn-medium read-more" >Read More <i class="lnr lnr-arrow-right"></i></a>
                             </article>
 
-                            <article class="post hentry">
-                                <blockquote class="post-quote">
-                                    <i class="fa fa-quote-left"></i>
-                                    <p>Praesent volutpatid nuncpretium ullamcorper Nunc infelis magnauis pharetra our is venenatis justo dapibus gravida class aptent.</p>
-                                    <footer>Solvis Denial</footer>
-                                </blockquote>
-                            </article>
+                            <!--<article class="post hentry">-->
+                                <!--<blockquote class="post-quote">-->
+                                    <!--<i class="fa fa-quote-left"></i>-->
+                                    <!--<p>Praesent volutpatid nuncpretium ullamcorper Nunc infelis magnauis pharetra our is venenatis justo dapibus gravida class aptent.</p>-->
+                                    <!--<footer>Solvis Denial</footer>-->
+                                <!--</blockquote>-->
+                            <!--</article>-->
+
                             <article class="post hentry">
 
                                 <a  class="post-thumb">

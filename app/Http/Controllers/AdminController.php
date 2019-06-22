@@ -6,22 +6,21 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Helpers\Helpers;
 use App\Jobs\SendUserChangeStatus;
+use App\Models\Cause;
 use App\Models\Posts;
+use App\Models\Skill;
+use App\Models\Suitable;
+use App\Responses\User\CausesResponse;
 use App\Responses\IndexAdminResponse;
 use App\Responses\ContactInfoResponse;
 use App\Responses\AboutInfoResponse;
-use App\Responses\OrganizeChartMemberResponse;
-use App\Responses\OrganizeInfoResponse;
 use App\Responses\NewsResponse;
-use App\Responses\ActivityResponse;
-use App\Responses\OrganizeChartRangeResponse;
-use App\Responses\EventResponse;
-use App\Responses\ScholarshipResponse;
 use App\Responses\BannerResponse;
-use App\Responses\FileResponse;
-use App\Responses\SponsorResponse;
 
 use App\Models\Site;
+use App\Responses\User\SkillsResponse;
+use App\Responses\User\SuitablesResponse;
+use App\Traits\UserRoleTrait;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,6 +29,8 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
+    use UserRoleTrait;
+
     protected $rootView = 'main.admin';
 
     protected $excepts = [
@@ -64,10 +65,121 @@ class AdminController extends Controller
      * @Responses and Actions api|web
      */
 
+    /**
+     * @Responses and Actions api only
+     * @Causes Manager
+     */
+    public function responseActionCreateCauses(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:191|unique:causes',
+            'icon' => 'required|max:3000|mimes:jpeg,png,jpg,gif,svg',
+            'background_image' => 'required|max:3000|mimes:jpeg,png,jpg,gif,svg',
+        ]);
+        return new CausesResponse('insert');
+    }
+
+    public function responseActionUpdateCauses(Request $request, $id)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:191',
+            'icon' => 'max:3000|mimes:jpeg,png,jpg,gif,svg',
+            'background_image' => 'max:3000|mimes:jpeg,png,jpg,gif,svg',
+        ]);
+        $name = $request->get('name');
+        $oldData = Cause::find($id);
+        if (isset($oldData) && $oldData->name !== $name) {
+            $exits = Cause::where('name', $name)->where('id', '!=', $id)->first();
+            if (isset($exits)) {
+                return response()->json(['errors' => ['category_name' => ['Your entered category name already exists in our system.']]], 422);
+            }
+        }
+        return new CausesResponse('update');
+    }
+
+    public function responseActionDeleteCauses(Request $request, $id)
+    {
+        return new CausesResponse('delete');
+    }
+    /**
+     * @Causes Manager
+     */
 
     /**
      * @Responses and Actions api only
-     * @SiteInfo Manger
+     * @Skills Manager
+     */
+    public function responseActionCreateSkill(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:191|unique:skills',
+        ]);
+        return new SkillsResponse('insert');
+    }
+
+    public function responseActionUpdateSkill(Request $request, $id)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:191',
+        ]);
+        $name = $request->get('name');
+        $oldData = Skill::find($id);
+        if (isset($oldData) && $oldData->name !== $name) {
+            $exits = Skill::where('name', $name)->where('id', '!=', $id)->first();
+            if (isset($exits)) {
+                return response()->json(['errors' => ['skill_name' => ['Your entered skill name already exists in our system.']]], 422);
+            }
+        }
+        return new SkillsResponse('update');
+    }
+
+    public function responseActionDeleteSkill(Request $request, $id)
+    {
+        return new SkillsResponse('delete');
+    }
+    /**
+     * @Skills Manager
+     */
+
+    /**
+     * @Responses and Actions api only
+     * @Suitable Manager
+     */
+    public function responseActionCreateSuitable(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:191|unique:suitables',
+        ]);
+        return new SuitablesResponse('insert');
+    }
+
+    public function responseActionUpdateSuitable(Request $request, $id)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:191',
+        ]);
+        $name = $request->get('name');
+        $oldData = Suitable::find($id);
+        if (isset($oldData) && $oldData->name !== $name) {
+            $exits = Suitable::where('name', $name)->where('id', '!=', $id)->first();
+            if (isset($exits)) {
+                return response()->json(['errors' => ['suitable_name' => ['Your entered suitable name already exists in our system.']]], 422);
+            }
+        }
+        return new SuitablesResponse('update');
+    }
+
+    public function responseActionDeleteSuitable(Request $request, $id)
+    {
+        return new SuitablesResponse('delete');
+    }
+    /**
+     * @Skills Manager
+     */
+
+    /**
+     * @Responses and Actions api only
+     * @SiteInfo Manager
      */
     public function responseActionManageSiteInfo(Request $request)
     {
@@ -138,7 +250,7 @@ class AdminController extends Controller
 
     /**
      * @Responses
-     * @SiteInfo Manger
+     * @SiteInfo Manager
      * /
      *
      * /**
@@ -147,14 +259,20 @@ class AdminController extends Controller
     public function insertBanner(Request $request)
     {
         $this->validate($request, [
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
+            'title' => 'required|string|max:191',
+            'link_name' => 'required|string|max:191',
+            'link' => 'required|string|max:191',
+            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
         ]);
-        return new BannerResponse("insert");
+        return new BannerResponse('insert');
     }
 
     public function updateBanner(Request $request)
     {
         $this->validate($request, [
+            'title' => 'required|string|max:191',
+            'link_name' => 'required|string|max:191',
+            'link' => 'required|string|max:191',
             'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
         ]);
         return new BannerResponse('update');
@@ -167,31 +285,6 @@ class AdminController extends Controller
     /**
      * @Responses BannerAction
      */
-    /**
-     * @Responses FileAction
-     */
-    public function insertFile(Request $request)
-    {
-        $this->validate($request, [
-            'fileName' => 'required|string|max:191',
-            'file' => 'required|max:10000|mimes:pdf,doc,docx,xlsx,pptx',
-        ]);
-        return new FileResponse("insert");
-    }
-
-    public function updateFile(Request $request)
-    {
-        $this->validate($request, [
-            'fileName' => 'required|string|max:191',
-            'file' => 'max:10000|mimes:pdf,doc,docx,xlsx,pptx',
-        ]);
-        return new FileResponse('update');
-    }
-
-    public function deleteFile()
-    {
-        return new FileResponse('delete');
-    }
     /**
      * @Responses FileAction
      */
@@ -280,81 +373,7 @@ class AdminController extends Controller
     /**
      * @Responses ActivityAction
      */
-    /**
-     * @Responses EventAction
-     */
 
-    public function insertEvent(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-            'start_event' => 'required',
-            'end_event' => 'required',
-            'place' => 'required',
-            'hosted_by' => 'required',
-            'description' => 'required|string',
-        ]);
-        return new EventResponse('insert');
-    }
-
-    public function updateEvent(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-            'start_event' => 'required',
-            'end_event' => 'required',
-            'place' => 'required',
-            'hosted_by' => 'required',
-            'description' => 'required|string',
-        ]);
-        return new EventResponse('update');
-    }
-
-    public function deleteEvent()
-    {
-        return new EventResponse('delete');
-    }
-    /**
-     * @Responses EventAction
-     */
-    /**
-     * @Responses ScholarshipAction
-     */
-    public function insertScholarship(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-            'deadline' => 'required',
-            'place' => 'required',
-            'scholarship_type' => 'required|string',
-            'description' => 'required|string',
-        ]);
-        return new ScholarshipResponse('insert');
-    }
-
-    public function updateScholarship(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-            'scholarship_deadline' => 'required',
-            'place' => 'required',
-            'scholarship_type' => 'required|string',
-            'description' => 'required|string',
-        ]);
-        return new ScholarshipResponse('update');
-    }
-
-    public function deleteScholarship()
-    {
-        return new ScholarshipResponse('delete');
-    }
-    /**
-     * @Responses ScholarshipAction
-     */
     /**
      * @Responses AboutAction
      */
@@ -374,123 +393,8 @@ class AdminController extends Controller
 
     /**
      * @Responses AboutAction
-     *     /**
-     * @Responses OrganizeAction
      */
 
-    public function getOrganizeInfo(Request $request)
-    {
-        return new OrganizeInfoResponse('get');
-    }
-
-    public function manageOrganizeInfo(Request $request)
-    {
-        $this->validate($request, [
-            'description' => 'string',
-        ]);
-        return new OrganizeInfoResponse('manage');
-    }
-
-    /**
-     * @Responses OrganizeAction
-     *      */
-    /**
-     * @Responses OrganizeChartRangeAction
-     */
-    public function getChartRangeOptions()
-    {
-        return new OrganizeChartRangeResponse('options');
-    }
-
-    public function insertCharRange(Request $request)
-    {
-        $this->validate($request, [
-            'chart_name' => 'required|string|max:191',
-        ]);
-        if ($request->position_order !== null && !Helpers::isNumber($request->position_order)) {
-            return response()->json(['errors' => ['position_order' => ['Your entered position order is invalid value.']]], 422);
-        }
-        return new OrganizeChartRangeResponse('insert');
-    }
-
-    public function updateChartRange(Request $request)
-    {
-        $this->validate($request, [
-            'chart_name' => 'required|string|max:191',
-            'position_order' => 'required',
-        ]);
-        if (!Helpers::isNumber($request->position_order)) {
-            return response()->json(['errors' => ['position_order' => ['Your entered position order is invalid value.']]], 422);
-        }
-
-        return new OrganizeChartRangeResponse('update');
-    }
-
-    public function deleteChartRange()
-    {
-        return new OrganizeChartRangeResponse('delete');
-    }
-    /**
-     * @Responses OrganizeChartRangeAction
-     */
-
-    /**
-     * @Responses OrganizeChartRangeMembersAction
-     */
-    public function getChartRangeMembers(Request $request, $id)
-    {
-        $text = $request->get('q');
-        $data = (new OrganizeChartMemberResponse('get', ['text' => $text, 'id' => $id]))->get($request);
-        return response()->json(['data' => $data]);
-    }
-
-    public function createChartRangeMember(Request $request)
-    {
-        $this->validate($request, [
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-            'name' => 'required|string|max:191',
-            'last_name' => 'required|string|max:191',
-            'position' => 'required',
-            'university' => 'string|max:191',
-            'chart_range' => 'required'
-        ]);
-        if ($request->position_order !== null && !Helpers::isNumber($request->position_order)) {
-            return response()->json(['errors' => ['position_order' => ['Your entered position order is invalid value.']]], 422);
-        }
-
-        $position = $request->get('position');
-        if ($position === 'other') {
-            $this->validate($request, [
-                'other_position' => 'required',
-            ]);
-        }
-        return new OrganizeChartMemberResponse('insert');
-    }
-
-    public function updateChartRangeMember(Request $request, $id)
-    {
-        $this->validate($request, [
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-            'name' => 'required|string|max:191',
-            'last_name' => 'required|string|max:191',
-            'position' => 'required',
-            'university' => 'string|max:191',
-            'position_order' => 'required',
-            'chart_range' => 'required'
-        ]);
-        if (!Helpers::isNumber($request->position_order)) {
-            return response()->json(['errors' => ['position_order' => ['Your entered position order is invalid value.']]], 422);
-        }
-        return new OrganizeChartMemberResponse('update');
-    }
-
-    public function deleteChartRangeMember()
-    {
-        return new OrganizeChartMemberResponse('delete');
-    }
-    /**
-     * @Responses OrganizeChartRangeMembersAction
-     */
     /**
      * @Responses PostsImageAction
      */
@@ -512,97 +416,6 @@ class AdminController extends Controller
 
     /**
      * @Responses PostsImageAction
-     */
-
-    /**
-     * @Responses OrganizeAction
-     */
-
-    public function responseActionCreateOrganize(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:191',
-            'government_organize' => 'required|max:10',
-        ]);
-        $oldData = Organize::where('name', $request->get('name'))->first();
-        if (isset($oldData)) {
-            return response()->json(['errors' => ['name' => ['Your entered organize name already exists in our system.']]], 422);
-        }
-        $organize = Organize::CreateOrganize($request->get('name'), $request->get('government_organize') ? 'yes' : 'no');
-        return response()->json(['success' => true, 'data' => $organize]);
-    }
-
-    public function responseActionUpdateOrganize(Request $request, $id)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:191',
-            'government_organize' => 'required|max:10',
-        ]);
-        $name = $request->get('name');
-        $government_organize = $request->get('government_organize') ? 'yes' : 'no';
-        $oldData = Organize::find($id);
-        if (isset($oldData) && $oldData->name !== $name) {
-            $exits = Organize::where('name', $name)->where('id', '!=', $id)->first();
-            if (isset($exits)) {
-                return response()->json(['errors' => ['organize_name' => ['Your entered organize name already exists in our system.']]], 422);
-            }
-        }
-        $saved = Organize::UpdateOrganize($id, $name, $government_organize);
-        return response()->json(['success' => $saved]);
-    }
-
-    public function responseActionDeleteOrganize(Request $request, $id)
-    {
-        $deleted = Organize::DeleteOrganize($id);
-        return response()->json(['success' => $deleted]);
-    }
-
-    /**
-     * @Responses OrganizeAction
-     */
-
-    /**
-     * @Responses DepartmentAction
-     */
-
-    public function responseActionCreateDepartment(Request $request)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:191',
-        ]);
-        $oldData = Department::where('name', $request->get('name'))->first();
-        if (isset($oldData)) {
-            return response()->json(['errors' => ['name' => ['Your entered department name already exists in our system.']]], 422);
-        }
-        $department = Department::CreateDepartment($request->get('name'));
-        return response()->json(['success' => true, 'data' => $department]);
-    }
-
-    public function responseActionUpdateDepartment(Request $request, $id)
-    {
-        $this->validate($request, [
-            'name' => 'required|string|max:191',
-        ]);
-        $name = $request->get('name');
-        $oldData = Department::find($id);
-        if (isset($oldData) && $oldData->name !== $name) {
-            $exits = Department::where('name', $name)->where('id', '!=', $id)->first();
-            if (isset($exits)) {
-                return response()->json(['errors' => ['department_name' => ['Your entered department name already exists in our system.']]], 422);
-            }
-        }
-        $saved = Department::UpdateDepartment($id, $request->get('name'));
-        return response()->json(['success' => $saved]);
-    }
-
-    public function responseActionDeleteDepartment(Request $request, $id)
-    {
-        $deleted = Department::DeleteDepartment($id);
-        return response()->json(['success' => $deleted]);
-    }
-
-    /**
-     * @Responses DepartmentAction
      */
 
     /**
@@ -698,11 +511,14 @@ class AdminController extends Controller
         $paginateLimit = ($request->exists('limit') && !empty($request->get('limit'))) ? $request->get('limit') : 10;
         $paginateLimit = Helpers::isNumber($paginateLimit) ? $paginateLimit : 10;
         $text = $request->get('q');
-        if ($type === 'users') {
-            $fields = ['users.id', 'users.status', 'users.name', 'users.last_name', 'users.email', 'users.created_at'];
+
+        if ($type === 'volunteers') {
+            $fields = ['users.id', 'users.status', 'users.name', 'users.email', 'users.created_at'];
             $request->request->add(['fields' => $fields]);
             $data = User::select(array_merge(['users.image'], $fields))->join('user_types', 'user_types.user_id', 'users.id')
+                ->where('user_types.type_user_id', $this->getTypeUserId('volunteer'))
                 ->whereIn('user_types.type_user_id', User::getNonAdminUserIds());
+
             $data->where(function ($query) use ($request, $text) {
                 foreach ($request->fields as $k => $f) {
                     if ($f === 'users.created_at') {
@@ -714,11 +530,6 @@ class AdminController extends Controller
                     }
                     $query->orWhere($f, 'LIKE', "%{$text}%");
                 }
-                $query->orWhere(
-                    DB::raw("CONCAT (users.name, ' ', users.last_name)"),
-                    'LIKE',
-                    "%{$text}%"
-                );
             });
             $data = $data->orderBy('users.created_at', 'desc')->paginate($paginateLimit);
             $data->map(function ($d) {
@@ -726,13 +537,17 @@ class AdminController extends Controller
                 $d->statusColor = $d->status === 'approved' ? '#00bfa5' : ($d->status === 'disabled' ? '#d50000' : '');
                 return $d;
             });
+
         } else if ($type === 'organizes') {
-            $fields = ['id', 'name', 'government_organize', 'created_at', 'updated_at'];
+            $fields = ['users.id', 'users.status', 'users.name', 'users.email', 'users.created_at'];
             $request->request->add(['fields' => $fields]);
-            $data = Organize::select($fields);
+            $data = User::select(array_merge(['users.image'], $fields))->join('user_types', 'user_types.user_id', 'users.id')
+                ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
+                ->whereIn('user_types.type_user_id', User::getNonAdminUserIds());
+
             $data->where(function ($query) use ($request, $text) {
                 foreach ($request->fields as $k => $f) {
-                    if ($f === 'created_at' || $f === 'updated_at') {
+                    if ($f === 'users.created_at') {
                         if (Helpers::isEngText($text)) {
                             $query->orWhere($f, 'LIKE', "%{$text}%");
                         } else {
@@ -742,61 +557,22 @@ class AdminController extends Controller
                     $query->orWhere($f, 'LIKE', "%{$text}%");
                 }
             });
-            $data = $data->orderBy('created_at', 'desc')->paginate($paginateLimit);
+            $data = $data->orderBy('users.created_at', 'desc')->paginate($paginateLimit);
             $data->map(function ($d) {
-                $d->government_organize = $d->government_organize === 'yes';
+                $d->image = "/assets/images/user_profiles/{$d->image}";
+                $d->statusColor = $d->status === 'approved' ? '#00bfa5' : ($d->status === 'disabled' ? '#d50000' : '');
                 return $d;
             });
-        } else if ($type === 'departments') {
-            $fields = ['id', 'name', 'created_at', 'updated_at'];
-            $request->request->add(['fields' => $fields]);
-            $data = Department::select($fields);
-            $data->where(function ($query) use ($request, $text) {
-                foreach ($request->fields as $k => $f) {
-                    if ($f === 'created_at' || $f === 'updated_at') {
-                        if (Helpers::isEngText($text)) {
-                            $query->orWhere($f, 'LIKE', "%{$text}%");
-                        } else {
-                            continue;
-                        }
-                    }
-                    $query->orWhere($f, 'LIKE', "%{$text}%");
-                }
-            });
-            $data = $data->orderBy('created_at', 'desc')->paginate($paginateLimit);
-        } else if ($type === 'dictionaries') {
-            $fields = ['id', 'lao', 'japanese', 'description', 'created_at', 'updated_at'];
-            $request->request->add(['fields' => $fields]);
-            $data = Dictionary::select($fields);
-            $data->where(function ($query) use ($request, $text) {
-                foreach ($request->fields as $k => $f) {
-                    if ($f === 'created_at' || $f === 'updated_at') {
-                        if (Helpers::isEngText($text)) {
-                            $query->orWhere($f, 'LIKE', "%{$text}%");
-                        } else {
-                            continue;
-                        }
-                    }
-                    $query->orWhere($f, 'LIKE', "%{$text}%");
-                }
-            });
-            $data = $data->orderBy('created_at', 'desc')->paginate($paginateLimit);
-        } else if ($type === 'news') {
-            $data = (new NewsResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'activity') {
-            $data = (new ActivityResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'event') {
-            $data = (new EventResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'scholarship') {
-            $data = (new ScholarshipResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'organizeChartRanges') {
-            $data = (new OrganizeChartRangeResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
         } else if ($type === 'banner') {
             $data = (new BannerResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'file') {
-            $data = (new FileResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
-        } else if ($type === 'sponsor') {
-            $data = (new SponsorResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
+        } else if ($type === 'news') {
+            $data = (new NewsResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
+        } else if ($type === 'causes') {
+            $data = (new CausesResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
+        } else if ($type === 'skills') {
+            $data = (new SkillsResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
+        } else if ($type === 'suitables') {
+            $data = (new SuitablesResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
         }
         if (count($data) > 0) {
             $data->appends(['limit' => $request->exists('limit'), 'q' => $request->get('q')]);

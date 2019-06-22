@@ -7,8 +7,8 @@
                     <div class="md-single-grid provider-list">
                         <!--Table card-->
                         <TablePaginate v-model="query"
-                                       :searchPlaceholder="'Search by organize name'"
-                                       :searchButtonText="'Add Organize'"
+                                       :searchPlaceholder="'Search by organize name, surname, tel or Email'"
+                                       :searchButtonText="'Add User'"
                                        :headers="headers"
                                        :notFoundText="'Please make sure you type or spell the organize information correctly.'"
                                        :isSearch="isSearch"
@@ -21,85 +21,62 @@
                                        @onSearchInputClose="getItems"
                                        @onRemoveChipText="getItems"
                                        :paginateData="paginate"
-                                       @paginateNavigate="paginateNavigator">
-                            <!--Slot Form Top -->
+                                       @paginateNavigate="paginateNavigator"
+                                       @onMenuContextClick="showModalAction">
+
                             <template slot="form-top" v-if="formTopState.show">
                                 <form class="admin-form-card user-form" @submit.prevent>
-                                    <div class="user-form-title"> Create new organize</div>
+                                    <div class="user-form-title"> Create new user</div>
                                     <div class="layout-align-space-around-start layout-row">
                                         <AdminInput v-model="models.formTop.name"
-                                                    :focus="true"
                                                     :validateText="validated().name"
-                                                    :label="'Organize Name'"
+                                                    :label="'Name'"
                                                     :inputType="'text'"
-                                                    @onInputEnter="addOrganize"/>
+                                                    :focus="true"/>
                                     </div>
-
                                     <div class="layout-align-space-around-start layout-row">
-                                        <AdminInput v-model="models.formTop.government_organize"
-                                                    :containerClass="'dense'"
-                                                    :validateText="validated().government_organize"
-                                                    :label="'Government Organization'"
-                                                    :inputType="'checkbox'"
-                                                    @onInputEnter="addOrganize">
-                                        </AdminInput>
+                                        <AdminInput v-model="models.formTop.email" :validateText="validated().email"
+                                                    :autoCompleteText="'username'" :label="'Email'"
+                                                    :inputType="'email'  "/>
+                                        <AdminInput @onInputEnter="createUser" v-model="models.formTop.password"
+                                                    :validateText="validated().password"
+                                                    :containerClass="'is-second-input'"
+                                                    :autoCompleteText="'current-password'" :label="'Password'"
+                                                    :inputType="'password'"/>
                                     </div>
-
                                     <div class="user-form-action layout-align-end-center layout-row">
                                         <button @click="toggleFormTop(false)"
                                                 class="v-md-button secondary theme-blue">
                                             Cancel
                                         </button>
-                                        <button @click="addOrganize" class="v-md-button primary theme-blue"> Create
+                                        <button @click="createUser" class="v-md-button primary theme-blue"> Create
                                         </button>
                                     </div>
                                 </form>
                             </template>
-                            <!--Slot Form Top -->
-                            <!--Slot Actions row -->
-                            <template slot-scope="{fireEvent, position, data}" slot="action-row">
-                                <button @click="toggleFormRowContent(fireEvent, position, {active: true})"
-                                        class="v-md-button v-md-icon-button"><i
-                                    class="material-icons v-icon">edit</i></button>
-                                <button @click="deleteOrganize(data.column)" class="v-md-button v-md-icon-button"><i
-                                    class="material-icons v-icon">delete</i></button>
-                            </template>
-                            <!--Slot Actions row-->
-                            <!--Slot Row Detail Content-->
-                            <template slot-scope="{fireEvent, position, rowContent}" slot="form-row-detail">
-                                    <AdminInput v-model="rowContent.data.name"
-                                                :validateText="rowContent.validated.organize_name"
-                                                :label="'Organize Name'"
-                                                :focus="true"
-                                                :inputType="'text'"
-                                                @onInputEnter="editOrganize(fireEvent, rowContent.data, position)"/>
 
-                                    <AdminInput v-model="rowContent.data.government_organize"
-                                                :containerClass="'dense'"
-                                                :validateText="rowContent.validated.government_organize"
-                                                :label="'Government Organization'"
-                                                :inputType="'checkbox'"
-                                                @onInputEnter="editOrganize(fireEvent, rowContent.data, position)" />
-
-                                <div class="user-form-action provider-list-actions layout-align-end-center layout-row">
-                                    <button
-                                        @click="toggleFormRowContent(fireEvent, position, {active: false})"
-                                        class="v-md-button secondary theme-blue">
-                                        Cancel
-                                    </button>
-                                    <button @click="editOrganize(fireEvent, rowContent.data, position)"
-                                            class="v-md-button primary theme-blue">
-                                        Save
-                                    </button>
-                                </div>
-                            </template>
-                            <!--Slot Row Detail Content-->
                         </TablePaginate>
+                        <!--Table card-->
                     </div>
                 </div>
             </div>
         </div>
-        <!--Modal-->
+        <!--Modals -->
+        <!--info-->
+        <AdminModal :isActive="modal.type==='info' && modal.active" @close="modal.active=false">
+            <template slot="title"> {{modal.name}}</template>
+            <div class="fb-dialog-body-section">
+                <div v-html="modal.message"></div>
+                <div>
+                    <div class="form-label"> User Account</div>
+                    <div class="form-input-static-value"> {{ modal.data.email }}</div>
+                </div>
+            </div>
+            <template slot="actions">
+                <button @click="positiveAction()" class="v-md-button primary"> {{modal.action.text}}</button>
+            </template>
+        </AdminModal>
+        <!--info -->
         <!--warning-->
         <AdminModal :isActive="modal.type==='warning' && modal.active" @close="modal.active=false">
             <template slot="title"> {{modal.name}}</template>
@@ -111,8 +88,8 @@
                     </div>
                 </div>
                 <div>
-                    <div class="form-label"> Organize Name</div>
-                    <div class="form-input-static-value"> {{ modal.data.name }}</div>
+                    <div class="form-label"> User Account</div>
+                    <div class="form-input-static-value"> {{ modal.data.email }}</div>
                 </div>
             </div>
             <template slot="actions">
@@ -120,7 +97,7 @@
             </template>
         </AdminModal>
         <!--warning -->
-        <!--Modal -->
+        <!--Modals -->
     </div>
 </template>
 
@@ -129,115 +106,144 @@
     import {mapActions} from 'vuex'
 
     export default AdminBase.extend({
-        name: "organize",
-        data: () => ({
-            title: 'Organizations',
-            type: 'organizes',
-            watchers: true,
-            tabs: [{name: 'Organizations'}],
-            headers: [
-                {class: 'th-sortable', name: 'Organize Name', width: '35%'},
-                {class: "th-sortable", name: "Government Organization", width: "100"},
-                {class: 'hide-xs th-sortable', name: 'Created At', width: '28%'},
-                {class: 'hide-xs th-sortable', name: 'Updated At', width: '28%'},
-                {class: 'th-not-sortable', name: '', width: '80'},
-            ],
-            models: {formTop: {government_organize: false}},
-        }),
+        name: "OrganizeOrGroup",
+        data() {
+            return {
+                title: 'ອົງກອນ ຫລື ກຸ່ມ',
+                type: 'organizes',
+                watchers: true,
+                tabs: [{name: 'Members'}],
+                headers: [
+                    {class: 'th-sortable', name: 'Email', width: '200'},
+                    {class: 'hide-xs hide-md th-sortable', name: 'Image', width: '10%'},
+                    {class: 'hide-xs th-sortable', name: 'Status', width: '20%'},
+                    {class: 'hide-xs th-sortable', name: 'Name', width: '25%'},
+                    {class: 'hide-xs th-sortable', name: 'Created At', width: '25%'},
+                    {class: 'th-not-sortable', name: '', width: '80'},
+                ],
+            }
+        },
         methods: {
-            ...mapActions(['postCreateOrganize', 'postUpdateOrganize', 'postDeleteOrganize']),
+            ...mapActions(['postChangeUserStatus', 'postDeleteUser', 'postRegisterUser', 'postSendUserResetPasswordLink']),
             callbackBuildItem(data) {
-                return {
-                    rowContent: {
-                        validated: {},
-                        state: {active: false, loading: false},
-                        originData: this.$utils.clone(data), //clone to separate data for object
-                        data: data,
-                        wholeEdit: true
+                let contextMenu, userStatusMenu;
+                contextMenu = [
+                    {
+                        name: 'Reset password',
+                        active: false,
+                        type: 'info',
+                        message: `<p> Send an email to get reset password link, <a>the email will send to the user email.</a></p>`,
+                        action: {act: this.postSendUserResetPasswordLink, text: 'Send'},
+                        data: data
                     },
+                    {
+                        name: 'Delete Account',
+                        active: false,
+                        type: 'warning',
+                        message: `When you delete the account, the account will be permanently deleted and cannot be un-deleted.`,
+                        action: {act: this.postDeleteUser, text: 'Delete'},
+                        data: data,
+                    }
+                ];
+
+                //set user status menu
+                if (data.status === 'approved') {
+                    userStatusMenu = {
+                        name: 'Disable Account',
+                        active: false,
+                        type: 'warning',
+                        message: `Users with disabled accounts cannot sign in.`,
+                        action: {act: this.postChangeUserStatus, params: {status: 'disabled'}, text: 'Disable'},
+                        data: data
+                    }
+                } else if (data.status === 'disabled') {
+                    userStatusMenu = {
+                        name: 'Enable Account',
+                        active: false,
+                        type: 'info',
+                        message: `<p>Users with enabled accounts can sign in.</p>`,
+                        action: {act: this.postChangeUserStatus, params: {status: 'approved'}, text: 'Enable'},
+                        data: data
+
+                    }
+                } else {
+                    userStatusMenu = {
+                        name: 'Approve Account',
+                        active: false,
+                        type: 'info',
+                        message: `<p>Approve the user account then the user can sign in and <a>user can start create profile.</p>`,
+                        action: {act: this.postChangeUserStatus, params: {status: 'approved'}, text: 'Approve'},
+                        data: data
+                    }
+                }
+                //set user status menu
+                //add user menu status
+                contextMenu.splice(1, 0, userStatusMenu);//add item at second position
+                //add user menu status
+                return {
+                    rowContent: {},
                     rows: [
-                        {data: data.name, type: 'id', class: 'user-email'},
-                        {data: data.government_organize ? 'Yes':'No', type: "text"},
-                        {data: this.$utils.formatTimestmp(data.created_at), type: 'text', class: 'hide-xs'},
-                        {data: this.$utils.formatTimestmp(data.updated_at), type: 'text', class: 'hide-xs'},
+                        {data: data.email, type: 'id', class: 'user-email'},
                         {
-                            data: data.name, type: 'action', class: '',
-                            modal: {
-                                name: 'Delete Organize',
-                                active: false,
-                                type: 'warning',
-                                message: `When you delete the organize, the organize will be permanently deleted and cannot be un-deleted.`,
-                                action: {act: this.postDeleteOrganize, text: 'Delete'},
-                                data: data,
-                            }
+                            data: `${this.baseUrl}${data.image}`,
+                            type: 'image',
+                            class: 'hide-xs hide-md'
+                        },
+                        {
+                            data: this.$utils.firstUpper(data.status),
+                            type: 'text',
+                            class: 'hide-xs',
+                            textColor: data.statusColor,
+                        },
+                        {data: data.name, type: 'text', class: 'hide-xs'},
+                        {data: this.$utils.formatTimestmp(data.created_at), type: 'text', class: 'hide-xs'},
+                        {
+                            data: data.email, type: 'action', class: '',
+                            contextMenu
                         },
                     ]
                 }
             },
-            //positive action for modal buttons
+            showModalAction(m) {
+                m.active = true; //close modal on menu context clicked
+                this.modal = m;
+            },
+            //positive action for modal menu context
             positiveAction() {
                 this.modal.active = false;//close modal on positive button clicked
                 let action = this.modal.action, dt = 3500, //dt is toasted show length in time
-                    data = this.modal.data; //set data from modal
+                    data = {...this.modal.data, ...action.params}; //set data from modal
                 if (action.act) {//@important action.act must non native functions
-                    action.act({id: data.id})
+                    action.act({id: data.id, data})
                         .then(r => {
                             if (r.success) {
-                                this.showInfoToast({msg: 'The organize was deleted!', dt});
+                                this.showInfoToast({msg: r.message, dt});
                                 this.getItems();
                             } else {
-                                this.showErrorToast({msg: 'Failed to delete the organize!', dt});
+                                this.showErrorToast({msg: r.message, dt});
                             }
                         })
                         .catch(e => {
-                            this.showErrorToast({msg: 'Failed to delete the organize!', dt});
+                            this.showErrorToast({msg: 'The action failed!', dt});
                         });
                 }
             },
-            addOrganize() {
+            createUser() {
                 let ft = this.formTopState;
                 ft.loading = true;
-                this.postCreateOrganize(this.models.formTop)
-                    .then(r => {
-                        if (r.success) {
+                this.models.formTop.type = 'organize';
+                this.postRegisterUser(this.models.formTop)
+                    .then(res => {
+                        if (res.success) {
                             this.getItems();
                             ft.show = false;
                             this.models.formTop = {imageSrc: null};
                         }
                         ft.loading = false;
                     })
-                    .catch(e => {
+                    .catch(er => {
                         ft.loading = false;
                     })
-            },
-            editOrganize(fireEvent, data, position) {
-                let dt = 3500, v = this.paginate.items[position.row].rowContent;
-                data.organize_name = data.name;
-                this.toggleFormRowContent(fireEvent, position, this.Event.loadingState().ActiveLoading);
-                this.postUpdateOrganize(data)
-                    .then(r => {
-                        if (r.success) {
-                            this.showInfoToast({msg: 'The organize was updated!', dt});
-                            this.getItems();
-                        } else {
-                            this.showErrorToast({msg: 'Failed to update the organize!', dt});
-                        }
-                        this.toggleFormRowContent(fireEvent, position, this.Event.loadingState().NorActiveLoading);
-                    })
-                    .catch(err => {
-                        v.validated = {};
-                        if ((err && err.errors) || (err.response && err.response.data && err.response.data.errors)) {
-                            this.toggleFormRowContent(fireEvent, position, this.Event.loadingState().ActiveNotLoading);
-                            v.validated = this.validated();//get validated data from state mutation
-                        } else {
-                            this.toggleFormRowContent(fireEvent, position, this.Event.loadingState().NorActiveLoading);
-                            this.showErrorToast({msg: 'Failed to update the organize!', dt});
-                        }
-                    });
-            },
-            deleteOrganize(data) {
-                data.modal.active = true;
-                this.modal = data.modal;
             }
         },
         created() {

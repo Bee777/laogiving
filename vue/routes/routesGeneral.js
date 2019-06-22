@@ -12,6 +12,10 @@ import NewsSingle from '@com/General/Pages/Single/NewsSingle.vue'
 import ActivitySingle from  '@com/General/Pages/Single/ActivitySingle.vue'
 import CompanyProfile from  '@com/General/Pages/CompanyProfile.vue'
 
+const Login = ()=> import('@com/General/Login.vue')
+const Logout = ()=> import('@com/General/Logout.vue')
+
+
 const metas = {
     guestMeta: {
         requiresVisitor: true,
@@ -37,6 +41,25 @@ const metas = {
 };
 
 export default [
+    {
+        path: "/login",
+        component: Login,
+        name: 'login',
+        meta: {
+            ...metas.guestMeta, ...metas.df({
+                navFixed: false,
+            })
+        },
+    },
+    {
+        path: '/users-logout',
+        name: 'users-logout',
+        component: Logout, meta: {
+            ...metas.df({
+                navFixed: false,
+            })
+        },
+    },
     {
         path: "/register_overview",
         component: RegisterOverview,

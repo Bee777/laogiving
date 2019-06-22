@@ -121,7 +121,7 @@ class Helpers
     public static function subFileName($filename, $length_sub = 28)
     {
         $filenameLength = mb_strlen($filename, 'UTF-8');
-        return ($filenameLength > $length_sub) ? mb_substr($filename, 0, 28, 'UTF-8') : $filename;
+        return preg_replace('/[^a-z0-9]/i', '_', ($filenameLength > $length_sub) ? mb_substr($filename, 0, 28, 'UTF-8') : $filename);
     }
 
     public static function isNumber($n)
@@ -153,6 +153,12 @@ class Helpers
             return true;
         }
         return false;
+    }
+
+    public static function fileExists($fullPath = ''): bool
+    {
+        $file_path = public_path($fullPath);
+        return ($fullPath !== '' && file_exists($file_path) && is_file($file_path));
     }
 
     public static function decode64($val)

@@ -27,15 +27,11 @@ class DashboardResponse implements Responsable
         if (Helpers::isAjax($request)) {
             $data = [];
             $data['latest_members_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->whereIn('user_types.type_user_id', User::getNonAdminUserIds())->count();
-            $data['events_count'] = $this->getPostsCount('event');
-            $data['scholarships_count'] = $this->getPostsCount('scholarship');
-            $data['activities_count'] = $this->getPostsCount('activity')['all'];
             $data['news_count'] = $this->getPostsCount('news')['all'];
-            $data['dictionaries_count'] = 0;
 
             if (User::isAdminUser($request->user())) {
-                $data['members_government_none_government_count'] = $this->getMembersGovernmentNoneGovernmentCount();
-                $data['members_degrees_count'] = $this->getMembersDegreeCount();
+                $data['activities_count'] = $this->getPostsCount('activities');
+                $data['volunteering_hours'] = 0;
             }
 
             return response()->json(['data' => $data]);
@@ -48,43 +44,5 @@ class DashboardResponse implements Responsable
         $data['active'] = Posts::where('type', $type)->where('status', 'open')->count();
         $data['all'] = Posts::where('type', $type)->count();
         return $data;
-    }
-
-    public function getMembersGovernmentNoneGovernmentCount()
-    {
-        $government_count = 0;
-        $none_government_count = 0;
-
-        $data = [];
-        $data['government'] = [
-            'title' => 'Government',
-            'count' => ['text' => 'Members', 'value' => $government_count]
-        ];
-        $data['none-government'] = [
-            'title' => 'None-Government',
-            'count' => ['text' => 'Members', 'value' => $none_government_count]
-        ];
-        return collect($data)->values();
-    }
-
-    public function getMembersDegreeCount()
-    {
-        $data = [];
-
-        $query = User::join('user_types', 'user_types.user_id', 'users.id')
-            ->join('member_educations', 'member_educations.user_id', '=', 'users.id')
-            ->join('education_degrees', 'education_degrees.id', '=', 'member_educations.education_degree_id')
-            ->whereIn('user_types.type_user_id', User::getNonAdminUserIds());
-
-        $degrees = ['Degree 1', 'Degree 2', 'Degree 3'];
-        foreach ($degrees as $degree) {
-            $temp = clone $query;
-            $data[] = [
-                'title' => $degree,
-                'count' => ['text' => 'Members', 'value' => 0]
-            ];
-            unset($temp);
-        }
-        return collect($data)->chunk(2)->values();
     }
 }

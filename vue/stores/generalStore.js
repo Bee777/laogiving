@@ -23,28 +23,22 @@ export default new Vuex.Store({
         ...defaultStates,
         isSidebar: '',
         homeData: {
-            banners: [],
-            AboutJaol: aboutInfo,
-            ContactInfo: contactInfo,
-            organizeChart: {
-                info: null, chart: null
-            },
+            banners: banners,
             latest_news: latest_news,
+            states: states,
+            causes: causes,
         },
         postsData: {
             news: news,//{posts: {}, mostViews: [], comingEvents: []},
             activities: activities,// {posts: {}, mostViews: [], comingEvents: []},
-            events: events, //{posts: {}, mostViews: [], comingEvents: []},
         },
         singlePostsData: {
             news: {data: {}, others: []},
             activities: {data: {}, others: []},
-            events: {data: {}, others: []},
         },
         postsAllowed: {
             news: true,
             activities: true,
-            events: true,
         },
         searchQuery: {text: '', filters: {}},
     },

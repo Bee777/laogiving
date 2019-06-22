@@ -82,131 +82,106 @@
                     {
                         contentHeader: {
                             expanded: true,
-                            name: "Site Setting",
-                            description: "Manage site identifications.",
+                            name: "ຂໍ້ມູນຜູ້ໃຊ້",
+                            description: "ຈັດການຂໍ້ມູນຜູ້ໃຊ້, ການອະນຸຍາດຜຸູ້ໃຊ້, ການຄົ້ນຫາ",
                             icon: "keyboard_arrow_up"
                         },
                         items: [
                             {
-                                name: "Site Info and Banner", //required
-                                icon: "settings", //required
-                                action: this.Route, //required
-                                params: {name: "sitesetting"} //required
-                            }
-                        ]
-                    },
-                    {
-                        contentHeader: {
-                            expanded: true,
-                            name: "Jaol Memebers",
-                            description: "Manage, Authentication, Approval, Searching",
-                            icon: "keyboard_arrow_up"
-                        },
-                        items: [
-                            {
-                                name: "All Members", //required
+                                name: "ອາສາສະຫມັກ", //required
                                 icon: "group", //required
                                 action: this.Route, //required
-                                params: {name: "members"} //required
+                                params: {name: "volunteer"} //required
                             },
                             {
-                                name: "Members Profile",
-                                icon: "account_box", //required
+                                name: "ອົງກອນ ຫລື ກຸ່ມ",
+                                icon: "business", //required
                                 action: this.Route, //required
-                                params: {name: "members-profile"} //required
-                            },
-                            {
-                                name: "Organization",
-                                icon: "bubble_chart",
-                                action: this.Route,
-                                params: {name: "organization"}
-                            },
-                            {
-                                name: "Department",
-                                icon: "chrome_reader_mode",
-                                action: this.Route,
-                                params: {name: "department"}
+                                params: {name: "organize"} //required
                             }
                         ]
                     },
-                    //Xone Menu
                     {
                         contentHeader: {
                             expanded: true,
-                            name: "Jaol Posts",
-                            description: "Manage Jaol posts information",
+                            name: "ຂໍ້ມູນກິດຈະກໍາ",
+                            description: "ຈັດການຂໍ້ມູນກິດຈະກໍາ",
                             icon: "keyboard_arrow_up"
                         },
                         items: [
                             {
-                                name: "News", //required
+                                name: "ສ້າງກິດຈະກໍາ", //required
+                                icon: "add_circle", //required
+                                action: this.Route, //required
+                                params: {name: "create-activity"} //required
+                            },
+                            {
+                                name: "ກິດຈະກໍາ", //required
+                                icon: "list_alt", //required
+                                action: this.Route, //required
+                                params: {name: "activities"} //required
+                            },
+                            {
+                                name: "ປະເພດກິດຈະກໍາ", //required
+                                icon: "category", //required
+                                action: this.Route, //required
+                                params: {name: "causes"} //required
+                            },
+                            {
+                                name: "ຂໍ້ມູນຄວາມຊໍານານ", //required
+                                icon: "equalizer", //required
+                                action: this.Route, //required
+                                params: {name: "skill"} //required
+                            },
+                            {
+                                name: "ຂໍ້ມູນຄວາມເຫມາະສົມ", //required
+                                icon: "streetview", //required
+                                action: this.Route, //required
+                                params: {name: "suitable"} //required
+                            },
+                        ]
+                    },
+                    {
+                        contentHeader: {
+                            expanded: true,
+                            name: "ຂໍ້ມູນຂ່າວສານຕ່າງໆ",
+                            description: "ຈັດການຂໍ້ມູນຂ່າວສານຕ່າງໆ",
+                            icon: "keyboard_arrow_up"
+                        },
+                        items: [
+                            {
+                                name: "ຂ່າວສານ", //required
                                 icon: "rss_feed", //required
                                 action: this.Route, //required
                                 params: {name: "news"} //required
                             },
-                            {
-                                name: "Activity", //required
-                                icon: "list_alt", //required
-                                action: this.Route, //required
-                                params: {name: "activity"} //required
-                            },
-                            {
-                                name: "Event", //required
-                                icon: "today", //required
-                                action: this.Route, //required
-                                params: {name: "event"} //required
-                            },
-                            {
-                                name: "Scholarship", //required
-                                icon: "school", //required
-                                action: this.Route, //required
-                                params: {name: "scholarship"} //required
-                            },
-                            {
-                                name: "All Dictionaries", //required
-                                icon: "g_translate", //required
-                                action: this.Route, //required
-                                params: {name: "dictionary"} //required
-                            },
                         ]
                     },
                     {
                         contentHeader: {
                             expanded: true,
-                            name: "Jaol Info",
-                            description: "Manage Jaol organize chart information and jaol self information.",
+                            name: "ຂໍ້ມູນເວັບໄຊ",
+                            description: "ຈັດການຂໍ້ມູນຂ່າວ.",
                             icon: "keyboard_arrow_up"
                         },
                         items: [
                             {
-                                name: "About Jaol Info", //required
+                                name: "ຂໍ້ມູນເວັບ ແລະ ແບຣນເນີ້", //required
+                                icon: "settings", //required
+                                action: this.Route, //required
+                                params: {name: "site-setting"} //required
+                            },
+                            {
+                                name: "ຂໍ້ມູນກ່ຽວກັວ", //required
                                 icon: "business", //required
                                 action: this.Route, //required
-                                params: {name: "aboutjaol"} //required
+                                params: {name: "about"} //required
                             },
                             {
-                                name: "Board Committee", //required
-                                icon: "bubble_chart", //required
-                                action: this.Route, //required
-                                params: {name: "organize-chart-range"} //required
-                            },
-                            {
-                                name: "Contact Info", //required
+                                name: "ຂໍ້ມູນຕິດຕໍ່", //required
                                 icon: "call", //required
                                 action: this.Route, //required
-                                params: {name: "contactinfo"} //required
-                            },
-                              {
-                                name: "Sponsor", //required
-                                icon: "card_giftcard", //required
-                                action: this.Route, //required
-                                params: {name: "sponsor"} //required
-                            },
-                            {
-                                name: "Upload File", //required
-                                icon: "cloud_upload", //required
-                                action: this.Route, //required
-                                params: {name: "uploadfile"} //required
+                                params: {name: "contact-info"} //required
                             },
                         ]
                     }

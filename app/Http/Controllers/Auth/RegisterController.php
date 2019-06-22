@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\UserType;
+use App\Traits\UserRoleTrait;
 use Illuminate\Http\Response;
 use App\Jobs\SendNewUserRegistration;
 use App\User;
 use App\Http\Controllers\Controller;
-use App\UserType;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
@@ -26,7 +28,7 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RegistersUsers, UserRoleTrait;
 
     /**
      * Where to redirect users after registration.
@@ -54,10 +56,10 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'first_name' => ['required', 'string', 'max:191'],
-            'last_name' => ['required', 'string', 'max:191'],
+            'name' => ['required', 'string', 'max:191'],
             'email' => ['required', 'string', 'email', 'max:191', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'password' => ['required', 'string', 'min:8'],
+            'type' => ['required', Rule::in(['volunteer', 'organize'])],
         ]);
     }
 
@@ -83,9 +85,10 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $receive_news = isset($data['receive_news']) ? 'yes': 'no';
         return User::create([
-            'name' => $data['first_name'],
-            'last_name' => $data['last_name'],
+            'name' => $data['name'],
+            'receive_news' => $receive_news,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
@@ -106,7 +109,7 @@ class RegisterController extends Controller
             $this->dispatch(new SendNewUserRegistration($user));
         }
         // add user type for first register
-        $userType = new UserType(['type_user_id' => $user->getTypeUserId('user')]);
+        $userType = new UserType(['type_user_id' => $this->getValidateUserType($request->get('type'))]);
         $user->userType()->save($userType);
         if ($request->ajax()) {
             return [
@@ -115,5 +118,16 @@ class RegisterController extends Controller
             ];
         }
         return false;
+    }
+
+    protected function user_type_wrapper($title)
+    {
+        return str_replace('-', '_', $title);
+    }
+
+    protected function getValidateUserType($type)
+    {
+        $userTypeId = $this->getTypeUserId($this->user_type_wrapper($type));
+        return $userTypeId ?? null;
     }
 }

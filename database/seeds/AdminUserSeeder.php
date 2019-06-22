@@ -20,6 +20,7 @@ class AdminUserSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'super_admin@giving.la',
             'password' => Hash::make('admin123'),
+            'status' => 'approved',
         ]);
         $user->save();
         $userType = new UserType(['type_user_id' => $this->getTypeUserId('super_admin')]);

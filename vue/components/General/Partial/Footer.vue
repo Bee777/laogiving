@@ -16,9 +16,10 @@
                         </aside>
                         <aside class="widget socialmedia-widget">
                             <ul class="social">
-                                <li><a><i class="fab fa-facebook"></i></a></li>
-                                <li><a><i class="fab fa-instagram"></i></a></li>
-                                <li><a><i class="fab fa-youtube"></i></a></li>
+                                <li><a target="_blank" :href="s.twitter"><i class="fab fa-twitter"></i></a></li>
+                                <li><a target="_blank" :href="s.facebook"><i class="fab fa-facebook"></i></a></li>
+                                <li><a target="_blank" :href="s.instagram"><i class="fab fa-instagram"></i></a></li>
+                                <li><a target="_blank" :href="s.youtube"><i class="fab fa-youtube"></i></a></li>
                             </ul>
                         </aside>
                     </div>
@@ -27,7 +28,8 @@
                             <ul class="menu">
                                 <li><a class="cursor" @click="Route({name: 'home'})">Home</a></li>
                                 <li><a class="cursor" @click="Route({name: 'activities'})">Be a Volunteer</a></li>
-                                <li><a class="cursor" @click="Route({name: 'register', query: {type: 'organize'}})">Be an
+                                <li><a class="cursor" @click="Route({name: 'register', query: {type: 'organize'}})">Be
+                                    an
                                     Organization</a></li>
                                 <li><a class="cursor" @click="Route({name: 'news'})">News</a></li>
                                 <li><a class="cursor" @click="Route({name: 'about'})">About Us</a></li>
@@ -41,10 +43,16 @@
                         <aside class="widget newsletter-widget">
                             <h3>NEWSLETTER</h3>
                             <p>Receive giving news and other good stories from us!.</p>
-                            <form id="newsletter">
-                                <input type="email" name="email" class="form-control" placeholder="Email"/>
-                                <button type="submit" value="" class="btn btn-orange btn-medium"><i
+                            <form @submit.prevent id="newsletter">
+                                <input v-model="news_letter.email" type="email" name="email" class="form-control"
+                                       placeholder="Email"/>
+
+                                <button @click="subMitNewsLetter" type="submit" value=""
+                                        class="btn btn-orange btn-medium"><i
                                     class="lnr lnr-arrow-right"></i></button>
+                                <label v-if="validated().email" class="error-msg" style="display: block;">{{
+                                    validated().email }}</label>
+                                <label v-if="news_letter.msg" class="success-msg">{{ news_letter.msg }}</label>
                             </form>
                         </aside>
                     </div>
@@ -69,6 +77,27 @@
 </style>
 <script>
     import Base from "@com/Bases/GeneralBase.js";
+    import {mapActions} from 'vuex'
 
-    export default Base.extend({});
+    export default Base.extend({
+        data: () => ({
+            news_letter: {msg: ''},
+        }),
+        methods: {
+            ...mapActions(['postSaveNewsLetter']),
+            subMitNewsLetter() {
+                this.postSaveNewsLetter(this.news_letter).then((res) => {
+                    if (res.success) {
+                        this.news_letter.msg = res.msg;
+                        this.news_letter.email = '';
+                        setTimeout(() => {
+                            this.news_letter.msg = '';
+                        }, 3500);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+        }
+    });
 </script>

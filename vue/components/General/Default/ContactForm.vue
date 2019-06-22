@@ -139,9 +139,6 @@
                         }
                     });
             }
-        },
-        created() {
-            this.fetchHomeData();
         }
     });
 </script>

@@ -5,7 +5,7 @@
             :searchPlaceholder="'Search by Banner name'"
             :searchButtonText="'Add Banner'"
             :headers="headers"
-            :notFoundText="'Please make sure you type or spell the organize information correctly.'"
+            :notFoundText="'Please make sure you type or spell the banner information correctly.'"
             :isSearch="isSearch"
             :isLoading="validated().loading_searches"
             :formTopState="formTopState"
@@ -24,9 +24,9 @@
                     <div class="user-form-title">Add Banner</div>
                     <div class="layout-align-space-around-start layout-row">
                         <AdminInput
-                            v-model="models.formTop.name"
+                            v-model="models.formTop.title"
                             :focus="true"
-                            :label="'Banner name'"
+                            :label="'Title'"
                             :inputType="'text'"
                         />
                     </div>
@@ -39,12 +39,21 @@
                     </div>
                     <div class="layout-align-space-around-start layout-row">
                         <AdminInput
+                            :label="'Link name'"
+                            v-model="models.formTop.link_name"
+                            :containerClass="'dense'"
+                            :inputType="'text'"
+                        ></AdminInput>
+                    </div>
+                    <div class="layout-align-space-around-start layout-row">
+                        <AdminInput
                             :label="'Link'"
                             v-model="models.formTop.link"
                             :containerClass="'dense'"
                             :inputType="'text'"
                         ></AdminInput>
                     </div>
+
                     <div class="layout-align-space-around-start layout-row">
                         <AdminInput
                             @inputImageBase64="(d)=> models.formTop.imageSrc=d"
@@ -88,8 +97,8 @@
             <template slot-scope="{fireEvent, position, rowContent}" slot="form-row-detail">
                 <div class="layout-align-space-around-start layout-row">
                     <AdminInput
-                        v-model="rowContent.data.name"
-                        :label="'Banner name'"
+                        v-model="rowContent.data.title"
+                        :label="'Title'"
                         :inputType="'text'"
                         @onInputEnter="edit(fireEvent, rowContent.data, position)"
                     />
@@ -101,6 +110,14 @@
                         :inputType="'number'"
                         @onInputEnter="edit(fireEvent, rowContent.data, position)"
                     />
+                </div>
+                <div class="layout-align-space-around-start layout-row">
+                    <AdminInput
+                        :label="'Link name'"
+                        v-model="rowContent.data.link_name"
+                        :containerClass="'dense'"
+                        :inputType="'text'"
+                    ></AdminInput>
                 </div>
                 <div class="layout-align-space-around-start layout-row">
                     <AdminInput
@@ -118,7 +135,7 @@
                         :label="'Banner Image *'"
                         :validateText="rowContent.validated.image"
                         :inputType="'file'"
-                        placeholder="Choose bnner image"
+                        placeholder="Choose banner image"
                         @onInputEnter="edit(fireEvent, rowContent.data, position)"
                     />
                 </div>
@@ -160,7 +177,7 @@
                 <div>
                     <div class="form-label">Activity Information</div>
                     <div class="form-input-static-value">
-                        {{ `Order: ${modal.data.order}, Banner name: ${modal.data.name}`}}
+                        {{ `Order: ${modal.data.order}, Title: ${modal.data.title}`}}
                     </div>
                 </div>
             </div>
@@ -179,13 +196,14 @@
     export default AdminBase.extend({
         name: "Banner",
         data: () => ({
-            title: "Site Settings",
+            title: "ຂໍ້ມູນເວັບ ແລະ ແບຣນເນີ້",
             type: "banner",
             watchers: true,
             headers: [
-                {class: "th-sortable", name: "Banner name", width: "30%"},
-                {class: "hide-xs th-sortable", name: "Order", width: "20%"},
-                {class: "hide-xs th-sortable", name: "Link", width: "20%"},
+                {class: "th-sortable", name: "Banner Title", width: "30%"},
+                {class: "hide-xs th-sortable", name: "Order", width: "10%"},
+                {class: "hide-xs th-sortable", name: "Link Name", width: "15%"},
+                {class: "hide-xs th-sortable", name: "Link", width: "15%"},
                 {class: "hide-xs th-sortable", name: "Image", width: "10%"},
                 {class: "hide-xs th-sortable", name: "Created", width: "20%"},
                 {class: "th-not-sortable", name: "", width: "80"}
@@ -208,9 +226,14 @@
                         originData: this.$utils.clone(data), //clone to separate data for object
                     },
                     rows: [
-                        {data: data.name, type: "id", class: "user-email"},
+                        {data: data.title, type: "id", class: "user-email"},
                         {
                             data: data.order,
+                            type: "text",
+                            class: "hide-xs"
+                        },
+                        {
+                            data: data.link_name,
                             type: "text",
                             class: "hide-xs"
                         },

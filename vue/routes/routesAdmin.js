@@ -1,14 +1,13 @@
 import Dashboard from '@com/Admin/Dashboard.vue'
-import Members from '@com/Admin/Members/All.vue'
-import SingleMemberProfile from '@com/Admin/Members/SingleMemberProfile.vue'
+import Volunteer from '@com/Admin/Members/Volunteer.vue'
 import Organize from '@com/Admin/Members/Organize.vue'
-import MembersProfile from '@com/Admin/Members/MembersProfile.vue'
 import SiteSetting from '../components/Admin/Default/SiteSetting.vue'
 import ContactInfo from '@com/Admin/Posts/ContactInfo.vue'
 import AboutSite from '@com/Admin/Posts/AboutSite.vue'
 import News from '@com/Admin/Posts/News.vue'
-import Activity from '@com/Admin/Posts/Activity.vue'
-import UploadFile from '@com/Admin/Posts/Uploadfile.vue'
+import Causes from '@com/Admin/Activity/Cause.vue'
+import Skill from '@com/Admin/Activity/Skill.vue'
+import Suitable from '@com/Admin/Activity/Suitable.vue'
 
 const prefix = '/admin/me';
 const metas = {
@@ -37,27 +36,15 @@ export default [{
         meta: metas.authMeta,
     },
     {
-        name: 'members',
-        path: `${prefix}/members`,
-        component: Members,
+        name: 'volunteer',
+        path: `${prefix}/volunteer`,
+        component: Volunteer,
         meta: metas.authMeta,
     },
     {
-        name: 'organization',
-        path: `${prefix}/organizations`,
+        name: 'organize',
+        path: `${prefix}/organize`,
         component: Organize,
-        meta: metas.authMeta,
-    },
-    {
-        name: 'members-profile',
-        path: `${prefix}/members-profile`,
-        component: MembersProfile,
-        meta: metas.authMeta,
-    },
-    {
-        name: 'member-profile',
-        path: `${prefix}/members-profile/:user_id`,
-        component: SingleMemberProfile,
         meta: metas.authMeta,
     },
     {
@@ -78,16 +65,21 @@ export default [{
         meta: metas.authMeta,
     },
     {
-        path: `${prefix}/activity`,
-        name: 'activity',
-        component: Activity,
+        path: `${prefix}/causes`,
+        name: 'causes',
+        component: Causes,
         meta: metas.authMeta,
     },
     {
-        path: `${prefix}/upload-files`,
-        name: 'upload-file',
-        component: UploadFile,
+        path: `${prefix}/skill`,
+        name: 'skill',
+        component: Skill,
         meta: metas.authMeta,
     },
-
+    {
+        path: `${prefix}/suitable`,
+        name: 'suitable',
+        component: Suitable,
+        meta: metas.authMeta,
+    },
 ];

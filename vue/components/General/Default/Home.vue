@@ -1,28 +1,18 @@
 <template>
     <div>
-        <Carousel>
-            <template slot-scope="{ path }">
-                <li :style="`background:url(${path}/use_img/banner1.jpg) no-repeat center; background-size:cover;`">
+        <Carousel :items="homeData.banners">
+            <template slot-scope="{ data, idx, path}">
+                <li
+                    :style="`background:url(${baseUrl}/assets/images/banners/${data.image}) no-repeat center; background-size:cover;`"
+                    :index="idx">
                     <div class="container">
                         <div class="row">
                             <div class="slide-caption">
                                 <h2 data-animation="animated bounceInLeft">
-                                    Give the Gift
-                                    today!
-                                    Every little bit counts. </h2>
-                                <a @click="Route({'name': 'activities'})" data-animation="animated zoomInUp"
-                                   class="btn btn-medium btn-blue">Browse Activities <i class="lnr lnr-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li :style="`background:url(${path}/use_img/banner_img7.jpg) no-repeat center; background-size:cover;`">
-                    <div class="container">
-                        <div class="row">
-                            <div class="slide-caption">
-                                <h2 data-animation="animated bounceInLeft"> Beautify with a Heart, Let's Go Green </h2>
-                                <a @click="Route({name: 'news'})" data-animation="animated zoomInUp"
-                                   class="btn btn-medium btn-blue">Our News <i class="lnr lnr-arrow-right"></i></a>
+                                    {{data.title}}</h2>
+                                <a target="_blank" :href="data.link" data-animation="animated zoomInUp"
+                                   class="btn btn-medium btn-blue">{{data.link_name}}<i
+                                    class="lnr lnr-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -41,7 +31,7 @@
                                 </h4>
                                 <p>Find a volunteer activity that you're interested in, to use the skills you have,
                                     right here in Laos.</p>
-                                <a  @click="Route({name:'activities'})" class="btn btn-medium btn-blue">BE A VOLUNTEER <i
+                                <a @click="Route({name:'activities'})" class="btn btn-medium btn-blue">BE A VOLUNTEER <i
                                     class="lnr lnr-arrow-right"></i></a>
                             </div>
                             <div class="col-xs-12 col-sm-5">
@@ -72,14 +62,14 @@
                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 feature">
                             <div class="is-left-side ">
                                 <img alt="hours" :src="`${baseRes}assets/svg/ic-hours.svg`">
-                                <h3 class="bg-stats__stats">149</h3>
+                                <h3 class="bg-stats__stats">{{ homeData.states.volunteer_signups || 0 }}</h3>
                                 <p>volunteer signups</p>
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 feature">
                             <div class="is-right-side ">
                                 <img alt="hours" :src="`${baseRes}assets/svg/ic-home.svg`">
-                                <h3 class="bg-stats__stats">280</h3>
+                                <h3 class="bg-stats__stats">{{ homeData.states.volunteering_created || 0 }}</h3>
                                 <p>activities created.</p>
                             </div>
                         </div>

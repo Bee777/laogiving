@@ -12,7 +12,7 @@
 /******************** @GuestUserSection ****************** */
 Route::group(['prefix' => '/guest', 'middleware' => ['cors']], function () {
     Route::post('/login', 'Auth\LoginController@login')->name('api.post.login');
-    Route::post('/aGlkZGVuLXJlZ2lzdGVyLXBhZ2UtQGphb2w-post', 'Auth\RegisterController@register')->name('api.post.register');
+    Route::post('/register-user', 'Auth\RegisterController@register')->name('api.post.register');
     //Users Email Forgot Password
     Route::post('/forgot-password/email/{token}', 'Auth\ForgotPasswordController@getEmailFromToken')->name('api.post.getEmailFromToken');
     //Users Password Reset
@@ -30,6 +30,9 @@ Route::group(['prefix' => '/home', 'middleware' => ['cors', 'parseToken:guest-be
     /****@ContactInfo */
     Route::post('/contact-info', 'HomeController@responsePostContactInfo')->name('api.post.contactInfo');
     /****@ContactInfo */
+    /****@NewsLetter */
+    Route::post('/save-receive-news-letter', 'HomeController@responsePostNewsLetter')->name('api.post.saveNewsLetter');
+    /****@NewsLetter */
 });
 /******************** @HomeSection ****************** */
 
@@ -73,11 +76,26 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
         Route::post('/banner/update/{id}', 'AdminController@updateBanner');
         Route::delete('/banner/delete/{id}', 'AdminController@deleteBanner');
         /***@Banner ** */
-        /***@File ** */
-        Route::post('/file/create', 'AdminController@insertFile');
-        Route::post('/file/update/{id}', 'AdminController@updateFile');
-        Route::delete('/file/delete/{id}', 'AdminController@deleteFile');
-        /***@File ** */
+        /***@Volunteering ** */
+        Route::group(['prefix' => '/volunteering', 'middleware' => []], function () {
+            /*** @Causes ** */
+            Route::post('/category/create', 'AdminController@responseActionCreateCauses')->name('api.admin.post.volunteering.causes.create');
+            Route::post('/category/update/{id}', 'AdminController@responseActionUpdateCauses')->name('api.admin.post.volunteering.causes.update');
+            Route::delete('/category/delete/{id}', 'AdminController@responseActionDeleteCauses')->name('api.admin.delete.volunteering.causes.delete');
+            /*** @Causes ** */
+            /*** @Skills ** */
+            Route::post('/skill/create', 'AdminController@responseActionCreateSkill')->name('api.admin.post.volunteering.skill.create');
+            Route::post('/skill/update/{id}', 'AdminController@responseActionUpdateSkill')->name('api.admin.post.volunteering.skill.update');
+            Route::delete('/skill/delete/{id}', 'AdminController@responseActionDeleteSkill')->name('api.admin.delete.volunteering.skill.delete');
+            /*** @Causes ** */
+            /*** @Suitable ** */
+            Route::post('/suitable/create', 'AdminController@responseActionCreateSuitable')->name('api.admin.post.volunteering.suitable.create');
+            Route::post('/suitable/update/{id}', 'AdminController@responseActionUpdateSuitable')->name('api.admin.post.volunteering.suitable.update');
+            Route::delete('/suitable/delete/{id}', 'AdminController@responseActionDeleteSuitable')->name('api.admin.delete.volunteering.skill.delete');
+            /*** @Suitable ** */
+
+        });
+        /***@Volunteering ** */
         /*** @UploadPostsImage * */
         Route::post('posts/upload-images', 'AdminController@responseActionUploadImages')->name('api.admin.post.posts.uploadImages');
         Route::get('/posts/get-images', 'AdminController@responseActionGetImages')->name('api.admin.post.posts.getImages');

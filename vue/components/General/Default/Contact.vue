@@ -13,19 +13,18 @@
                                 <p>Got a cool idea, feedback on how we can improve or maybe just to say hi?</p>
                                 <p>We'd love to hear from you! Please drop us an email at below.</p>
                                 <div
-                                    class="con-icon"
-                                    v-if="!$utils.isEmptyVar( homeData.ContactInfo )">
+                                    class="con-icon">
                                     <h3 class="h3">
                                         <i class="fas fa-phone"></i>
-                                        {{homeData.ContactInfo.phone}}
+                                        {{s.phone}}
                                     </h3>
                                     <h3 class="h3">
                                         <i class="fas fa-envelope"></i>
-                                        {{homeData.ContactInfo.email}}
+                                        {{s.email}}
                                     </h3>
                                     <h3 class="h3">
                                         <i class="fas fa-map-marker-alt"></i>
-                                        {{homeData.ContactInfo.address}}
+                                        {{s.address}}
                                     </h3>
                                 </div>
                             </div>
@@ -38,7 +37,7 @@
                 <!-- <google-map /> -->
                 <div class="map">
                     <iframe
-                        src="https://maps.google.com/maps?width=100%&height=400&hl=en&q=108Hill-Office & Residenceຸ&ie=UTF8&t=&z=13&iwloc=B&output=embed"
+                        :src="s.google_map"
                         frameborder="0"
                         scrolling="no"
                         marginheight="0"
@@ -58,7 +57,6 @@
             ContactForm
         },
         created() {
-            this.fetchHomeData();
             this.setPageTitle(`Contact Us`);
         }
     });

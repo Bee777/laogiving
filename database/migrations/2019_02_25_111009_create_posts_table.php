@@ -14,9 +14,9 @@ class CreatePostsTable extends Migration
     public function up()
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->enum('status', ['pending', 'close', 'open'])->default('open');
-            $table->enum('type', ['news', 'activity', 'event', 'scholarship', 'organize_info'])->default('news');
+            $table->enum('type', ['news', 'activity', 'event'])->default('news');
             $table->string('title');
             $table->string('image');
             $table->longText('description');
@@ -25,7 +25,7 @@ class CreatePostsTable extends Migration
             $table->string('scholarship_type')->nullable()->default(null);
             $table->timestamp('start_date')->nullable()->default(null);
             $table->timestamp('deadline')->nullable()->default(null);
-            $table->integer('user_id')->unsigned();
+            $table->unsignedBigInteger('user_id');
             $table->double('view')->default(0);
             $table->foreign('user_id')
                 ->references('id')->on('users')

@@ -377,11 +377,12 @@ e.g: Our organisation is committed to the welfare of youth-at-risk">NNI is the n
                             </div>
                         </div>
 
-                        <div class="text-center ctn-1200 mb-24 buttonGroup hide" id="submitGroup1">
+                        <div class="text-center ctn-1200 mb-24 buttonGroup hide">
                             <!-- 			        <div class="grid-12 grid-tablet-landscape-up-4-last">  -->
-                            <input type="button" class="button button--ghost button--min-width mr-16 cancelEditProfile"
-                                   id="cancelButton2" value="CANCEL">
-                            <input type="button" class="button button--min-width saveEditProfile" value="SAVE">
+                            <button
+                                    class="button-ctn button--ghost button--min-width mr-16 cancelEditProfile">CANCEL
+                            </button>
+                            <button class="button-ctn button--min-width saveEditProfile">SAVE</button>
                             <!-- 			        </div> -->
                         </div>
                     </form>
@@ -393,9 +394,10 @@ e.g: Our organisation is committed to the welfare of youth-at-risk">NNI is the n
             <!--@ENDFORM-->
 
             <div class="ctn-1200 flex-ctn flex-ctn--just-end mt-24">
-                <input @click="$emit('cancelEditProfile')" type="button" class="button-ctn button--ghost button--min-width mr-16"
-                       value="CANCEL">
-                <input type="button" class="button-ctn button--min-width saveEditProfile" value="SAVE">
+                <button @click="$emit('cancelEditProfile')" class="button-ctn button--ghost button--min-width mr-16">
+                    CANCEL
+                </button>
+                <button class="button-ctn button--min-width saveEditProfile">SAVE</button>
             </div>
 
         </div>

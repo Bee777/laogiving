@@ -124,9 +124,9 @@
             Banner
         },
         data: () => ({
-            title: "Site Settings",
+            title: "ຂໍ້ມູນເວັບ ແລະ ແບຣນເນີ້",
             watchers: true,
-            tabs: [{name: "Site Info", idx: 0}, {name: "Banner", idx: 1}],
+            tabs: [{name: "ຂໍ້ມູນເວັບ", idx: 0}, {name: "ແບຣນເນີ້", idx: 1}],
             selectedTab: {},
             siteInfo: {
                 thumb_website_logo: siteLogo,

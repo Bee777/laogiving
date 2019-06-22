@@ -6,15 +6,15 @@
                 <div class="full-width-percent bg-smoke">
                     <div class="pd-l-15">
                         <ul class="social">
-                            <li><a><i class="fab fa-facebook"></i></a></li>
-                            <li><a><i class="fab fa-instagram"></i></a></li>
-                            <li><a><i class="fab fa-youtube"></i></a></li>
+                            <li><a target="_blank" :href="s.facebook"><i class="fab fa-facebook"></i></a></li>
+                            <li><a target="_blank" :href="s.instagram"><i class="fab fa-instagram"></i></a></li>
+                            <li><a target="_blank" :href="s.youtube"><i class="fab fa-youtube"></i></a></li>
                         </ul>
                         <nav class="meta-login">
                             <ul>
                                 <li><a @click="Route({name:'about'})" class="cursor">About</a></li>
                                 <li><a @click="Route({name:'contact'})" class="cursor">Contact Us</a></li>
-                                <li class="call"><i class="lnr lnr-smartphone"></i>Call Us +731 234 5678</li>
+                                <li class="call"><i class="lnr lnr-smartphone"></i>Call Us {{s.phone}}</li>
                             </ul>
                         </nav>
                     </div>
@@ -53,19 +53,25 @@
                             </div>
                             <div class="collapse navbar-collapse">
                                 <ul class="nav navbar-nav flex flex-wrap flex-end ">
-                                    <li><a @click="Route({name: 'activities'})" class="cursor">Be a Volunteer</a></li>
+                                    <li :class="isRoute('activities')"><a
+                                        :class="isRoute('activities')"
+                                        @click="Route({name: 'activities'})" class="cursor">Be a Volunteer</a></li>
                                     <template v-if="LoggedIn()">
                                         <template v-if="authUserInfo.decodedType === 'organize'
                                         || authUserInfo.decodedType === 'admin'
                                         || authUserInfo.decodedType === 'super_admin'">
-                                            <li><a href="/organize/me/create-activity" class="cursor">Create an
+                                            <li :class="isRoute('create-activity')"><a
+                                                :class="isRoute('create-activity')"
+                                                href="/organize/me/create-activity" class="cursor">Create an
                                                 Activity</a></li>
                                         </template>
 
                                         <template v-if="authUserInfo.decodedType === 'volunteer'
                                         || authUserInfo.decodedType === 'admin'
                                         || authUserInfo.decodedType === 'super_admin'">
-                                            <li><a href="/vounteer/me" class="cursor">My Account</a></li>
+                                            <li :class="isRoute('home')"><a
+                                                :class="isRoute('home')"
+                                                href="/volunteer/me" class="cursor">My Account</a></li>
                                         </template>
 
                                     </template>
@@ -144,8 +150,8 @@
             scrollNavHandler() {
                 //set scroll info
                 setTimeout(() => {
-                    this.navbarHeight = this.$refs['main-nav-bar'].clientHeight;
-                    this.fixedNavBarHeight = this.$refs['nav-bar'].clientHeight;
+                    this.navbarHeight = (this.$refs['main-nav-bar'] || {}).clientHeight;
+                    this.fixedNavBarHeight = (this.$refs['nav-bar'] || {}).clientHeight;
                 }, 120);
 
                 let nScroll = this.navbarHeight - this.fixedNavBarHeight,
@@ -172,6 +178,9 @@
             removeHandlers() {
                 if (this.el)
                     this.el.off('scroll');
+            },
+            isRoute(n) {
+                return this.$route.name === n ? 'active' : ''
             },
         },
         created() {

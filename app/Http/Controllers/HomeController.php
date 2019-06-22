@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendContactInfo;
+use App\Models\Banner;
+use App\Models\Cause;
+use App\Models\Posts;
 use App\Responses\Home\PostsResponse;
 use App\Responses\Home\SinglePostsResponse;
+use App\Responses\SaveNewsLetterResponse;
 use App\Traits\DefaultData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -67,6 +71,10 @@ class HomeController extends Controller
     public function getHomeData($request): array
     {
         $data = [];
+        $data['banners'] = Banner::getBanners(8);
+        $data['latest_news'] = Posts::getPosts('news', 3);
+        $data['states'] = $this->getStates();
+        $data['causes'] = Cause::getCauses(14);
         return $data;
     }
     /***@Get Home Data */
@@ -87,4 +95,16 @@ class HomeController extends Controller
         return response()->json(['success' => true, 'msg' => 'The contact information was sent!.']);
     }
     /***@POST_CONTACTINFO */
+
+    /***@POST_NEWSLETTER
+     * @param Request $request
+     */
+    public function responsePostNewsLetter(Request $request)
+    {
+       $this->validate($request, [
+            'email' => ['required', 'string', 'email', 'max:191', 'unique:news_letters'],
+        ]);
+        return new SaveNewsLetterResponse('save');
+    }
+    /***@POST_NEWSLETTER */
 }

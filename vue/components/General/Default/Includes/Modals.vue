@@ -16,7 +16,8 @@
                         </div>
                         <form name="loginform" v-on:submit.prevent method="post" class="activity">
                             <label> Email
-                                <input v-model="user.email" class="input-ctn" autocomplete="username email" name="email" value=""
+                                <input v-model="user.email" class="input-ctn" autocomplete="username email" name="email"
+                                       value=""
                                        type="text">
                             </label>
 
@@ -26,7 +27,8 @@
                             <label class="mt-16">
                                 Password <span class="tooltip__mark" data-toggle="tooltip" data-placement="right"
                                                title="Your password must be between 8-24 characters with at least one number. Only special characters @$!%*?&amp;+-.=^_|~ are accepted.">?</span>
-                                <input @keyup.enter="Login({userInfo: user, refreshPage: true})" v-model="user.password"
+                                <input @keyup.enter="LoginUser({userInfo: user, refreshPage: true})"
+                                       v-model="user.password"
                                        autocomplete="current-password" name="password" value=""
                                        class="input-ctn"
                                        type="password">
@@ -40,7 +42,7 @@
                             </div>
 
                             <label class="mb-16"><a>Forgot Password?</a></label>
-                            <button @click="Login({userInfo: user, refreshPage: true})"
+                            <button @click="LoginUser({userInfo: user, refreshPage: true})"
                                     class="button-ctn button--large button--full">
                                 Login
                             </button>
@@ -292,9 +294,10 @@
                                     <div
                                         class="rounded-card rounded-card--plain rounded-card--reset-margin rounded-card--mt-16">
                                         <div class="rounded-card__head rounded-card__head--white"
-                                           ><h3 class="h3 font-dark-grey">
+                                        ><h3 class="h3 font-dark-grey">
                                             TELL YOUR FRIENDS AND FAMILY</h3>
-                                            <p class="non-printable" style="color: #666666; font-weight: normal;">Make giving a part of who
+                                            <p class="non-printable" style="color: #666666; font-weight: normal;">Make
+                                                giving a part of who
                                                 we are</p></div>
                                         <div class="rounded-card__body font-dark-grey share-box"><a
                                             class="cursor" href="javascript: void(0);"
@@ -348,6 +351,9 @@
             beforeOpen(e) {
                 this.jq("html").addClass("hidden sidebar");
                 this.jq("body").addClass("hidden sidebar");
+            },
+            LoginUser(credentials) {
+                this.Login(credentials);
             },
             beforeClose(e) {
                 /*
@@ -408,6 +414,7 @@
             this.modalWidth = wWidth - SCROLL_WIDTH < MODAL_WIDTH
                 ? wWidth - ((wWidth + SCROLL_WIDTH) * 8 / 100)
                 : MODAL_WIDTH;
+            this.LoginUser = this.$throttle(this.LoginUser, 1000);
         }
     }
 </script>

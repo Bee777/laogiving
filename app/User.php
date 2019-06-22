@@ -17,6 +17,7 @@ use \Illuminate\Database\Eloquent\Relations\HasMany,
     \Illuminate\Database\Eloquent\Relations\BelongsToMany,
     \Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Notifications\UserResetPasswordNotification;
+use phpDocumentor\Reflection\Types\Self_;
 
 
 class User extends Authenticatable
@@ -29,7 +30,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'last_name', 'email', 'status', 'image', 'password',
+        'name', 'receive_news', 'email', 'status', 'image', 'password',
     ];
 
     /**
@@ -85,7 +86,7 @@ class User extends Authenticatable
      */
     public function setStatus($status): bool
     {
-        if ($this->status !== $status && in_array($status, $this->defaultStatus, true)) {
+        if ($this->status !== $status && in_array($status, self::$defaultStatus, true)) {
             $this->status = $status;
             $this->save();
             //check if status changed to disabled and sign user out
@@ -153,7 +154,6 @@ class User extends Authenticatable
             'thumb_image' => $this->userInfo['imagePath'] . $this->userInfo['preThumb'] . $this->image,
             'image' => $this->userInfo['imagePath'] . $this->image,
             'email' => $this->email,
-            'last_name' => $this->last_name,
             'type' => base64_encode($this->userType->typeUser->name),
         ];
     }

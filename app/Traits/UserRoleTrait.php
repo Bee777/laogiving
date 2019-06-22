@@ -10,8 +10,8 @@ namespace App\Traits;
 
 
 use App\Http\Controllers\Helpers\Helpers;
-use App\Role;
-use App\TypeUser;
+use App\Models\Role;
+use App\Models\TypeUser;
 use App\User;
 use \Illuminate\Support\Collection;
 use \RuntimeException;

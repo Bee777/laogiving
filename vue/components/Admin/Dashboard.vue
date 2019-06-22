@@ -40,34 +40,33 @@
                                             <div class="admin-mat-card">
                                                 <div class="p-card-header">
                                                     <i class="material-icons"> chrome_reader_mode </i>
-                                                    <h3 @click="goTo('event')" class="p-card-title"> Events,
-                                                        Scholarship. </h3>
+                                                    <h3 @click="goTo('event')" class="p-card-title"> Activities, Hours Volunteered. </h3>
                                                 </div>
                                                 <SpinnerLoading v-if="validated().loading_dashboard_data"/>
                                                 <div class="p-posts-card">
                                                     <div class="p-columns">
-                                                        <!--Events Count-->
+                                                        <!--Activities Count-->
                                                         <div class="p-column">
-                                                            <div @click="goTo('event')" style="cursor: pointer;"
+                                                            <div @click="goTo('activities')" style="cursor: pointer;"
                                                                  class="items-counter align-horizontal-center target-host">
                                                                 <div class="counter-header">
                                                                     <div class="counter-title-label">
-                                                                        <h4 class="counter-title">Active Events
+                                                                        <h4 class="counter-title">Active Activities
                                                                             Count</h4>
                                                                         <div class="p-label">(Current)</div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="value-delta">
                                                                     <div class="value">
-                                                                        <span class="value-container">{{dashboardData.events_count.active}} Posts</span>
+                                                                        <span class="value-container">{{dashboardData.activities_count.active}} Posts</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <!--End Events Count-->
-                                                        <!--Scholarships Count-->
+                                                        <!--End Activities Count-->
+                                                        <!--Hours Volunteered Count-->
                                                         <div class="p-column">
-                                                            <div @click="goTo('scholarship')" style="cursor: pointer;"
+                                                            <div @click="goTo('activities')" style="cursor: pointer;"
                                                                  class="items-counter align-horizontal-center target-host">
                                                                 <div class="counter-header">
                                                                     <div class="counter-title-label">
@@ -78,12 +77,12 @@
                                                                 </div>
                                                                 <div class="value-delta">
                                                                     <div class="value">
-                                                                        <span class="value-container">{{dashboardData.scholarships_count.active}} Posts</span>
+                                                                        <span class="value-container">{{dashboardData.volunteering_hours}} Posts</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <!--End Scholarships Count-->
+                                                        <!--End Hours Volunteered Count-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -100,30 +99,40 @@
                                 <section>
                                     <h2 class="items-title">All Members Status</h2>
                                     <div class="items-row sidekick">
-                                        <!--Government/None-Government Card-->
                                         <CounterCard :isLoading="validated().loading_dashboard_data"
-                                                     @onCardClick="goTo('members-profile')"
-                                                     @onMultipleCardClick="goTo('members-profile')"
-                                                     title="Government/None-Government"
-                                                     :multipleItems="dashboardData.members_government_none_government_count"
-                                                     icon="work"/>
-                                        <!--Government/None-Government Card-->
+                                                     @onCardClick="goTo('volunteer')" title="Volunteer"
+                                                     icon="face"
+                                                     :count="{text: 'Signups', value: 0}"/>
+
+                                        <CounterCard :isLoading="validated().loading_dashboard_data"
+                                                     @onCardClick="goTo('organize')" title="Organize or Group"
+                                                     icon=" group "
+                                                     :count="{text: 'Signups', value: 0}"/>
                                     </div>
-                                    <!--Degrees Card-->
-                                    <template v-for="(degrees, idx) in dashboardData.members_degrees_count">
-                                        <div class="items-row sidekick" :key="idx">
-                                            <!--Degree Card-->
-                                            <CounterCard v-for="(degree, jdx) in degrees" :key="jdx" :isLoading="validated().loading_dashboard_data"
-                                                         @onCardClick="goTo('members-profile')" :title="degree.title"
-                                                         icon="import_contacts"
-                                                         :count="{text: degree.count.text, value: degree.count.value}"/>
-                                            <!--Degree Card-->
-                                        </div>
-                                    </template>
-                                    <!--Degrees Card-->
                                 </section>
                             </div>
                             <!--End Member Overview Items-->
+
+                            <!--Volunteering Overview Items-->
+                            <div class="items">
+                                <!-- items-stability -->
+                                <section>
+                                    <h2 class="items-title">All Volunteering Status</h2>
+                                    <div class="items-row sidekick">
+                                        <CounterCard :isLoading="validated().loading_dashboard_data"
+                                                     @onCardClick="goTo('volunteering')"
+                                                     title="Success"
+                                                     :count="{text: 'Activities', value: dashboardData.activities_count.success }"
+                                                     icon="verified_user"/>
+                                        <CounterCard :isLoading="validated().loading_dashboard_data"
+                                                     @onCardClick="goTo('volunteering')"
+                                                     title="Opening"
+                                                     :count="{text: 'Activities', value: dashboardData.activities_count.active }"
+                                                     icon="description"/>
+                                    </div>
+                                </section>
+                            </div>
+                            <!--End Volunteering Overview Items-->
 
                             <!--Posts Items-->
                             <div class="items">
@@ -133,9 +142,9 @@
                                     <div class="items-row sidekick">
                                         <!--Scholarships Card-->
                                         <CounterCard :isLoading="validated().loading_dashboard_data"
-                                                     @onCardClick="goTo('scholarship')" title="Scholarships"
+                                                     @onCardClick="goTo('scholarship')" title="Activities"
                                                      icon="school"
-                                                     :count="{text: 'Posts', value: dashboardData.scholarships_count.all }"/>
+                                                     :count="{text: 'Posts', value: dashboardData.activities_count.all }"/>
                                         <!--Scholarships Card-->
                                     </div>
                                     <div class="items-row sidekick">
@@ -145,26 +154,8 @@
                                                      @onCardClick="goTo('news')" title="News" icon="rss_feed"
                                                      :count="{text: 'Posts', value: dashboardData.news_count}"/>
                                         <!--News Card-->
-                                        <!--Activities Card-->
-                                        <CounterCard :isLoading="validated().loading_dashboard_data"
-                                                     @onCardClick="goTo('activity')" title="Activities"
-                                                     icon="list_alt"
-                                                     :count="{text: 'Posts', value: dashboardData.activities_count }"/>
-                                        <!--Activities Card-->
                                     </div>
-                                    <div class="items-row sidekick">
-                                        <!--Event Card-->
-                                        <CounterCard :isLoading="validated().loading_dashboard_data"
-                                                     @onCardClick="goTo('event')" title="Events" icon="today"
-                                                     :count="{text: 'Posts', value: dashboardData.events_count.all }"/>
-                                        <!--Event Card-->
-                                        <!--Scholarships Card-->
-                                        <CounterCard :isLoading="validated().loading_dashboard_data"
-                                                     @onCardClick="goTo('dictionary')" title="Dictionaries"
-                                                     icon="g_translate"
-                                                     :count="{text: 'Word(s)', value: dashboardData.dictionaries_count }"/>
-                                        <!--Scholarships Card-->
-                                    </div>
+
                                 </section>
                             </div>
                             <!--End Posts Items-->
@@ -191,8 +182,7 @@
         computed: {
             ...mapState(['isMobile', 'isSidebarCollapsed', 'dashboardData']),
         },
-        watch: {
-        },
+        watch: {},
         methods: {
             ...mapActions(['setPageTitle', 'fetchDashboardData']),
             setEnterParentData() {
