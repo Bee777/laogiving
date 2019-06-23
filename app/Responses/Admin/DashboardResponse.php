@@ -10,11 +10,13 @@ namespace App\Responses\Admin;
 
 use App\Http\Controllers\Helpers\Helpers;
 use App\Models\Posts;
+use App\Traits\UserRoleTrait;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
 
 class DashboardResponse implements Responsable
 {
+    use UserRoleTrait;
 
     /**
      * Create an HTTP response that represents the object.
@@ -30,10 +32,11 @@ class DashboardResponse implements Responsable
             $data['news_count'] = $this->getPostsCount('news')['all'];
 
             if (User::isAdminUser($request->user())) {
-                $data['activities_count'] = $this->getPostsCount('activities');
+                $data['activities_count'] = ['active' => 0, 'all' => 0, 'success' => 0];
                 $data['volunteering_hours'] = 0;
+                $data['latest_volunteers_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->where('user_types.type_user_id', $this->getTypeUserId('volunteer'))->count();
+                $data['latest_organizes_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->where('user_types.type_user_id', $this->getTypeUserId('organize'))->count();
             }
-
             return response()->json(['data' => $data]);
         }
     }

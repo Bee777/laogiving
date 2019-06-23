@@ -58,7 +58,7 @@
                                                                 </div>
                                                                 <div class="value-delta">
                                                                     <div class="value">
-                                                                        <span class="value-container">{{dashboardData.activities_count.active}} Posts</span>
+                                                                        <span class="value-container">{{dashboardData.activities_count.active}} Activities</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -70,14 +70,13 @@
                                                                  class="items-counter align-horizontal-center target-host">
                                                                 <div class="counter-header">
                                                                     <div class="counter-title-label">
-                                                                        <h4 class="counter-title">Active Scholarships
-                                                                            Count</h4>
+                                                                        <h4 class="counter-title">Hours Volunteered</h4>
                                                                         <div class="p-label">(Current)</div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="value-delta">
                                                                     <div class="value">
-                                                                        <span class="value-container">{{dashboardData.volunteering_hours}} Posts</span>
+                                                                        <span class="value-container">{{dashboardData.volunteering_hours}} Hours</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -102,12 +101,12 @@
                                         <CounterCard :isLoading="validated().loading_dashboard_data"
                                                      @onCardClick="goTo('volunteer')" title="Volunteer"
                                                      icon="face"
-                                                     :count="{text: 'Signups', value: 0}"/>
+                                                     :count="{text: 'Signups', value: dashboardData.latest_volunteers_count}"/>
 
                                         <CounterCard :isLoading="validated().loading_dashboard_data"
                                                      @onCardClick="goTo('organize')" title="Organize or Group"
                                                      icon=" group "
-                                                     :count="{text: 'Signups', value: 0}"/>
+                                                     :count="{text: 'Signups', value: dashboardData.latest_organizes_count}"/>
                                     </div>
                                 </section>
                             </div>

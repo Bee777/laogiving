@@ -34,9 +34,11 @@ export default new Vuex.Store({
         menuContextItemClicked: {},
         searchQuery: {text: '', filters: {}},
         dashboardData: {
-            activities_count: {active: 0, all: 0},
+            activities_count: {active: 0, all: 0, success: 0},
             volunteering_hours: 0,
             latest_members_count: 0,
+            latest_volunteers_count: 0,
+            latest_organizes_count: 0,
             news_count: 0,
         },
         searchesData: {
