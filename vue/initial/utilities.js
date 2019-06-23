@@ -1249,7 +1249,7 @@ export default {
         setTimeout(function () {
             field.focus();
             setTimeout(function () {
-                field.setAttribute('style', 'display:none;position:absolute;');
+                field.setAttribute('style', 'display:none;position:absolute;opacity:0;');
             }, 50);
         }, 50);
     },

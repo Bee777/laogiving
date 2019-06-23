@@ -11,7 +11,9 @@ Vue.use(VModal);
  * @Component load
  */
 import GeneralInput from '@cus-com/GeneralInput.vue';
+import PostsSearchForm from '@com/General/Partial/PostsSearchForm.vue';
 
+Vue.component('PostsSearchForm', PostsSearchForm);
 Vue.component('GeneralInput', GeneralInput);
 /**
  * @Component load

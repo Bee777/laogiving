@@ -2663,7 +2663,28 @@ input.nav-input-search:focus {
 @Post single design
  */
 .single-post-image-container {
-    padding-top: 53.3%;
+    padding-top: 54%;
+}
+
+.image-relative-abs {
+    position: relative;
+    max-width: 100%;
+}
+
+.image-card-container-abs {
+    width: 100%;
+    height: 100%;
+}
+
+.image-card-abs {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    display: block;
 }
 
 img.single-post-image {
@@ -7211,12 +7232,15 @@ input[type="number"] {
     display: block;
     padding-right: 1rem;
 }
+
 .search-result__field-right, .laogiving .search-result__field-right {
     display: block;
 }
+
 .ico-search-black {
     background-image: url(../svg/ic-search-black.svg);
 }
+
 /*@End Search Field*/
 
 
@@ -9332,17 +9356,21 @@ p.body-txt--smaller span, p.body-txt--smaller {
     color: #999999;
     letter-spacing: 0;
 }
+
 .body-txt--small > span {
     font-size: 14px;
     line-height: 20px;
 }
+
 .body-txt--no-letter-space span {
     line-height: 16px;
     letter-spacing: normal;
 }
+
 .bcrumb--grey-back .bcrumb__child.is-complete p, .bcrumb--grey-back .laogiving .bcrumb__child.is-complete p {
     color: #666666;
 }
-.home-one .navbar-default .navbar-nav > li > a:focus, .home-one .navbar-default .navbar-nav > li > a:active:focus  {
+
+.home-one .navbar-default .navbar-nav > li > a:focus, .home-one .navbar-default .navbar-nav > li > a:active:focus {
     color: #fff;
 }

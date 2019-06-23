@@ -1,19 +1,12 @@
 <template>
-    <div class="search">
-        <div class="form">
-            <div class="field has-addons">
-                <div class="control">
-                    <input @keyup.enter="triggerButton" v-model="inputText" class="input is-medium" type="text"
-                           placeholder="Find what you want">
-                </div>
-                <div class="control">
-                    <a ref="search-button" @click="searchEnter" class="button is-info is-medium">
-                        Search
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <aside class="widget widget_search">
+        <h3>Search bar</h3>
+        <form @submit.prevent class="search-form" method="get">
+            <input @keyup.enter="triggerButton" v-model="inputText" title="Search for:" class="search-field" type="search"
+                   placeholder="Search …">
+            <input ref="search-button" @click="searchEnter" type="submit" value="Search" class="search-submit btn btn-default">
+        </form>
+    </aside>
 </template>
 
 <script>
@@ -50,5 +43,10 @@
 </script>
 
 <style scoped>
-
+    .widget_search {
+        overflow: hidden;
+    }
+    .search-field {
+        outline: none;
+    }
 </style>

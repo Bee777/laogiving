@@ -486,7 +486,7 @@ export const createActions = (utils) => {
             return new Promise((r, n) => {
                 utils.Validate(data, {
                     'name': ['required', {max: 191}],
-                    'icon': ['required', {mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
+                    'icon': ['required', {mimes: 'svg'}, {max: 3000}],
                     'background_image': ['required', {mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
                 }).then(v => {
 
@@ -514,7 +514,7 @@ export const createActions = (utils) => {
             return new Promise((r, n) => {
                 utils.Validate(data, {
                     'name': ['required', {max: 191}],
-                    'icon': [{mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
+                    'icon': [{mimes: 'svg'}, {max: 3000}],
                     'background_image': [{mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
                 }).then(v => {
                     let formData = new FormData();

@@ -17,12 +17,12 @@
         <div class="laogiving">
             <Modals/>
         </div>
-        <Navbar @onNavbarFixed="(t)=> this.fixedNav = t" v-if="!$route.meta.hideNavFooter"/>
-        <div :style="getStyles()" id="general-main-container"
+        <Navbar v-if="!$route.meta.hideNavFooter"/>
+        <div id="general-main-container"
              :class="[(isMobile && $route.meta.navFixed) ? 'add-padding-top-content': '']">
             <router-view></router-view>
         </div>
-        <Footer v-if="!$route.meta.hideNavFooter" :style="getStyles()"/>
+        <Footer v-if="!$route.meta.hideNavFooter"/>
 
         <Sidebar/>
         <!--Tooltip-->
@@ -51,7 +51,6 @@
                 breakPoint: 0,
                 windowHeight: 0,
                 limitBreakPoint: 1023,
-                fixedNav: {},
                 isPreload: false,
             }
         },
@@ -72,9 +71,6 @@
                 } else {
                     this.setMobile({isMobile: false, currentWidth: this.breakPoint, currentHeight: this.windowHeight});
                 }
-            },
-            getStyles() {
-                return this.fixedNav.state ? `padding-top: ${this.fixedNav.height}px !important;` : '';
             },
             onLoading(t) {
                 this.isPreload = t;

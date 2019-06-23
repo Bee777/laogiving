@@ -118,6 +118,8 @@ class SinglePostsResponse implements Responsable
 
     public function mapPost($data): void
     {
+        $data->next = $data->next();
+        $data->previous = $data->previous();
 
         $data->author = $data->user->name . ' ' . $data->user->last_name;
         $data->author_image = $data->user->userInfo['imagePath'] . $data->user->userInfo['preThumb'] . $data->user->image;

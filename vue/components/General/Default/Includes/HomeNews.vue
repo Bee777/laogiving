@@ -13,8 +13,11 @@
                          v-for="(item, idx) in $store.state.homeData.latest_news" :key="idx">
                         <div class="events">
                             <a @click="Route({name: 'news-single',  params: {id: item.id} })" class="img-thumb cursor">
-                                <figure>
-                                    <img :src="`${item.image}`" :alt="item.title"/></figure>
+                                <figure class="image-relative">
+                                    <div class="image-card-container">
+                                        <img class="image-card" :src="`${item.image}`" :alt="item.title"/>
+                                    </div>
+                                </figure>
                             </a>
                             <div class="events-info">
                                 <h3><a class="cursor" @click="Route({name: 'news-single',  params: {id: item.id} })">{{item.title}}</a></h3>
@@ -41,7 +44,28 @@
 <script>
     export default {
         data: () => ({
-            listing: [1, 2, 3],
+
         })
     };
 </script>
+<style scoped>
+    .image-relative {
+        position: relative;
+        max-width: 100%;
+    }
+    .image-card-container {
+        width: 100%;
+        height: 100%;
+        padding-top: 70%;
+    }
+    .image-card{
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        display: block;
+    }
+</style>

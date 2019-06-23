@@ -1,8 +1,10 @@
 <template>
     <div class="nav-bar-fixed-container" ref="main-nav-bar">
-        <div class="nav-bar" :class="[{'nav-bar-fixed' : isFixedNav}]">
+        <div class="nav-bar metabar"
+             :class="[{'metabar--affixed': isFixedNav, 'is-transitioning': isTransitionFixedNav}]"
+             :style="`-webkit-transform: translateY(-${ isFixedNav? fixedNavBarToHeight: 0}px);transform: translateY(-${isFixedNav? fixedNavBarToHeight: 0}px);`">
             <!--TopNav-->
-            <div class="header_meta header_meta_one flex flex-scale-auto" v-if="!isFixedNav">
+            <div ref="nav-bar-top" class="header_meta header_meta_one flex flex-scale-auto">
                 <div class="full-width-percent bg-smoke">
                     <div class="pd-l-15">
                         <ul class="social">
@@ -100,6 +102,9 @@
             </header>
             <!--MainTopNav-->
         </div>
+
+        <div class="metabar metabar--spacer" :style="`height: ${navbarHeight}px;`"></div>
+
     </div>
 </template>
 
@@ -114,9 +119,12 @@
                 isActive: '',
                 el: null,
                 lastScrollTop: 0,
-                navbarHeight: 170,
-                fixedNavBarHeight: 64,
+                navbarHeight: 127,
+                fixedNavBarToHeight: 48,
+                fixedNavBarHeight: 79,
                 isFixedNav: false,
+                transitionFixedNav: 200,
+                isTransitionFixedNav: false,
                 navInputSearch: {active: false, text: ''}
             };
         },
@@ -137,7 +145,6 @@
             },
             toggleFixedNav(t) {
                 this.isFixedNav = t;
-                this.$emit('onNavbarFixed', {state: t, height: this.navbarHeight});
             },
             activeNavInputSearch(t) {
                 this.navInputSearch.active = t;
@@ -147,15 +154,25 @@
                     }, 200);
                 }
             },
+            setNavHeight() {
+                let navTopHeight = (this.$refs['nav-bar-top'] || {}).clientHeight;
+                let navHeight = (this.$refs['nav-bar'] || {}).clientHeight;
+                this.navbarHeight = navTopHeight + navHeight;
+
+                this.fixedNavBarToHeight = navTopHeight;
+                this.fixedNavBarHeight = navHeight;
+
+                this.$emit('onNavbarFixed', {state: true, height: this.navbarHeight});
+            },
             scrollNavHandler() {
                 //set scroll info
-                setTimeout(() => {
-                    this.navbarHeight = (this.$refs['main-nav-bar'] || {}).clientHeight;
-                    this.fixedNavBarHeight = (this.$refs['nav-bar'] || {}).clientHeight;
-                }, 120);
-
-                let nScroll = this.navbarHeight - this.fixedNavBarHeight,
-                    Scroll = this.navbarHeight + this.fixedNavBarHeight, st = 0;
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        this.setNavHeight();
+                    }, 300);
+                });
+                let nScroll = this.fixedNavBarToHeight,
+                    Scroll = this.fixedNavBarToHeight, st = 0;
                 this.el = this.jq(window);
                 //set scroll info
 
@@ -166,10 +183,14 @@
                         if (st > nScroll) {
                             this.toggleFixedNav(true);
                         }
+                        this.isTransitionFixedNav = false;
                     } else {
                         // Scroll Up
                         if (st <= Scroll) {
                             this.toggleFixedNav(false);
+                        }
+                        if (st <= this.transitionFixedNav) {
+                            this.isTransitionFixedNav = true;
                         }
                     }
                     this.lastScrollTop = st;
@@ -193,4 +214,43 @@
         }
     });
 </script>
+<style lang="scss" scoped>
+
+    .metabar {
+        position: absolute;
+        display: block;
+        z-index: 500;
+        width: 100%;
+        font-size: 16px;
+        background: #fff;
+        color: rgba(0, 0, 0, .54);
+        letter-spacing: 0;
+        font-weight: 400;
+        font-style: normal;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        top: 0;
+    }
+
+    .metabar--spacer {
+        position: relative;
+        z-index: 100;
+    }
+
+    .metabar--affixed {
+        position: fixed;
+        background: #fff;
+        -webkit-box-shadow: 0 2px 2px -2px rgba(0, 0, 0, .15);
+        box-shadow: 0 2px 2px -2px rgba(0, 0, 0, .15);
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%);
+    }
+
+    .metabar--affixed.is-transitioning {
+        -webkit-transition: -webkit-transform .3s;
+        transition: -webkit-transform .3s;
+        transition: transform .3s;
+        transition: transform .3s, -webkit-transform .3s;
+    }
+</style>
 

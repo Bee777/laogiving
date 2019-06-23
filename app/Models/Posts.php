@@ -16,6 +16,16 @@ class Posts extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function next()
+    {
+        return self::where('id', '>', $this->id)->orderBy('id', 'asc')->first();
+    }
+
+    public function previous()
+    {
+        return self::where('id', '<', $this->id)->orderBy('id', 'desc')->first();
+    }
+
     public static function getPosts($type, $limit)
     {
         $mLimit = Helpers::isNumber($limit) ? $limit : 3;

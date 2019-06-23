@@ -4,7 +4,7 @@
             <template slot-scope="{ data, idx, path}">
                 <li
                     :style="`background:url(${baseUrl}/assets/images/banners/${data.image}) no-repeat center; background-size:cover;`"
-                    :index="idx">
+                    :key="idx">
                     <div class="container">
                         <div class="row">
                             <div class="slide-caption">
