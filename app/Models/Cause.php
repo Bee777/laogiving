@@ -12,7 +12,11 @@ class Cause extends Model
     public static function getCauses($limit)
     {
         $mLimit = Helpers::isNumber($limit) ? $limit : 3;
-        $causes = self::limit($mLimit)->orderBy('id', 'asc')->get();
+        if ($limit === 'all') {
+            $causes = self::orderBy('id', 'asc')->get();
+        } else {
+            $causes = self::limit($mLimit)->orderBy('id', 'asc')->get();
+        }
         $causes->map(function ($cause) {
             $key_cache = 'cause_svg_cache_';
             if (!Cache::has($key_cache . $cause->id)) {

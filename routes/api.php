@@ -118,6 +118,7 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
         Route::get('/searches/{type}', 'UserController@responseSearches')->name('api.user.get.searches');
         /*** @Searches ** */
         /*** @UserProfileSettings ** */
+        Route::post('/visibility-profile-manage', 'UserController@responseVisibilityProfileManage')->name('api.user.get.responseVisibilityProfileManage');
         Route::get('/profile-options', 'UserController@responseProfileOptions')->name('api.user.get.profileOptions');
         Route::post('/profile-manage', 'UserController@responseProfileManage')->name('api.user.get.responseProfileManage');
         /*** @UserProfileSettings ** */

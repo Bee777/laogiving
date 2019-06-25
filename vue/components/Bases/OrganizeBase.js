@@ -17,7 +17,7 @@ export default Vue.extend({
         }
     },
     computed: {
-        ...mapState(['isMobile', 'postsData', 'singlePostsData', 'homeData', 'searchQuery']),
+        ...mapState(['isMobile', 'postsData', 'singlePostsData', 'authUserInfo', 'dashboardData', 'searchQuery', 'userProfile']),
     },
     watch: {
         query: function (n, o) {
@@ -119,8 +119,21 @@ export default Vue.extend({
                 }
             }
             return res;
-        }
+        },
         /***@SinglePost*/
+        //Toaster
+        toaster(msg, delay = 3500) {
+            let toaster = this.jq('.toast');
+            if (!toaster.length) {
+                return;
+            }
+            toaster.get(0).innerHTML = msg;
+            toaster.css('display', 'block');
+            setTimeout(() => {
+                toaster.get(0).innerHTML = '';
+                toaster.css('display', 'none');
+            }, delay)
+        }
     },
     created() {
         this.getItems = this.debounce(this.getItems, 150);

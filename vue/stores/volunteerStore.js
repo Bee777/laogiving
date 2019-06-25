@@ -1,4 +1,4 @@
-import {createActions, axiosClient} from "./actions/userActions";
+import {createActions, axiosClient} from "./actions/volunteerActions";
 import {
     createInit,
     defaultStates,
@@ -33,31 +33,18 @@ export default new Vuex.Store({
         menuContext: {menus: []},
         menuContextItemClicked: {},
         searchQuery: {text: '', filters: {}},
+        userProfile: {
+            date_of_birth: '', salutation: 'none',
+            profile_image_base64: '', gender: 'none',
+        },
         dashboardData: {
             activities_count: 0,
-            latest_members_count: 0,
-            events_count: {active: 0, all: 0},
-            scholarships_count: {active: 0, all: 0},
-            news_count: 0,
-            dictionaries_count: 0
         },
         searchesData: {
-            members: {},
-            dictionaries: {},
-            news: {},
             activity: {},
-            event: {},
-            scholarship: {},
-            downloadFiles: {},
         },
         searchesAllowed: {
-            dictionaries: true,
-            news: true,
             activity: true,
-            event: true,
-            scholarship: true,
-            members: true,
-            downloadFiles: true,
         },
     },
     getters: {
@@ -78,7 +65,7 @@ export default new Vuex.Store({
             s.selectedSidebarItem = p;
             if (s.isMobile)
                 s.isSidebarMobileOpen = '';
-            $utils.setWindowTitle(`${p.name} | ${settings.site_name}`);
+            $utils.setWindowTitle(`${p.name} | ${settings.site_name}`, 'html,body');
         },
         setSidebarMobileOpen(s, p) {
             s.isSidebarMobileOpen = p.isOpen ? 'mobile-nav-open' : ''
@@ -104,6 +91,12 @@ export default new Vuex.Store({
         },
         setDashboardData(s, p) {
             s.dashboardData = p;
+        },
+        setUserProfile(s, p) {
+            s.userProfile = p;
+        },
+        setUserProfileKey(s, p) {
+            s.userProfile[p.key] = p.value;
         }
     },
     actions: {

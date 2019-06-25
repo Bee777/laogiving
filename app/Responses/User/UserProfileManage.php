@@ -10,10 +10,11 @@ namespace App\Responses\User;
 
 
 use App\Http\Controllers\Helpers\Helpers;
-use App\Organize;
-use App\User;
+use App\Models\CauseDetail;
+use App\Models\OrganizeProfile;
+use App\Models\VolunteerProfile;
 use Illuminate\Contracts\Support\Responsable;
-use App\UserProfile;
+use App\User;
 use Image, File;
 
 class UserProfileManage implements Responsable
@@ -36,64 +37,136 @@ class UserProfileManage implements Responsable
     {
         $data = $request->all();
         if (Helpers::isAjax($request)) {
-            $user = $request->user();
-            if (isset($user)) {
-                //Personal Information
-                $user->name = $request->get('first_name');
-                $user->last_name = $request->get('last_name');
-                $this->saveImageProfile($user);
-                $user->save();
-                //Personal Information
+            $type = $request->get('type');
 
+            if ($this->hasType($type)) {
+                $user = $request->user();
                 //check if admin return back
                 if (User::isAdminUser($user)) {
                     return response()->json(['success' => true, 'data' => $data]);
                 }
                 //check if admin return back
-                $hasProfile = true;
-                $userProfile = $user->profile;
-                if (!isset($userProfile)) {
-                    $userProfile = new UserProfile();
-                    $hasProfile = false;
-                }
-                //Marital Information
-                if (in_array($request->get('marital_status'), $this->getMaritalStatus(), true)) {
-                    $userProfile->marital_status = $request->get('marital_status');
-                } else {
-                    $userProfile->marital_status = 'none';
-                }
-                //Marital Information
-                //Address Information & Description
-                if ($request->has('placeOfBirth')) {
-                    $userProfile->place_of_birth = $request->get('placeOfBirth');
-
-                }
-                if ($request->has('placeOfResident')) {
-                    $userProfile->current_address = $request->get('placeOfResident');;
-                }
-                if ($request->has('personalDescription')) {
-                    $userProfile->description = $request->get('personalDescription');;
-                }
-                //Address Information & Description
 
                 //Personal Information
-                if ($request->has('dateOfBirth')) {
-                    $userProfile->date_of_birth = Helpers::toFormatDateString($request->get('dateOfBirth'), 'Y-m-d H:i:s');
+                $user->name = $request->get('display_name');
+                $this->saveImageProfile($user);
+                $user->save();
+                //Personal Information
+
+                #Cause Details
+                $causes = $request->get('user_causes', []);
+                if (is_array($causes) && count($causes) > 0) {
+                    CauseDetail::saveUser($user, $causes);
+                } else {
+                    CauseDetail::saveUser($user, []);
                 }
-                if ($request->has('phone_number')) {
-                    if ($request->get('phone_number') !== null && !Helpers::isValidPhoneNumber($request->get('phone_number'))) {
-                        return response()->json(['errors' => ['phone_number' => ['Your phone number is invalid.']]], 422);
+                #Cause Details
+                if ($type === 'volunteer' && $user->isUser('volunteer')) {
+
+                    $hasProfile = true;
+                    $userProfile = $user->userProfile($type);
+                    if (!isset($userProfile)) {
+                        $userProfile = new VolunteerProfile();
+                        $hasProfile = false;
                     }
-                    $userProfile->phone_number = $request->get('phone_number');
+                    //Salutation, Gender Information
+                    if ($this->salutation($request->get('salutation'))) {
+                        $userProfile->salutation = $request->get('salutation');
+                    }
+                    if ($this->gender($request->get('gender'))) {
+                        $userProfile->gender = $request->get('gender');
+                    }
+                    //Salutation, Gender Information
+                    $userProfile->display_name = $request->get('display_name');
+
+                    if ($request->has('public_email')) {
+                        $userProfile->public_email = $request->get('public_email');
+                    }
+
+                    //Personal Information
+                    if ($request->has('date_of_birth')) {
+                        $userProfile->date_of_birth = Helpers::toFormatDateString($request->get('date_of_birth'), 'Y-m-d H:i:s');
+                    }
+                    if ($request->has('phone_number')) {
+                        if ($request->get('phone_number') !== null && !Helpers::isValidPhoneNumber($request->get('phone_number'))) {
+                            return response()->json(['errors' => ['phone_number' => ['Your phone number is invalid.']]], 422);
+                        }
+                        $userProfile->phone_number = $request->get('phone_number');
+                    }
+
+                    //@Save User Profile
+                    if (!$hasProfile) {
+                        $user->saveUserProfile($type, $userProfile);
+                    } else {
+                        $userProfile->save();
+                    }
+                    //@Save User Profile
+                } else if ($type === 'organize' && $user->isUser('organize')) { //@End Volunteer
+                    $hasProfile = true;
+                    $userProfile = $user->userProfile($type);
+                    if (!isset($userProfile)) {
+                        $userProfile = new OrganizeProfile();
+                        $hasProfile = false;
+                    }
+
+                    //Group size, Visibility Information
+                    if ($this->group_size($request->get('group_size'))) {
+                        $userProfile->group_size = $request->get('group_size');
+                    }
+
+                    if ($this->visibility($request->get('visibility'))) {
+                        $userProfile->visibility = $request->get('visibility');
+                    }
+                    //Group size, Visibility Information
+
+                    //General Information
+                    $userProfile->display_name = $request->get('display_name');
+
+                    if ($request->has('about')) {
+                        $userProfile->about = $request->get('about');
+                    }
+                    if ($request->has('vision_mission')) {
+                        $userProfile->vision_mission = $request->get('vision_mission');
+                    }
+                    if ($request->has('website')) {
+                        $userProfile->website = $request->get('website');
+                    }
+
+                    if ($request->has('our_programmes')) {
+                        $userProfile->our_programmes = $request->get('our_programmes');
+                    }
+                    if ($request->has('facebook')) {
+                        $userProfile->facebook = $request->get('facebook');
+                    }
+
+                    if ($request->has('public_email')) {
+                        $userProfile->public_email = $request->get('public_email');
+                    }
+                    if ($request->has('contact_person')) {
+                        $userProfile->contact_person = $request->get('contact_person');
+                    }
+                    if ($request->has('address')) {
+                        $userProfile->address = $request->get('address');
+                    }
+
+                    if ($request->has('registration_date')) {
+                        $userProfile->registration_date = Helpers::toFormatDateString($request->get('registration_date'), 'Y-m-d H:i:s');
+                    }
+                    if ($request->has('phone_number')) {
+                        if ($request->get('phone_number') !== null && !Helpers::isValidPhoneNumber($request->get('phone_number'))) {
+                            return response()->json(['errors' => ['phone_number' => ['Your phone number is invalid.']]], 422);
+                        }
+                        $userProfile->phone_number = $request->get('phone_number');
+                    }
+                    //General Information
+                    //@Save User Profile
+                    if (!$hasProfile) {
+                        $user->saveUserProfile($type, $userProfile);
+                    } else {
+                        $userProfile->save();
+                    }
+                    //@Save User Profile
                 }
-                //Personal Information
-                //@Save User Profile
-                if (!$hasProfile) {
-                    $user->profile()->save($userProfile);
-                } else {
-                    $userProfile->save();
-                }
-                //@Save User Profile
             }
             return response()->json(['success' => true, 'data' => $data]);
         }
@@ -105,7 +178,7 @@ class UserProfileManage implements Responsable
             $file = $this->req->file('profile_image');
             $fileExt = strtolower($file->getClientOriginalExtension());
             $imgOriginalName = Helpers::subFileName($file->getClientOriginalName()) . md5('^');
-            $img_filename = $imgOriginalName . md5(date('Y-m-d H:i:s') . microtime()) . time() . '_profile.' . $fileExt;
+            $img_filename = $imgOriginalName . md5(uniqid('profile-volunteer', true)) . '_profile.' . $fileExt;
             $uploadPath = $user->userInfo['imagePath'];
             $preThumb = $user->userInfo['preThumb'];
             if ($fileExt === 'gif' || $fileExt === 'svg') {
@@ -137,8 +210,33 @@ class UserProfileManage implements Responsable
         }
     }
 
-    public function getMaritalStatus()
+    public function hasType($title)
     {
-        return ['none', 'single', 'married'];
+        $types = ['volunteer', 'organize'];
+        return in_array($title, $types, true);
+    }
+
+    public function gender($title)
+    {
+        $gender = ['none', 'male', 'female'];
+        return in_array(strtolower($title), $gender, true);
+    }
+
+    public function salutation($title)
+    {
+        $salutation = ['none', 'mr', 'ms', 'mrs', 'miss', 'mdm', 'dr'];
+        return in_array(strtolower($title), $salutation, true);
+    }
+
+    public function group_size(string $title)
+    {
+        $sizes = ['0', '10', '50', '200', '201'];
+        return in_array($title, $sizes, true);
+    }
+
+    public function visibility(string $title)
+    {
+        $visibilities = ['none', 'visible', 'hidden'];
+        return in_array($title, $visibilities, true);
     }
 }

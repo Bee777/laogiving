@@ -26,14 +26,18 @@
                     <div class="col-xs-12 col-sm-4 footer-widget">
                         <aside class="widget widget_nav_menu">
                             <ul class="menu">
-                                <li><a class="cursor" @click="Route({name: 'home'})">Home</a></li>
-                                <li><a class="cursor" @click="Route({name: 'activities'})">Be a Volunteer</a></li>
-                                <li><a class="cursor" @click="Route({name: 'register', query: {type: 'organize'}})">Be
-                                    an
-                                    Organization</a></li>
-                                <li><a class="cursor" @click="Route({name: 'news'})">News</a></li>
-                                <li><a class="cursor" @click="Route({name: 'about'})">About Us</a></li>
-                                <li><a class="cursor" @click="Route({name: 'contact'})">Contact US</a></li>
+                                <li><a class="cursor" @click="goTo({name: 'home', href: '/'})">Home</a></li>
+                                <li><a class="cursor" @click="goTo({name: 'activities', href: '/posts/activities'})">Be
+                                    a Volunteer</a></li>
+                                <li v-if="!LoggedIn()">
+                                    <a class="cursor"
+                                       @click="goTo({name: 'register', query: {type: 'organize'}, href: '/register?type=organize' })">Be
+                                        an
+                                        Organization</a></li>
+                                <li><a class="cursor" @click="goTo({name: 'news', href: '/posts/news'})">News</a></li>
+                                <li><a class="cursor" @click="goTo({name: 'about', href: '/about'})">About Us</a></li>
+                                <li><a class="cursor" @click="goTo({name: 'contact', href: '/contact'})">Contact US</a>
+                                </li>
                                 <!--<li><a @click="Route({name: 'activities'})">Privacy Policy</a></li>-->
                             </ul>
                         </aside>
@@ -85,6 +89,13 @@
         }),
         methods: {
             ...mapActions(['postSaveNewsLetter']),
+            goTo({name, query, href}) {
+                if (this.$context_name === 'app_general') {
+                    this.Route({name, query})
+                } else {
+                    this.$utils.Location(href);
+                }
+            },
             subMitNewsLetter() {
                 this.postSaveNewsLetter(this.news_letter).then((res) => {
                     if (res.success) {

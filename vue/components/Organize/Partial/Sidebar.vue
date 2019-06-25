@@ -11,7 +11,7 @@
                     </div>
                     <div class="drawer-unlogin">
                         <a @click="GoToHomePage()" class="drawer-seeker">
-                            <span class="line-bottom">Lao giving</span>
+                            <span class="line-bottom">Lao Giving</span>
                         </a>
                         <router-link @click.native.prevent="maskClick()" :to="{ name: 'home', query: { active_page: 'account' } }">
                             <a class="drawer-employer">
@@ -30,6 +30,16 @@
                                 <span>Dashboard</span>
                             </router-link>
                         </li>
+
+                        <li :class="isRoute('create-activity')">
+                            <router-link :to="{name: 'create-activity'}" @click.native.prevent="maskClick()">
+                                <i class="sidebar-icon-md material-icons">
+                                    add_circle
+                                </i>
+                                <span>Create an Activity</span>
+                            </router-link>
+                        </li>
+
                         <li :class="isRoute('news')">
                             <a class="cursor" @click="goToPage('/posts/news')">
                                 <i class="sidebar-icon-md material-icons">

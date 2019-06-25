@@ -141,7 +141,7 @@ export const defaultStates = {
     windowWidth: 0,
     windowHeight: 0,
     authUserInfo: {
-        image: `/assets/images/${settings.website_logo}${settings.fresh_version}`,
+        image: `/assets/images/user_profiles/logo.png${settings.fresh_version}`,
         thumb_image: `/assets/images/user_profiles/96x96-logo.svg${settings.fresh_version}`,
         type: '',
         decodedType: '',

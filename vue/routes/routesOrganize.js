@@ -17,7 +17,7 @@ const metas = {
     },
     authMeta: {
         requiresAuth: true,
-        allows: adminTypes.concat(['volunteer'])
+        allows: adminTypes.concat(['organize'])
     },
     df(prm) {
         let r = Object.assign({}, this.defaultMeta);

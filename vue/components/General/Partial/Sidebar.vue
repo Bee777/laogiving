@@ -22,7 +22,7 @@
                     <div class="drawer-unlogin" v-else>
                         <router-link @click.native.prevent="maskClick()" :to="{ name: 'home' }">
                             <a class="drawer-seeker">
-                                <span class="line-bottom">Lao giving</span>
+                                <span class="line-bottom">Lao Giving</span>
                             </a>
                         </router-link>
                         <a @click="GoToAccountPage(true)" class="drawer-employer cursor">

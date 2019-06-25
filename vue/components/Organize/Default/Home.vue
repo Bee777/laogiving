@@ -5,27 +5,45 @@
             <section class="company-profile__head">
                 <div class="cWidth-1200 company-profile__head-title-logo object-fit">
                     <div class="company-profile__logo">
-                        <img alt="" src="https://www.giving.sg/image/organization_logo?img_id=9128818&1557070447000">
+                        <img :alt="authUserInfo.name" :src="`${baseUrl}${authUserInfo.image}`">
                     </div>
-                    <div class="company-profile__title-views-ctn"><h2 class="h2">Bee Organisation</h2>
+                    <div class="company-profile__title-views-ctn"><h2 class="h2">{{authUserInfo.name}}</h2>
                         <div
                             class="font-dark-grey mt-16 body-txt--small flex flex-ctn--dir-col-tablet-landscape-up-row">
                             <div class="mr-0-tablet-landscape-up-24">
                                 <span class="company-profile__views">6 views </span>
 
                                 <div class="social-list mt-8">
-                                    <a class="button-ctn button--icon button--ghost "
+                                    <a v-if="userProfile.website_in_our_site"
+                                       class="button-ctn button--icon button--ghost"
+                                       target="_blank"
+                                       :href="`https://www.facebook.com/sharer/sharer.php?u=${userProfile.website_in_our_site}`"
                                        title="Facebook"> <i class="material-icons button--icon__icon">share</i>
                                         <span class="button--icon__name">SHARE</span>
                                     </a>
-                                    <label class="btn-checkbox-btn btn-checkbox-btn--save ">
-                                        <input type="checkbox" name="saving-bookmark">
-                                        <span class="button-ctn button--icon button--ghost">
-                                      <i class="material-icons ico-save button--icon__icon">bookmark_border</i>
-                                      <span class="button--icon__name">SAVE</span>
-                                    </span>
-                                    </label>
-                                    <a class="button-ctn button--icon button--ghost "
+                                    <a v-else
+                                       disabled=""
+                                       class="button-ctn button--icon button--ghost"
+                                       title="Facebook"> <i class="material-icons button--icon__icon">share</i>
+                                        <span class="button--icon__name">SHARE</span>
+                                    </a>
+                                    <!--<label class="btn-checkbox-btn btn-checkbox-btn&#45;&#45;save ">-->
+                                    <!--<input type="checkbox" name="saving-bookmark">-->
+                                    <!--<span class="button-ctn button&#45;&#45;icon button&#45;&#45;ghost">-->
+                                    <!--<i class="material-icons ico-save button&#45;&#45;icon__icon">bookmark_border</i>-->
+                                    <!--<span class="button&#45;&#45;icon__name">SAVE</span>-->
+                                    <!--</span>-->
+                                    <!--</label>-->
+                                    <a v-if="userProfile.website_in_our_site"
+                                       @click="copyToClipboard({text: userProfile.website_in_our_site})"
+                                       class="button-ctn button--icon button--ghost "
+                                       title="Link copy to clipboard"> <i
+                                        class="material-icons button--icon__icon">link</i>
+                                        <span class="button--icon__name">LINK</span>
+                                    </a>
+                                    <a v-else
+                                       disabled
+                                       class="button-ctn button--icon button--ghost "
                                        title="Link copy to clipboard"> <i
                                         class="material-icons button--icon__icon">link</i>
                                         <span class="button--icon__name">LINK</span>
@@ -33,7 +51,7 @@
                                 </div>
 
                             </div>
-                            <div class="mr-0-tablet-landscape-up-24">
+                            <div class="mt-24-tablet-landscape-up-0">
                                 <div class="mb-8 company-profile__info ios-switch__on-content is-visible">
                                     <em>Your organisation profile is set to be visible to public but your organisation
                                         is not live yet</em>
@@ -41,13 +59,16 @@
                                 <div class="mb-8 company-profile__info ios-switch__off-content ">
                                     <em>Your organisation profile is not visible to public</em>
                                 </div>
-
                                 <div
                                     class="flex-ctn flex-ctn--align-center flex-ctn--stack-res flex-ctn--just-center flex-ctn--just-start-tablet-landscape-up">
                                     <div class="company-profile__switch">
                                         <label class="ios-switch">
-                                            <input type="checkbox" id="chkIsOrgPrivate"
-                                                   class="js-ios-switch__checkbox ios-switch__checkbox " checked="">
+                                            <input
+                                                @change="changeUserVisibility()"
+                                                type="checkbox" id="chkIsOrgPrivate"
+                                                name="visibility"
+                                                v-model="userProfile.visibility"
+                                                class="js-ios-switch__checkbox ios-switch__checkbox">
                                             <span class="ios-switch__off">PRIVATE</span>
                                             <div class="ios-switch__base"></div>
                                             <span class="ios-switch__on">PUBLIC</span> </label></div>
@@ -278,7 +299,8 @@
                                 <!--Controls-->
                                 <div class="volunteer-admin__container-controls">
 
-                                    <button @click="Route({name: 'create-activity'})" class="button-ctn">CREATE NEW</button>
+                                    <button @click="Route({name: 'create-activity'})" class="button-ctn">CREATE NEW
+                                    </button>
                                     <button @click="Route({name: 'all-volunteers'})" class="button-ctn button--ghost">
                                         VIEW ALL VOLUNTEERS
                                     </button>
@@ -684,357 +706,7 @@
             <!--ENDOrganizeProfile-->
             <!--Account-->
             <div class="ctn" v-show="tab===5">
-                <div class="cWidth-1200 mt-40 mb-40">
-
-                    <div
-                        class="rounded-card rounded-card__body--responsive rounded-card--height-auto rounded-card--full rounded-card--clean-tablet-portrait-down account">
-                        <div class="rounded-card__body rounded-card__body--responsive rounded-card__body">
-                            <form>
-                                <h3 class="h3 mb-8 font-dark-grey">Basic Info</h3>
-                                <div class="input-ctrl">
-                                    <label class="lbl">Logo</label>
-                                    <div class="file-upload file-upload--w270">
-                                        <div class="file-upload__holder">
-                                            <div class="file-upload__spacer"></div>
-                                            <div class="file-upload__image lfr-change-logo">
-                                                <img class="img-placeholder"
-                                                     :src="`https://www.giving.sg/image/organization_logo?img_id=9128818&1557070447000`">
-                                                <a
-                                                    class="button-ctn button--small button--icon file-upload__cancel imageUploadBtn"><i
-                                                    class="ico ico-upload button--icon__icon"></i></a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-ctrl">
-                                    <label class="lbl" for="displayName">Display Name</label>
-                                    <input type="text"
-                                           name="displayName"
-                                           id="displayName"
-                                           placeholder=""
-                                           disabled
-                                           class="form-control input-ctn field-required"
-                                           value="Bee Organization">
-                                    <label for="displayName" class="error-msg"></label>
-                                </div>
-
-                                <div class="input-ctrl success">
-                                    <div class="datepicker clearfix">
-                                        <label class="lbl"
-                                               for="dateOfBirth">Organisation/Group
-                                            Registration Date
-                                        </label>
-                                        <div class="controls">
-                                            <input
-                                                type="text" class="input-ctn pickadate-datepicker picker__input valid"
-                                                name="dateOfBirth" id="dateOfBirth"
-                                                placeholder="dd/mm/yyyy" maxlength="10" data-value="09/12/2018"
-                                                readonly="">
-                                            <label for="dateOfBirth" class="error-msg"
-                                                   style="display: block;"></label>
-                                        </div>
-                                        <div class="error"><label class="error-msg"></label></div>
-                                    </div>
-                                </div>
-
-                                <hr class="hr">
-
-                                <form class="form" novalidate="novalidate">
-                                    <h3 class="h3 mb-8 font-dark-grey">Organisation/Group Information</h3>
-
-                                    <div class="input-ctrl success"><label
-                                        class="lbl" for="employeeSize">Employee/Group Size </label>
-                                        <div class="controls"><select
-                                            name="employeeSize"
-                                            class="select-ctn select--full select-giving span12 valid"
-                                            id="employeeSize">
-                                            <option disabled="">Select employee/group size</option>
-                                            <option>1 - 10</option>
-                                            <option selected="">11 - 50</option>
-                                            <option>51 - 200</option>
-                                            <option>Over 200</option>
-                                        </select><label for="employeeSize" class="error-msg"
-                                                        style="display: block;"></label></div>
-                                    </div>
-
-                                    <hr class="hr">
-                                </form>
-
-                                <form class="form" novalidate="novalidate">
-                                    <h3 class="h3 mb-8 font-dark-grey">Address</h3>
-                                    <div class="input-ctrl">
-                                        <label class="lbl" for="address">Current</label>
-                                        <textarea maxlength="150" rows="5" class="textarea-ctn" id="address"></textarea>
-                                    </div>
-
-                                    <hr class="hr">
-                                </form>
-
-                                <form class="form" novalidate="novalidate">
-                                    <h3 class="h3 mb-8 font-dark-grey">About Organisation/Group</h3>
-                                    <div class="input-ctrl">
-                                        <label class="lbl" for="summary">Description
-                                            of Organisation/Group
-                                        </label>
-                                        <div class="controls">
-										<textarea class="span12 textarea-ctn" rows="8" style="height: 250px"
-                                                  name="summary" id="summary"
-                                                  placeholder="Describe your organisation" maxlength="1500">National Neuroscience Institute (NNI) is the national specialist centre and regional centre for clinical referrals for the management and treatment of the neurosciences, as well as for education and research conducted in the field.
-
-Offering a comprehensive range of Neurology, Neurosurgery and Neuroradiology services using the latest technology and experience of our healthcare professionals, NNI is at the forefront of neuroscience care in Singapore and across the region.
-
-NNI operates directly from two campuses; Tan Tock Seng Hospital and Singapore General Hospital (SGH), as well as provides specialty services to most other hospitals in Singapore.
-
-We are a member of the SingHealth (Singapore Health Services) Group, an integrated healthcare delivery network which offers a complete range of multi-disciplinary and integrated medical care. The Group comprises hospitals, national specialty centres and a network of polyclinics.</textarea>
-                                            <label id="summary-count"></label>
-                                            <label for="summary" class="help-block error-msg"></label>
-                                        </div>
-                                    </div>
-
-                                    <hr class="hr">
-                                </form>
-
-                                <h3 class="h3 font-dark-grey">Our Causes</h3>
-                                <div class="error-msg">You have not select anything</div>
-                                <label class="lbl">Please select at least ONE and at most FOUR causes</label>
-                                <div class="ctn gallery gallery-tablet-portrait-up-6 mt-24 clearfix"
-                                     id="orgCausesSelection">
-                                    <ul class="gallery__item checkbox-list">
-
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26746">
-                                            <div class="checkbox-list__lbl-spn">Animal
-                                                Welfare
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26747">
-                                            <div class="checkbox-list__lbl-spn">Arts
-                                                &amp; Heritage
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26748">
-                                            <div class="checkbox-list__lbl-spn">
-                                                Children &amp; Youth
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26749">
-                                            <div class="checkbox-list__lbl-spn">Community</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   checked
-                                                   value="26750">
-                                            <div class="checkbox-list__lbl-spn">Disability
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26751"
-                                                   checked>
-                                            <div class="checkbox-list__lbl-spn">Education</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26752">
-                                            <div class="checkbox-list__lbl-spn">Elderly</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26753">
-                                            <div class="checkbox-list__lbl-spn" data-content="Environment">Environment
-                                            </div>
-                                        </label></li>
-                                    </ul>
-                                    <ul class="gallery__item checkbox-list">
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26754">
-                                            <div class="checkbox-list__lbl-spn" data-content="Families">Families</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26755">
-                                            <div class="checkbox-list__lbl-spn" data-content="Health">Health</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="1637026">
-                                            <div class="checkbox-list__lbl-spn" data-content="Humanitarian">
-                                                Humanitarian
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26756">
-                                            <div class="checkbox-list__lbl-spn" data-content="Social Service">Social
-                                                Service
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26745"
-                                                   checked>
-                                            <div class="checkbox-list__lbl-spn" data-content="Sports">Sports</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26757">
-                                            <div class="checkbox-list__lbl-spn" data-content="Women &amp; Girls">Women
-                                                &amp; Girls
-                                            </div>
-                                        </label></li>
-                                    </ul>
-                                </div>
-
-                                <hr class="hr">
-                                <form class="form">
-                                    <h3 class="h3 mb-8 font-dark-grey">Contact Info</h3>
-                                    <div class="input-ctrl"><label class="lbl" for="pubEnquiryPerson">Contact
-                                        Person </label>
-                                        <div class="controls"><input
-                                            name="pubEnquiryPerson"
-                                            id="pubEnquiryPerson" placeholder="Contact Person"
-                                            class="form-control field-required input-ctn" type="text"
-                                            value="Volunteer Co-ordinator">
-                                            <label for="pubEnquiryPerson"
-                                                   class="help-block error-msg"></label>
-                                        </div>
-                                    </div>
-                                    <div class="input-ctrl">
-                                        <label class="lbl" for="email">Email</label> <input
-                                        name="email" id="email" placeholder=""
-                                        class="form-control input-ctn field-required" type="email"
-                                        value="beeostin@gmail.com">
-                                        <label for="email" id="emailError" class="error-msg"></label>
-                                    </div>
-                                    <div class="input-ctrl">
-                                        <label class="lbl" for="pubEnquiryContact">Contact Number
-                                        </label>
-                                        <div class="controls">
-                                            <input name="pubEnquiryContact"
-                                                   id="pubEnquiryContact" placeholder="Contact Number"
-                                                   class="form-control input-ctn" type="text"
-                                                   value="63577091">
-                                            <label for="pubEnquiryContact"
-                                                   class="help-block error-msg"></label>
-                                        </div>
-                                    </div>
-                                    <hr class="hr">
-                                </form>
-
-                                <form id="orgOnlineInfo" novalidate="novalidate">
-                                    <div class="input-ctrl">
-                                        <label class="lbl" for="webURL">Website (Optional)</label>
-                                        <div class="controls">
-                                            <input name="webURL" id="webURL"
-                                                   placeholder="Website" class="form-control input-ctn"
-                                                   type="text" value="">
-                                            <label for="webURL"
-                                                   class="help-block error-msg"></label>
-                                        </div>
-                                    </div>
-                                    <div class="input-ctrl">
-                                        <label class="lbl" for="givingUrl">URL in LaoGiving.la</label>
-                                        <div class="controls">
-                                            <input name="givingUrl" id="givingUrl"
-                                                   placeholder="URL in LaoGiving.la i.e.redcross"
-                                                   class="form-control input-ctn" type="text"
-                                                   value="bee-organisation">
-                                            <label for="givingUrl" id="givingUrlError"
-                                                   class="help-block error-msg"></label>
-                                        </div>
-                                    </div>
-                                    <div class="input-ctrl"><label class="lbl" for="facebookLink">Facebook Link
-                                        (Optional)</label>
-                                        <div class="controls"> facebook.com/ <input
-                                            name="facebookLink" id="facebookLink"
-                                            placeholder="e.g. NVPCla" class="form-control p-bot0 input-ctn"
-                                            type="text" value="" style="width: 78%">
-                                            <label for="facebookLink" class="help-block error-msg"></label>
-                                        </div>
-                                    </div>
-                                    <hr class="hr">
-                                </form>
-
-
-                                <h3 class="h3 font-dark-grey passwordLabel">Change Password (Optional)</h3>
-                                <div class="input-ctrl passwordLabel " id="controlCurrent">
-                                    <label class="lbl">Current Password</label>
-                                    <div class="controls input-ctrl error">
-                                        <input name="currentPassword"
-                                               id="currentPassword" placeholder="" class="form-control input-ctn"
-                                               type="password"
-                                               maxlength="24">
-                                        <label for="currentPassword" style="display: block" id="currentPwdError"
-                                               class="error-msg">Password must contain 8-24 characters, with at least a
-                                            number</label>
-                                        <span class="help-block"></span><br>
-                                    </div>
-                                </div>
-
-                                <div class="input-ctrl passwordLabel" id="controlNew">
-                                    <label class="lbl">New Password</label>
-                                    <div class="controls input-ctrl">
-                                        <input name="newPassword"
-                                               id="newPassword" placeholder="" class="form-control input-ctn"
-                                               type="password"
-                                               maxlength="24">
-                                        <label
-                                            class="error-msg"></label>
-                                        <span class="help-block"></span><br>
-                                    </div>
-                                </div>
-
-                                <div class="input-ctrl passwordLabel">
-                                    <label class="lbl">Confirm New Password</label>
-                                    <div class="controls input-ctrl">
-                                        <input name="confirmNewPassword" placeholder="" class="form-control input-ctn"
-                                               type="password"
-                                               maxlength="24">
-                                        <label
-                                            class="error-msg"></label>
-                                        <span class="help-block"></span>
-                                    </div>
-                                </div>
-
-                                <hr class="hr">
-
-                                <div class="text-right text-center-tablet-portrait-down">
-                                    <button class="mr-16 button-ctn button--135 button--ghost button--large">
-                                        CLEAR
-                                        <span class="show-tablet-portrait-up-inline">CHANGES</span>
-                                    </button>
-                                    <button class="button-ctn button--135 button--large">SAVE
-                                    </button>
-
-                                </div>
-
-                            </form>
-
-                        </div>
-                    </div>
-
-                </div>
+                <Account :visible="tab===5"/>
             </div>
             <!--EndAccount-->
             <!--Tabs Content-->
@@ -1050,6 +722,7 @@ We are a member of the SingHealth (Singapore Health Services) Group, an integrat
     import Members from "@com/Organize/Default/Includes/Members.vue"
     import OrganizeProfile from "@com/Organize/Default/Includes/OrganizeProfile.vue"
     import EditOrganizeProfile from '@com/Organize/Default/Includes/EditOrganizeProfile.vue'
+    import Account from '@com/Organize/Default/Includes/Account.vue'
 
     import {mapActions} from 'vuex'
 
@@ -1058,7 +731,8 @@ We are a member of the SingHealth (Singapore Health Services) Group, an integrat
         components: {
             Members,
             OrganizeProfile,
-            EditOrganizeProfile
+            EditOrganizeProfile,
+            Account
         },
         data: () => ({
             tab: 0,
@@ -1074,11 +748,13 @@ We are a member of the SingHealth (Singapore Health Services) Group, an integrat
             }
         },
         methods: {
+            ...mapActions(['copyToClipboard', 'postManageVisibilityUserProfile']),
             setTab() {
                 let tab = this.$route.query.active_page;
                 if (tab && typeof this.tabs[tab] !== "undefined") {
                     this.tab = this.tabs[tab];
                     this.isEditProfile = this.$route.query.edit === 'true';
+                    this.$utils.setWindowTitle(`${this.$utils.firstUpper(tab)} | ${this.s.site_name}`);
                 }
             },
             setRouteTab(n) {
@@ -1087,27 +763,24 @@ We are a member of the SingHealth (Singapore Health Services) Group, an integrat
             setRouteProfile(n) {
                 this.Route({name: 'home', query: {active_page: 'profile', edit: n}});
             },
-            setDatePicker() {
-                let dateOfBirthPickerEl = this.jq('#dateOfBirth');
-                dateOfBirthPickerEl.on('mousedown', function (e) {
-                    e.preventDefault();
-                });
-                dateOfBirthPickerEl.pickadate({
-                    selectMonths: true,
-                    selectYears: 80,
-                    formatSubmit: 'dd/mm/yyyy',
-                    today: false,
-                    max: new Date(),
-                    onOpen: () => {
-                    },
-                    onClose: function () {
-                        console.log(this.get('select', 'yyyy-mm-dd'))
-                    }
-                });
+            changeUserVisibility() {
+                let visibility = this.userProfile.visibility;
+                this.postManageVisibilityUserProfile(this.userProfile)
+                    .then(res => {
+                        if (res.success) {
+                            this.toaster(res.msg);
+                            this.userProfile.website_in_our_site = visibility ? res.data : '';
+                        } else {
+                            this.toaster(res.msg);
+                            this.userProfile.visibility = !visibility;
+                        }
+                    })
+                    .catch(err => {
+                        // console.log(err);
+                    });
             }
         },
         mounted() {
-            this.setDatePicker();
         },
         created() {
             this.setPageTitle(`Dashboard`);

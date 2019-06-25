@@ -17,7 +17,7 @@ export default Vue.extend({
         }
     },
     computed: {
-        ...mapState(['isMobile', 'postsData', 'singlePostsData', 'homeData', 'searchQuery']),
+        ...mapState(['isMobile', 'postsData', 'singlePostsData','authUserInfo', 'dashboardData', 'searchQuery', 'userProfile']),
     },
     watch: {
         query: function (n, o) {
@@ -29,7 +29,7 @@ export default Vue.extend({
     },
     methods: {
         ...mapMutations([]),
-        ...mapActions(['setPageTitle', 'fetchHomeData', 'fetchPostsData', 'fetchSinglePostsData']),
+        ...mapActions(['setPageTitle',]),
         /***@Posts */
         getDetail(type, data) {
             this.Route({name: `${type}-single`, params: {id: data.id}});

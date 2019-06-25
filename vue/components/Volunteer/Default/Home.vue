@@ -5,12 +5,13 @@
             <section class="company-profile__head">
                 <div class="cWidth-1200 company-profile__head-title-logo object-fit">
                     <div class="company-profile__logo company-profile__logo--profile ">
-                        <img alt="" src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg"></div>
-                    <div class="company-profile__title-views-ctn"><h2 class="h2">My Volunteer Name</h2>
+                        <img :alt="authUserInfo.name" :src="`${baseUrl}${authUserInfo.image}`"></div>
+                    <div class="company-profile__title-views-ctn"><h2 class="h2">{{authUserInfo.name}}</h2>
                         <div
                             class="font-dark-grey mt-16 body-txt--small flex flex-ctn--dir-col-tablet-landscape-up-row">
                             <div class="mr-0-tablet-landscape-up-24">
-                                <span class="company-profile__views">beeostin@gmail.com</span>
+                                <span class="company-profile__views">{{userProfile.public_email||
+                        authUserInfo.email}}</span>
                             </div>
                         </div>
                     </div>
@@ -281,9 +282,10 @@
                                                         class="mt-0 h4">08 May 2019 to 22 May
                                                         2019 </h4></a>
                                                         <div class="signup-status-select">
-                                                            <div @click="toggleDetail=!toggleDetail" class="cursor sign-detail">
+                                                            <div @click="toggleDetail=!toggleDetail"
+                                                                 class="cursor sign-detail">
                                                                 <i
-                                                                   class="material-icons">
+                                                                    class="material-icons">
                                                                     {{ toggleDetail ? 'visibility_off' : 'visibility' }}
                                                                 </i>
                                                             </div>
@@ -641,265 +643,7 @@
             <!--EndActivities-->
             <!--Account-->
             <div class="ctn" v-show="tab===3">
-                <div class="cWidth-1200 mt-40 mb-40">
-                    <form>
-                        <div
-                            class="rounded-card rounded-card__body--responsive rounded-card--height-auto rounded-card--full rounded-card--clean-tablet-portrait-down account">
-                            <div class="rounded-card__body rounded-card__body--responsive rounded-card__body">
-                                <h3 class="h3 font-dark-grey">Profile</h3>
-                                <hr>
-                                <div class="input-ctrl">
-                                    <label class="lbl">Profile Picture</label>
-                                    <div class="file-upload file-upload--w270">
-                                        <div class="file-upload__holder">
-                                            <div class="file-upload__spacer"></div>
-                                            <div class="file-upload__image lfr-change-logo">
-                                                <img class="img-placeholder"
-                                                     :src="`${baseRes}assets/images/ph-pink.jpg`">
-                                                <a
-                                                    class="button-ctn button--small button--icon file-upload__cancel imageUploadBtn"><i
-                                                    class="ico ico-upload button--icon__icon"></i></a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-ctrl">
-                                    <label class="lbl" for="displayName">Display Name</label>
-                                    <input type="text"
-                                           name="displayName"
-                                           id="displayName"
-                                           placeholder=""
-                                           class="form-control input-ctn field-required"
-                                           value="Bee Organization">
-                                    <label for="displayName" class="error-msg"></label>
-                                </div>
-
-                                <div class="input-ctrl">
-                                    <label class="lbl" for="email">Email Address</label> <input
-                                    name="email" id="email" placeholder=""
-                                    class="form-control input-ctn field-required" type="email"
-                                    value="beeostin@gmail.com">
-                                    <label for="email" id="emailError" class="error-msg"></label>
-                                </div>
-                                <div class="input-ctrl success">
-                                    <div class="datepicker clearfix">
-                                        <label class="lbl"
-                                               for="dateOfBirth">Birth Date</label>
-                                        <div class="controls">
-                                            <input
-                                                type="text" class="input-ctn pickadate-datepicker picker__input valid"
-                                                name="dateOfBirth" id="dateOfBirth"
-                                                placeholder="dd/mm/yyyy" maxlength="10" data-value="24/04/1996"
-                                                readonly="">
-                                            <label for="dateOfBirth" class="error-msg"
-                                                   style="display: block;"></label>
-                                        </div>
-                                        <div class="error"><label class="error-msg"></label></div>
-                                    </div>
-                                </div>
-                                <div class="clearfix input-ctrl success">
-                                    <label class="lbl">Salutation</label>
-                                    <select name="salutation"
-                                            class="select-giving1 span12 select-ctn select--full valid" id="user_sal">
-                                        <option value="">Please Select</option>
-                                        <option value="Mr" selected="">Mr</option>
-                                        <option value="Ms">Ms</option>
-                                        <option value="Mrs">Mrs</option>
-                                        <option value="Miss">Miss</option>
-                                        <option value="Mdm">Mdm</option>
-                                        <option value="Dr">Dr</option>
-                                    </select> <label for="user_sal" class="error-msg" style="display: block;"></label>
-                                </div>
-                                <div class="input-ctrl">
-                                    <label class="lbl">Gender</label>
-                                    <div class="radio-btn">
-                                        <label class="radio-btn__lbl"> <input
-                                            class="radio-btn__radio" type="radio"
-                                            name="gender" value="male"
-                                            checked="">
-                                            <span class="radio-btn__value">Male</span>
-                                        </label>
-                                    </div>
-                                    <div class="radio-btn">
-                                        <label class="radio-btn__lbl">
-                                            <input class="radio-btn__radio" type="radio"
-                                                   name="gender"
-                                                   value="female">
-                                            <span class="radio-btn__value">Female</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <hr class="hr">
-                                <h3 class="h3 font-dark-grey">Contact Details</h3>
-                                <div class="input-ctrl"><label class="lbl" for="phoneNo">Contact Number</label>
-                                    <div class="controls">
-                                        <input type="text"
-                                               name="phoneNo" id="phoneNo" placeholder="" class="form-control input-ctn"
-                                               value="030984832">
-                                        <label for="phoneNo" class="error-msg"></label>
-                                    </div>
-                                </div>
-                                <hr class="hr">
-                                <h3 class="h3 font-dark-grey">My Causes (Optional)</h3>
-                                <div class="error-msg">You have not select anything</div>
-                                <div class="ctn gallery gallery-tablet-portrait-up-6 mt-24 clearfix"
-                                     id="orgCausesSelection">
-                                    <ul class="gallery__item checkbox-list">
-
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26746">
-                                            <div class="checkbox-list__lbl-spn">Animal
-                                                Welfare
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26747">
-                                            <div class="checkbox-list__lbl-spn">Arts
-                                                &amp; Heritage
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26748">
-                                            <div class="checkbox-list__lbl-spn">
-                                                Children &amp; Youth
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26749">
-                                            <div class="checkbox-list__lbl-spn">Community</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26750">
-                                            <div class="checkbox-list__lbl-spn">Disability
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26751">
-                                            <div class="checkbox-list__lbl-spn">Education</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26752">
-                                            <div class="checkbox-list__lbl-spn">Elderly</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26753">
-                                            <div class="checkbox-list__lbl-spn" data-content="Environment">Environment
-                                            </div>
-                                        </label></li>
-                                    </ul>
-                                    <ul class="gallery__item checkbox-list">
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26754">
-                                            <div class="checkbox-list__lbl-spn" data-content="Families">Families</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26755">
-                                            <div class="checkbox-list__lbl-spn" data-content="Health">Health</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="1637026">
-                                            <div class="checkbox-list__lbl-spn" data-content="Humanitarian">
-                                                Humanitarian
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26756">
-                                            <div class="checkbox-list__lbl-spn" data-content="Social Service">Social
-                                                Service
-                                            </div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26745">
-                                            <div class="checkbox-list__lbl-spn" data-content="Sports">Sports</div>
-                                        </label></li>
-                                        <li><label class="checkbox-list__checkbox">
-                                            <input type="checkbox"
-                                                   name="causeBox[]"
-                                                   value="26757">
-                                            <div class="checkbox-list__lbl-spn" data-content="Women &amp; Girls">Women
-                                                &amp; Girls
-                                            </div>
-                                        </label></li>
-                                    </ul>
-                                </div>
-                                <hr class="hr">
-                                <h3 class="h3 font-dark-grey passwordLabel">Change Password (Optional)</h3>
-                                <div class="input-ctrl passwordLabel " id="controlCurrent">
-                                    <label class="lbl">Current Password</label>
-                                    <div class="controls input-ctrl error">
-                                        <input name="currentPassword"
-                                               id="currentPassword" placeholder="" class="form-control input-ctn"
-                                               type="password"
-                                               maxlength="24">
-                                        <label for="currentPassword" style="display: block" id="currentPwdError"
-                                               class="error-msg">Password must contain 8-24 characters, with at least a
-                                            number</label>
-                                        <span class="help-block"></span><br>
-                                    </div>
-                                </div>
-
-                                <div class="input-ctrl passwordLabel" id="controlNew">
-                                    <label class="lbl">New Password</label>
-                                    <div class="controls input-ctrl">
-                                        <input name="newPassword"
-                                               id="newPassword" placeholder="" class="form-control input-ctn"
-                                               type="password"
-                                               maxlength="24">
-                                        <label
-                                            class="error-msg"></label>
-                                        <span class="help-block"></span><br>
-                                    </div>
-                                </div>
-
-                                <div class="input-ctrl passwordLabel">
-                                    <label class="lbl">Confirm New Password</label>
-                                    <div class="controls input-ctrl">
-                                        <input name="confirmNewPassword" placeholder="" class="form-control input-ctn"
-                                               type="password"
-                                               maxlength="24">
-                                        <label
-                                            class="error-msg"></label>
-                                        <span class="help-block"></span><br>
-                                    </div>
-                                </div>
-                                <div class="text-right text-center-tablet-portrait-down mt-40">
-                                    <button class="mr-16 button-ctn button--135 button--ghost button--large">
-                                        CLEAR
-                                        <span class="show-tablet-portrait-up-inline">CHANGES</span>
-                                    </button>
-                                    <button class="button-ctn button--135 button--large">SAVE
-                                    </button>
-
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                <Account :visible="tab===3"/>
             </div>
             <!--EndAccount-->
             <!--Tabs Content-->
@@ -913,9 +657,13 @@
 <script>
     import Base from "@com/Bases/VolunteerBase.js";
     import {mapActions} from 'vuex'
+    import Account from '@com/Volunteer/Pages/Account.vue'
 
     export default Base.extend({
         name: "Home",
+        components: {
+            Account
+        },
         data: () => ({
             tab: 0,
             tabs: {dashboard: 0, activities: 1, saved: 2, account: 3},
@@ -933,32 +681,15 @@
                 let tab = this.$route.query.active_page;
                 if (tab && typeof this.tabs[tab] !== "undefined") {
                     this.tab = this.tabs[tab];
+                    this.$utils.setWindowTitle(`${this.$utils.firstUpper(tab)} | ${this.s.site_name}`);
                 }
             },
             setRouteTab(n) {
                 this.Route({name: 'home', query: {active_page: n}});
             },
-            setDatePicker() {
-                let dateOfBirthPickerEl = this.jq('#dateOfBirth');
-                dateOfBirthPickerEl.on('mousedown', function (e) {
-                    e.preventDefault();
-                });
-                dateOfBirthPickerEl.pickadate({
-                    selectMonths: true,
-                    selectYears: 80,
-                    formatSubmit: 'dd/mm/yyyy',
-                    today: false,
-                    max: new Date(),
-                    onOpen: () => {
-                    },
-                    onClose: function () {
-                        console.log(this.get('select', 'yyyy-mm-dd'))
-                    }
-                });
-            }
         },
         mounted() {
-            this.setDatePicker();
+
         },
         created() {
             this.setPageTitle(`Dashboard`);

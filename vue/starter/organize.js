@@ -10,6 +10,9 @@ Vue.use(VModal);
 /**
  * @Component load
  */
+
+const AdminInput = () => import('@cus-com/Admin/AdminInput.vue').then(a => a.default);
+Vue.component('AdminInput', AdminInput);
 import GeneralInput from '@cus-com/GeneralInput.vue';
 
 Vue.component('GeneralInput', GeneralInput);

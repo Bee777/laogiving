@@ -7405,6 +7405,9 @@ a.sqr-panel-item:focus {
 
 /*@End Explore causes*/
 
+.laogiving .mt-24-tablet-landscape-up-0 {
+    margin-top: 1.5rem;
+}
 
 /**@Media Screen */
 
@@ -8446,6 +8449,10 @@ a.sqr-panel-item:focus {
     .bcrumb__child--responsive p, .laogiving .bcrumb__child--responsive p {
         display: block;
         position: static;
+    }
+
+    .laogiving .mt-24-tablet-landscape-up-0 {
+        margin-top: 0;
     }
 
 }

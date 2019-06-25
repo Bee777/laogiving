@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\SendContactInfo;
 use App\Models\Banner;
 use App\Models\Cause;
+use App\Models\NewsLetter;
 use App\Models\Posts;
 use App\Responses\Home\PostsResponse;
 use App\Responses\Home\SinglePostsResponse;
@@ -101,9 +102,13 @@ class HomeController extends Controller
      */
     public function responsePostNewsLetter(Request $request)
     {
-       $this->validate($request, [
-            'email' => ['required', 'string', 'email', 'max:191', 'unique:news_letters'],
+        $this->validate($request, [
+            'email' => ['required', 'string', 'email', 'max:191']
         ]);
+        $received = NewsLetter::where('email', $request->get('email'))->first();
+        if (isset($received)) {
+            return response()->json(['errors' => ['email' => ['The email has already been subscribed.']]], 422);
+        }
         return new SaveNewsLetterResponse('save');
     }
     /***@POST_NEWSLETTER */

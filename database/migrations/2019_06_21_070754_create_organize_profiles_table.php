@@ -18,9 +18,7 @@ class CreateOrganizeProfilesTable extends Migration
             $table->bigIncrements('id');
             $table->string('display_name');
             $table->date('registration_date')->nullable()->default(null);
-            $table->enum('group_size', ['none', '1 - 10', '11 - 50', '51 - 200', 'Over 200'])->default('none');
-            $table->enum('salutation', ['none', 'mr', 'ms', 'mrs', 'miss', 'mdm', 'dr'])->default('none');
-            $table->enum('gender', ['none', 'male', 'female'])->default('none');
+            $table->enum('group_size', ['0', '10', '50', '200', '201'])->default('0');
             $table->enum('visibility', ['none', 'visible', 'hidden'])->default('none');
 
             $table->string('contact_person')->nullable();

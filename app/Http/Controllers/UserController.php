@@ -103,14 +103,48 @@ class UserController extends Controller
         return new UserProfileOptions();
     }
 
-    public function responseProfileManage(Request $request): UserProfileManage
+    public function responseVisibilityProfileManage(Request $request)
     {
         $this->validate($request, [
-            'first_name' => 'required|string|max:191',
-            'last_name' => 'required|string|max:191',
+            'visibility' => 'required|max:30']);
+        $user = $request->user();
+        if ($user->isUser('organize')) {
+            $data = $request->get('visibility');
+            if ((new UserProfileManage($request))->visibility($data)) {
+                $userProfile = $user->userProfile('organize');
+                if (isset($userProfile)) {
+                    $userProfile->visibility = $data;
+                    $userProfile->save();
+                    return response()->json(['success' => true,
+                        'msg' => 'You are ' . $data . ' your organisation profile.',
+                        'data' => route('get.home.organize.profile', $user->id)]);
+                    //"You are not allowed to hide your organisation profile as you have active campaigns with donations or volunteer activities with sign ups."
+                }
+                return response()->json(['success' => false, 'msg' => 'Setting up your account in Account tab first.']);
+            }
+        }
+        return response()->json(['success' => false, 'msg' => 'Invalid data input.']);
+    }
+
+    public function responseProfileManage(Request $request): UserProfileManage
+    {
+        if ($request->user()->isUser('organize')) {
+            $rules = [
+                'user_causes' => 'required',
+                'contact_person' => 'max:191',
+                'facebook' => 'max:191',
+                'website' => 'max:191',
+                'about' => 'max:1500',
+            ];
+        } else {
+            $rules = [];
+        }
+        $this->validate($request, array_merge($rules, [
             'profile_image' => 'max:3000|mimes:jpeg,png,jpg,gif,svg',
+            'display_name' => 'required|string|max:191',
+            'public_email' => 'email|max:191',
             'phone_number' => 'max:191',
-        ]);
+        ]));
         return new UserProfileManage($request);
     }
 
@@ -134,8 +168,8 @@ class UserController extends Controller
 
         if ($this->isNeedToValidate($request, 'new_password')) {
             $this->validate($request, [
-                'new_password' => 'confirmed|min:6|max:191|different:current_password',
-                'password_confirmation' => 'min:6|max:191'
+                'new_password' => 'confirmed|min:8|max:191|different:current_password',
+                'password_confirmation' => 'min:8|max:191'
             ]);
         }
 

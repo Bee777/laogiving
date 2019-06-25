@@ -8,12 +8,11 @@
 
 namespace App\Responses\User;
 
-use App\EducationDegree;
 use App\Http\Controllers\Helpers\Helpers;
+use App\Models\Cause;
+use App\Models\CauseDetail;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
-use App\Organize;
-use App\Department;
 
 class UserProfileOptions implements Responsable
 {
@@ -28,68 +27,53 @@ class UserProfileOptions implements Responsable
     {
         $data = [];
         if (Helpers::isAjax($request)) {
-            $data['organizes'] = Organize::select('id', 'name')->orderBy('id', 'desc')
-                ->get()->map(function ($data) {
-                    $data->label = $data->name;
-                    $data->value = $data->id;
-                    return $data;
-                });
-            $data['departments'] = Department::select('id', 'name')->orderBy('id', 'desc')
-                ->get()->map(function ($data) {
-                    $data->label = $data->name;
-                    $data->value = $data->id;
-                    return $data;
-                });
-
-            $data['education_degrees'] = EducationDegree::select('id', 'name')->orderBy('id', 'desc')
-                ->get()->map(function ($data) {
-                    $data->label = $data->name;
-                    $data->value = $data->id;
-                    return $data;
-                });
-
-            $data['user_profile'] = $this->transformUserProfile($request->user());
-            return response()->json(['success' => true, 'data' => $data]);
+            $type = $request->get('type');
+            if ($this->hasType($type)) {
+                $user = $request->user();
+                if ($user->isUser('volunteer') || $user->isUser('organize')) {
+                    $data = $this->transformUserProfile($request->user(), $type);
+                }
+                $data['causes'] = Cause::getCauses('all');
+                return response()->json(['success' => true, 'data' => $data]);
+            }
+            return response()->json(['success' => false, 'data' => $data]);
         }
     }
 
-    public function transformUserProfile($user)
+    public function hasType($title)
+    {
+        $types = ['volunteer', 'organize'];
+        return in_array($title, $types, true);
+    }
+
+    public function transformUserProfile(User $user, $type)
     {
         $data = null;
         if (isset($user)) {
             $data = [];
-            $data['first_name'] = $user->name;
-            $data['last_name'] = $user->last_name;
-            $data['profile_image_base64'] = '';
-            $data['marital_status'] = ['text' => '', 'value' => ''];
-            $userProfile = $user->profile;
-            if (isset($userProfile)) {
-                $data['phone_number'] = $userProfile->phone_number;
-                if (isset($userProfile->date_of_birth)) {
-                    $data['dateOfBirth'] = $userProfile->date_of_birth->format('c');
-                } else {
-                    $data['dateOfBirth'] = '';
+            $data['name'] = $user->name;
+            $data['email'] = $user->email;
+            if ($type === 'volunteer') {
+                $userProfile = $user->userProfile($type);
+                $data['user_profile'] = $userProfile;
+                if (isset($userProfile)) {
+                    $data['user_profile']['date_of_birth_formatted'] = $userProfile->date_of_birth->format('d/m/Y');
+                    $data['user_profile']['profile_image_base64'] = '';
                 }
-                $data['marital_status'] = ['text' => $this->getTextMaritalStatus($userProfile->marital_status), 'value' => $userProfile->marital_status];
+                $data['user_causes'] = CauseDetail::list('user', $user->id)->pluck('cause_id');
+            } else if ($type === 'organize') {
+                $userProfile = $user->userProfile($type);
+                $data['user_profile'] = $userProfile;
+                if (isset($userProfile)) {
+                    $data['user_profile']['visibility'] = $userProfile->visibility === 'visible';
+                    $data['user_profile']['registration_date_formatted'] = $userProfile->registration_date->format('d/m/Y');
+                    $data['user_profile']['profile_image_base64'] = '';
+                    $data['user_profile']['website_in_our_site'] = $userProfile->visibility ? route('get.home.organize.profile', $user->id) : '';
+
+                }
+                $data['user_causes'] = CauseDetail::list('user', $user->id)->pluck('cause_id');
             }
-            $data['member_educations'] = $user->member_educations();
-            $data['member_careers'] = $user->member_careers();
         }
         return $data;
-    }
-
-    public function getYearsOptions()
-    {
-        $years = [];
-        for ($i = 1960, $iMax = date('Y'); $i <= $iMax + 42; $i++) {
-            $years[] = (string)$i;
-        }
-        return $years;
-    }
-
-    public function getTextMaritalStatus($title)
-    {
-        $statuses = ['none' => 'Not specified', 'single' => 'Single', 'married' => 'Married'];
-        return $statuses[$title] ?? 'Not specified';
     }
 }

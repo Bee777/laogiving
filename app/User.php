@@ -3,8 +3,10 @@
 namespace App;
 
 use App\Http\Controllers\Helpers\Helpers;
+use App\Models\OrganizeProfile;
 use App\Models\Role;
 use App\Models\UserType;
+use App\Models\VolunteerProfile;
 use App\Traits\UserRoleTrait;
 use App\Traits\PersonalAccessTokenTrait;
 use Illuminate\Notifications\Notifiable;
@@ -54,6 +56,12 @@ class User extends Authenticatable
     public $userInfo = ['imagePath' => '/assets/images/user_profiles/', 'preThumb' => '96x96-'];
     protected static $defaultStatus = ['pending', 'approved', 'disabled'];
 
+    public function isUser(string $title)
+    {
+        $check_type_user_id = $this->getTypeUserId($title);
+        return $this->userType->type_user_id === $check_type_user_id;
+    }
+
     /**
      * @StartActions
      */
@@ -66,6 +74,7 @@ class User extends Authenticatable
         ];
         return (isset($actions[$name]) && in_array($this->userType->type_user_id, $actions[$name], true));
     }
+
     /**
      * @todo delete user all related user information
      * @return bool
@@ -110,6 +119,27 @@ class User extends Authenticatable
     /**@Department */
 
     /**@Relationship */
+    public function userProfile($type)
+    {
+        $func = $type . 'Profile';
+        return $this->$func;
+    }
+
+    public function saveUserProfile($type, $profile): void
+    {
+        $func = $type . 'Profile';
+        $this->$func()->save($profile);
+    }
+
+    public function volunteerProfile()
+    {
+        return $this->hasOne(VolunteerProfile::class);
+    }
+    public function organizeProfile()
+    {
+        return $this->hasOne(OrganizeProfile::class);
+    }
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
