@@ -289,7 +289,7 @@
                             this.causes = d.causes;
                             this.fetchAuthUserInfo();
                             this.$nextTick(() => {
-                                this.setDatePicker(d.user_profile.date_of_birth);
+                                this.setDatePicker(this.userProfile.date_of_birth);
                             })
                         }
                         this.isLoading = false;

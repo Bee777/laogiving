@@ -58,7 +58,7 @@ class UserProfileOptions implements Responsable
                 $userProfile = $user->userProfile($type);
                 $data['user_profile'] = $userProfile;
                 if (isset($userProfile)) {
-                    $data['user_profile']['date_of_birth_formatted'] = $userProfile->date_of_birth->format('d/m/Y');
+                    $data['user_profile']['date_of_birth_formatted'] = isset($userProfile->date_of_birth) ? $userProfile->date_of_birth->format('d/m/Y') : '';
                     $data['user_profile']['profile_image_base64'] = '';
                 }
                 $data['user_causes'] = CauseDetail::list('user', $user->id)->pluck('cause_id');
@@ -73,7 +73,7 @@ class UserProfileOptions implements Responsable
                 $data['user_profile'] = $userProfile;
                 if (isset($userProfile)) {
                     $data['user_profile']['visibility'] = $userProfile->visibility === 'visible';
-                    $data['user_profile']['registration_date_formatted'] = $userProfile->registration_date->format('d/m/Y');
+                    $data['user_profile']['registration_date_formatted'] = isset($userProfile->registration_date) ? $userProfile->registration_date->format('d/m/Y') : '';
                     $data['user_profile']['profile_image_base64'] = '';
                     $data['user_profile']['website_in_our_site'] = $userProfile->visibility ? route('get.home.organize.profile', $user->id) : '';
 

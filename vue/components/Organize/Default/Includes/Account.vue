@@ -299,6 +299,17 @@
             isLoading: false,
             causes: [],
             datePicker: null,
+            userMedia: {
+                video: {validated: '', url: ''},
+                images: [
+                    {
+                        image_base64: '',
+                        image: null,
+                        validated: '',
+                        removable: false,
+                    }
+                ],
+            },
         }),
         watch: {
             visible: function (n) {
@@ -327,6 +338,7 @@
                 let dt = 3500;
                 this.isLoading = true;
                 this.setUserProfileKey({key: 'user_causes', value: this.userCauses});
+                this.setUserProfileKey({key: 'user_media', value: this.userMedia});
 
                 if (!this.$utils.isEmptyObject(this.userCredential)) {
                     this.saveUserCredentials();
@@ -343,6 +355,7 @@
                         this.isLoading = false;
                     })
                     .catch(err => {
+                        console.log(err);
                         this.showErrorToast({msg: 'Failed to update your profile!', dt});
                         this.isLoading = false;
                     })
@@ -362,6 +375,7 @@
                         this.isLoading = false;
                     })
                     .catch(err => {
+
                         this.showErrorToast({msg: 'Failed to update your credentials!', dt});
                         this.isLoading = false;
                     });
@@ -377,12 +391,14 @@
                                 this.setUserProfileKey({key: 'display_name', value: d.name});
                                 this.setUserProfileKey({key: 'public_email', value: d.email});
                             }
+                            this.userMedia.video = d.user_media.video;
+                            this.userMedia.images = d.user_media.images;
                             this.userCauses = d.user_causes;
                             this.$refs['user-causes'].setValue(this.userCauses);
                             this.causes = d.causes;
                             this.fetchAuthUserInfo();
                             this.$nextTick(() => {
-                                this.setDatePicker(d.user_profile.registration_date);
+                                this.setDatePicker(this.userProfile.registration_date);
                             })
                         }
                         this.isLoading = false;
@@ -400,7 +416,9 @@
                 });
                 if (this.datePicker) {
                     let picker = dateOfBirthPickerEl.pickadate('picker');
-                    picker.set('select', new Date(date));
+                    if(date){
+                        picker.set('select', new Date(date));
+                    }
                     return;
                 }
                 this.datePicker = dateOfBirthPickerEl.pickadate({

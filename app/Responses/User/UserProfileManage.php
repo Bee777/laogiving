@@ -85,7 +85,7 @@ class UserProfileManage implements Responsable
                     }
 
                     //Personal Information
-                    if ($request->has('date_of_birth')) {
+                    if ($request->has('date_of_birth') && !empty($request->get('date_of_birth'))) {
                         $userProfile->date_of_birth = Helpers::toFormatDateString($request->get('date_of_birth'), 'Y-m-d H:i:s');
                     }
                     if ($request->has('phone_number')) {
@@ -110,9 +110,9 @@ class UserProfileManage implements Responsable
                     $user_media_video_url = $request->get('user_media_video_url');
 
                     if (isset($userMediaVideoModel)) {
-                        Media::updateUser($userMediaVideoModel->id, $user->id, 'youtube', $user_media_video_url | '');
+                        Media::updateUser($userMediaVideoModel->id, $user->id, 'youtube', (string)$user_media_video_url);
                     } else {
-                        Media::saveUser($user, 'youtube', $user_media_video_url | '');
+                        Media::saveUser($user->id, 'youtube', (string)$user_media_video_url);
                     }
                     //#images
                     $userMediaImagesModel = Media::list('user', 'image', $user->id);
@@ -179,8 +179,7 @@ class UserProfileManage implements Responsable
                     if ($request->has('address')) {
                         $userProfile->address = $request->get('address');
                     }
-
-                    if ($request->has('registration_date')) {
+                    if ($request->has('registration_date') && !empty($request->get('registration_date'))) {
                         $userProfile->registration_date = Helpers::toFormatDateString($request->get('registration_date'), 'Y-m-d H:i:s');
                     }
                     if ($request->has('phone_number')) {
