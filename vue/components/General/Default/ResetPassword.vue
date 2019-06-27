@@ -1,149 +1,83 @@
 <template>
     <div>
-        <div class="general-from-container is-65">
-            <div class="form-represent is-65">
-                <!--Progress bar-->
-                <div class="form-represent-top-border form-represent-top-border-z-index" aria-hidden="true">
-                    <div class="form-represent-top-border-progress"
-                         :class="[validated().loading_reset ? '': 'is-hide']">
-                        <div
-                            class="form-represent-top-border-progress-img form-represent-top-border-progress-bg-size"></div>
-                        <div class="form-represent-top-border-progress-tran"></div>
-                        <div class="form-represent-top-border-progress-tran-anim is-anim">
-                            <span class="form-represent-top-border-progress-tran-anim-spot is-anim"></span>
-                        </div>
 
-                        <div class="form-represent-top-border-progress-tran-relay-anim is-anim">
-
-                            <span class="form-represent-top-border-progress-tran-anim-spot scale is-anim"></span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Progress bar-->
-                <!--Start form register-->
-                <div class="form-represent-form-container">
-                    <!--Logo-->
-                    <div class="form-represent-form is-full-height">
-                        <div class="form-represent-form-logo-container">
-                            <div @click="Route({name: 'home'})" class="form-represent-form-logo-inner is-cursor">
-                                <img :src="`${baseUrl}/assets/images/${s.website_logo}${s.fresh_version}`">
-                            </div>
-                        </div>
-                    </div>
-                    <!--Logo-->
-                    <!--Elements-->
-                    <div class="form-represent-form-elements-container">
-                        <div>
-                            <div class="form-represent-form-elements-container-inner">
-                                <!--Header Caption -->
-                                <div class="form-represent-form-header-caption">
-                                    <div class="header-text-centered">
-                                        <h1 class="headingText ">
-                                            <content>Reset your Jaol Password</content>
-                                        </h1>
-                                        <div class="headingSubtext ">
-                                            <content>to Continue to Jaol Memebers</content>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--Header Caption -->
-                                <!--Form input-->
-                                <div class="form-represent-form-input">
-                                    <div class="form-represent-form-input-inner">
-                                        <!--Input element -->
-                                        <content>
-                                            <section class="section-input">
-                                                <div class="section-input-container-inner">
-                                                    <!--Start input-->
-                                                    <content>
-                                                        <GeneralInput v-model="user.email"
-                                                                      :inputType="'email'"
-                                                                      :labelText="'Email'"
-                                                                      :isDisabled="true"
-                                                                      :validate="{text:  validated().email}"
-                                                                      :adviceText="'We will sign out your authenticated devices after finished the password reset action.'"
-                                                                      :isSmall="true"
-                                                        />
-                                                        <!--Description-->
-                                                        <content v-if="validated().error">
-                                                            <div
-                                                                class="general-input-spacing failed-description is-error ">
-                                                                {{ validated().error}}
-                                                            </div>
-                                                        </content>
-                                                        <!--Description-->
-                                                        <div
-                                                            class="form-represent-input-group-three is-margin-bottom-less">
-                                                            <div class="form-represent-input-group">
-                                                                <div class="half-input-width no-order">
-                                                                    <GeneralInput v-model="user.password"
-                                                                                  :inputType="'password'"
-                                                                                  :labelText="'Password'"
-                                                                                  :validate="{text: validated().password}"
-                                                                                  :isSmall="true"
-                                                                    />
-                                                                </div>
-                                                                <div class="form-represent-input-advice-text">Use 6 or
-                                                                    more characters with a mix of letters, numbers &
-                                                                    symbols
-                                                                </div>
-                                                                <div class="half-input-width no-order">
-                                                                    <GeneralInput v-model="user.password_confirmation"
-                                                                                  :inputType="'password'"
-                                                                                  :labelText="'Confirm'"
-                                                                                  :validate="{text: validated().password_confirmation}"
-                                                                                  :isSmall="true"
-                                                                                  @inputEnter="UserResetPassword"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!--Optional-->
-                                                    </content>
-                                                    <!--End input-->
+        <div class="laogiving">
+            <div class="row-fluid text-center">
+                <main class="laogiving activity clearfix reset-container">
+                    <div class="container">
+                        <div id="resetpwd-header">
+                            <div class="signup-section"><h3 class="h3">Reset your password</h3></div>
+                            <form
+                                @submit.prevent
+                                class="form " method="post" style="display: flow-root">
+                                <div class="control-group"><label
+                                    class="control-label"><h5 class="h5">We will sign out your authenticated devices
+                                    after finished the password reset action.</h5>
+                                </label>
+                                    <fieldset class="fieldset">
+                                        <div class="control-group">
+                                            <div class="controls"><span
+                                                class="validation-feedback pull-right" style="display: none"></span>
+                                                <div class="control-group mt-8">
+                                                    <input class="field text-center"
+                                                           disabled
+                                                           v-model="user.email"
+                                                           id="email"
+                                                           name="email" placeholder="Your email address"
+                                                           type="email" value="" size="30">
+                                                    <label for="email" class="error-msg" style="display: block;">{{
+                                                        validated().email || validated().error }}</label>
                                                 </div>
-                                            </section>
-                                        </content>
-                                        <!--Input element -->
-                                        <!--Action-->
-                                        <div class="form-represent-form-action">
-                                            <div class="inner">
-                                                <div class="action-button">
-                                                    <!--@CLick-->
-                                                    <div
-                                                        @click="UserResetPassword"
-                                                        class="action-button-container action-button-container-main action-button-is-anim">
-                                                        <div class="action-button-bubble action-button-bubble-tran"
-                                                             style="top: 14.5px; left: 39px; width: 88px; height: 88px;"></div>
-                                                        <div class="action-button-inner-top"></div>
-                                                        <content class="action-button-content"><span
-                                                            class="action-button-text">Reset Password</span></content>
-                                                    </div>
+                                                <!--<label class="control-label" for="password">New Password</label>-->
+                                                <div class="control-group" v-if="!hide">
+                                                    <input class="field text-center"
+                                                           v-model="user.password"
+                                                           id="password"
+                                                           name="password" placeholder="Enter new password"
+                                                           type="password">
+                                                    <label for="password" class="error-msg" style="display: block;">{{
+                                                        validated().password }}</label>
                                                 </div>
-                                                <div class="action-text">
-                                                    <div
-                                                        class="action-text-container" @click="Route({name: 'login'})">
-                                                        <div class="action-text-bubble action-text-bubble-tran"
-                                                             style="top: 14.5px; left: 39px; width: 88px; height: 88px;"></div>
-                                                        <div class="action-text-inner-top"></div>
-                                                        <content class="action-text-content"><span
-                                                            class="action-text-text">Sign in instead</span></content>
-                                                    </div>
+
+                                                <div class="control-group" v-if="!hide">
+                                                    <input class="field text-center"
+                                                           v-model="user.password_confirmation"
+                                                           id="password_confirmation"
+                                                           name="password_confirmation"
+                                                           placeholder="Enter new password confirmation"
+                                                           type="password" value="" size="30">
+                                                    <label for="password_confirmation" class="error-msg"
+                                                           style="display: block;">{{
+                                                        validated().password_confirmation }}</label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--Action-->
-                                    </div>
+                                        <div class="control-group">
+                                            <div class="controls" v-if="!hide">
+                                                <button v-if="!validated().loading_reset"
+                                                        @click="UserResetPassword()"
+                                                        type="submit" class="button-ctn button--large"
+                                                        id="forgot-password-btn">Reset password
+                                                </button>
+                                                <button v-else type="submit" class="button-ctn button--large"
+                                                >Saving...
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </fieldset>
                                 </div>
-                                <!--Form input-->
-                            </div>
+                                <p class="small"> I want to <a @click="Route({name: 'register-overview'})"
+                                                               class="alternate-actions cursor">Sign Up</a>
+                                    or <a @click="$modal.show('signin')" class="alternate-actions cursor">Log
+                                        In</a> instead </p>
+                            </form>
+
+                            <div class="signup-section"><p class="small"><a href="/" class="alternate-actions">Take me
+                                back to the home page</a></p></div>
+
                         </div>
                     </div>
-                    <!--Elements-->
-                </div>
-                <!--End form register-->
-                <div class="masked-blur-form"></div>
+                </main>
             </div>
         </div>
     </div>
@@ -158,12 +92,13 @@
         data() {
             return {
                 ...mapGetters(['validated']),
-                user: {email: '...'}
+                user: {email: '...'},
+                hide: false,
             }
         },
         methods: {
-            ...mapActions(['initResetForm', 'resetPassword']),
-            ...mapMutations(['setValidated', 'setPageTitle']),
+            ...mapActions(['initResetForm', 'resetPassword', 'setPageTitle']),
+            ...mapMutations(['setValidated']),
             UserResetPassword() {
                 this.resetPassword(this.user)
                     .then(res => {
@@ -183,8 +118,9 @@
                             this.user.token_input = res.token;
                             this.user.email = decodeURIComponent(res.email);
                         } else {
-                            this.setValidated({errors: {error: "Your reset password link has expired!. Redirect in 3.5"}});
-                            this.Route({name: 'forgot-password'}, -1, 3500)
+                            this.hide = true;
+                            this.setValidated({errors: {error: "Your reset password link has expired!, Redirect in 4.5"}});
+                            this.Route({name: 'forgot-password'}, 4500)
                         }
                     })
                     .catch(e => {

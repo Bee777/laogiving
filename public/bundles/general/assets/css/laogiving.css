@@ -4,7 +4,17 @@
 
 body {
     font-size: 15px;
-    font-family: roboto, sans-serif
+    font-family: roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
+}
+
+.header_meta {
+    font-family: Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
+}
+.btn {
+    font-family: Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .inner-pages {
@@ -62,7 +72,7 @@ body {
 .breadcrumb p {
     margin: 0;
     padding: 0 15px;
-    font: 700 11px Montserrat, sans-serif;
+    font: 700 11px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #263238
 }
 
@@ -78,7 +88,7 @@ body {
 
 a.read-more {
     text-transform: uppercase;
-    font: 700 11px Montserrat, sans-serif;
+    font: 700 11px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #929ba6
 }
 
@@ -248,7 +258,7 @@ a:hover.read-more {
 
 .laogiving .slides > li h2 {
     color: #333;
-    font: 48px Knewave, sans-serif
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .laogiving .slides > li .btn-blue {
@@ -342,14 +352,14 @@ a:hover.read-more {
 .aboutus h3 {
     margin-top: 0;
     color: #262c38;
-    font: 48px Knewave, sans-serif
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .aboutus h3 span {
     color: #03a9f4;
     display: block;
     margin-bottom: -14px;
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase
 }
 
@@ -463,19 +473,19 @@ a:hover.read-more {
 .our-features h3 {
     margin-top: 0;
     color: #262c38;
-    font: 48px Knewave, sans-serif
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .our-features h3 span {
     color: #03a9f4;
     display: block;
     margin-bottom: -10px;
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase
 }
 
 .our-features .feature h3 {
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: none;
     color: #262c38
 }
@@ -506,14 +516,14 @@ a:hover.read-more {
 
 .fun-gallery h3 {
     color: #262c38;
-    font: 48px Knewave, sans-serif
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .fun-gallery h3 span {
     color: #03a9f4;
     display: block;
     margin-bottom: -14px;
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase
 }
 
@@ -595,14 +605,14 @@ a:hover.read-more {
 .school-classes h3 {
     margin-top: 0;
     color: #fff;
-    font: 48px Knewave, sans-serif
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .school-classes h3 span {
     color: #03a9f4;
     display: block;
     margin-bottom: -14px;
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase
 }
 
@@ -647,7 +657,7 @@ a:hover.read-more {
     top: 20px;
     background: #4caf50 url(../images/price_tag_l.png) no-repeat left bottom;
     color: #fff;
-    font: 700 16px Montserrat, sans-serif
+    font: 700 16px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .price small {
@@ -669,7 +679,7 @@ a:hover.read-more {
 }
 
 .classes h3 {
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #03a9f4;
     padding-right: 57px
 }
@@ -751,14 +761,14 @@ a:hover.read-more {
 .school-events h3 {
     margin-top: 0;
     color: #262c38;
-    font: 48px Knewave, sans-serif
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .school-events h3 span {
     color: #03a9f4;
     display: block;
     margin-bottom: -14px;
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase
 }
 
@@ -784,7 +794,7 @@ a:hover.read-more {
 }
 
 .school-events .events h3 {
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #03a9f4
 }
 
@@ -848,7 +858,7 @@ a:hover.read-more {
 .school-events .events a.know-more {
     border-top: 1px solid #eaecf3;
     background: #fafafc;
-    font: 700 13px Montserrat, sans-serif;
+    font: 700 13px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #878e9a;
     display: block;
     position: absolute;
@@ -884,14 +894,14 @@ a:hover.read-more {
 
 .our-blog h3 {
     margin-top: 0;
-    font: 48px Knewave, sans-serif
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .our-blog h3 span {
     color: #03a9f4;
     display: block;
     margin-bottom: -14px;
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase
 }
 
@@ -930,7 +940,7 @@ a:hover.read-more {
 
 .blogs h3 {
     margin-top: 10px;
-    font: 700 17px Montserrat, sans-serif
+    font: 700 17px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .blogs h3 a {
@@ -957,7 +967,7 @@ a:hover.read-more {
 
 .blogs a.know-more {
     border-top: 1px solid #353c4b;
-    font: 700 13px Montserrat, sans-serif;
+    font: 700 13px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #727e97;
     display: block;
     position: absolute;
@@ -984,14 +994,14 @@ a:hover.read-more {
 
 .our-teachers h3 {
     margin-top: 0;
-    font: 48px Knewave, sans-serif
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .our-teachers h3 span {
     color: #03a9f4;
     display: block;
     margin-bottom: -14px;
-    font: 700 18px Montserrat, sans-serif;
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase
 }
 
@@ -1024,7 +1034,7 @@ a:hover.read-more {
 .teachers h3 {
     margin: 0;
     padding: 0;
-    font: 700 18px Montserrat, sans-serif
+    font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .teachers p {
@@ -1111,7 +1121,7 @@ a:hover.read-more {
 
 .testimonials-laogiving blockquote {
     border: none;
-    font: 36px Knewave, sans-serif;
+    font: 36px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     font-style: italic;
     font-weight: 300;
     margin: 0 8%;
@@ -1140,12 +1150,12 @@ a:hover.read-more {
     display: block;
     clear: both;
     color: #333333;
-    font: 700 19px Montserrat, sans-serif
+    font: 700 19px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .testimonials-laogiving footer cite {
     font-weight: 400;
-    font: 14px Fira Sans, sans-serif;
+    font: 14px Fira Sans, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #333333;
 }
 
@@ -1186,7 +1196,7 @@ a:hover.read-more {
 }
 
 .call-to-action h3 {
-    font: 400 24px Montserrat, sans-serif;
+    font: 400 24px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #fff
 }
 
@@ -1218,7 +1228,7 @@ a:hover.read-more {
 .home-two .navbar-default .navbar-nav > li > a {
     padding: 8px 12px;
     color: #969696;
-    font: 24px rancho, cursive;
+    font: 24px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     font-weight: 400;
     background: 0 0
 }
@@ -1237,7 +1247,7 @@ a:hover.read-more {
 .home-two .navbar-default .navbar-nav > li::before {
     color: #969696;
     padding: 8px 19px;
-    font: 24px Linearicons-Free
+    font: 24px Linearicons-Free;
 }
 
 .home-two .navbar-default .navbar-nav > li:hover::before, .home-two .navbar-default .navbar-nav > li.active::before {
@@ -1338,14 +1348,14 @@ a:hover.read-more {
     margin: 0;
     padding: 0;
     color: #fff;
-    font: 80px rancho, cursive;
+    font: 80px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     line-height: 80px
 }
 
 .laogiving-second .slides > li h3 {
     margin: 0;
     padding: 0;
-    font: 700 48px Montserrat, sans-serif;
+    font: 700 48px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #4ad130
 }
 
@@ -1377,7 +1387,7 @@ a:hover.read-more {
     margin: 0 0 30px;
     padding: 0;
     color: #333;
-    font: 40px rancho, cursive
+    font: 40px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .muti-options-vtwo .events-vtwo h3 {
@@ -1440,7 +1450,7 @@ a:hover.read-more {
 
 .timetable ul li .week {
     margin: 0;
-    font: 26px rancho, cursive;
+    font: 26px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #333
 }
 
@@ -1546,7 +1556,7 @@ a:hover.read-more {
 .notice h3 {
     margin: 0;
     padding: 0;
-    font: 30px rancho, cursive;
+    font: 30px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #333
 }
 
@@ -1564,7 +1574,7 @@ a:hover.read-more {
 .contact-home-vtwo h3 {
     margin: 0;
     padding: 0 0 15px;
-    font: 40px rancho, cursive;
+    font: 40px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #333;
     text-align: center
 }
@@ -1636,7 +1646,7 @@ a:hover.read-more {
 .about-info h3 {
     margin: 0;
     padding: 0;
-    font: 40px rancho, cursive;
+    font: 40px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #333
 }
 
@@ -1687,7 +1697,7 @@ a:hover.read-more {
 .our-classes-two h3 {
     margin: 0;
     padding: 0;
-    font: 40px rancho, cursive;
+    font: 40px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #333;
     text-align: center
 }
@@ -1755,7 +1765,7 @@ a:hover.read-more {
     width: 120px;
     text-align: center;
     padding: 10px 15px;
-    font: 700 14px Montserrat, sans-serif;
+    font: 700 14px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #4ad130;
     border: 2px solid #4ad130
 }
@@ -1806,7 +1816,7 @@ a:hover.read-more {
 .facilities-with-teachers h3 {
     margin: 0 0 20px;
     padding: 0;
-    font: 40px rancho, cursive;
+    font: 40px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #333
 }
 
@@ -1952,7 +1962,7 @@ a:hover.read-more {
 .testimonials-home-two blockquote p {
     color: #fff;
     margin-bottom: 20px;
-    font: 52px rancho, cursive;
+    font: 52px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     font-weight: 300
 }
 
@@ -1966,12 +1976,12 @@ a:hover.read-more {
     display: block;
     clear: both;
     color: #fff;
-    font: 700 30px rancho, cursive
+    font: 700 30px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .testimonials-home-two footer cite {
     font-weight: 400;
-    font: 17px Montserrat, sans-serif;
+    font: 17px Montserrat, sans-serif, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #fff
 }
 
@@ -2012,7 +2022,7 @@ a:hover.read-more {
 }
 
 .call-to-action-two h3 {
-    font: 36px rancho, cursive;
+    font: 36px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #fff
 }
 
@@ -2107,14 +2117,14 @@ a:hover.read-more {
     font-weight: 700;
     padding: 20px 0 10px;
     margin: 0;
-    font: 700 12px Montserrat, sans-serif;
+    font: 700 12px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase
 }
 
 .co-join-info li {
     padding: 10px 0;
     border: none;
-    font: 700 12px Montserrat, sans-serif;
+    font: 700 12px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: uppercase;
     color: #03a9f4
 }
@@ -2136,7 +2146,7 @@ a:hover.read-more {
 
 .teacher-widget ul li p.title {
     margin-bottom: 10px;
-    font: 700 16px Montserrat, sans-serif
+    font: 700 16px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .teacher-widget ul li p.title a {
@@ -2154,7 +2164,7 @@ a:hover.read-more {
 
 .teacher-widget ul li p.meta {
     margin-bottom: 10px;
-    font: 12px Montserrat, sans-serif;
+    font: 12px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #6b737d
 }
 
@@ -2187,7 +2197,7 @@ a:hover.read-more {
 
 .site-footer .widget h3 {
     margin-top: 0;
-    font: 19px Knewave, sans-serif;
+    font: 19px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #262c38
 }
 
@@ -2201,7 +2211,7 @@ a:hover.read-more {
     border: none;
     background: #f4f4f8;
     box-shadow: 0 0 0;
-    font: 14px Roboto, sans-serif;
+    font: 14px Roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #c9d0d6;
     font-weight: 400
 }
@@ -2348,12 +2358,12 @@ a:hover.read-more {
 }
 
 .site-footer-two .widget h3 {
-    font: 30px rancho, cursive;
+    font: 30px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     color: #fff
 }
 
 .site-footer-two .footer-widget .menu li {
-    font: 24px rancho, cursive;
+    font: 24px rancho, cursive, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
     text-transform: inherit
 }
 
@@ -4070,6 +4080,10 @@ card__body > div > *, .activity .card__body > div > * {
     border-bottom: 1px solid #CCCCCC;
 }
 
+.accordion-card__head.is-collapsed {
+    border-bottom: 1px solid transparent;
+}
+
 .accordion-card--borderless .accordion-card__head {
     border: solid #CCCCCC;
     border-width: 1px 0;
@@ -4586,7 +4600,8 @@ card__body > div > *, .activity .card__body > div > * {
     width: 100%;
 }
 
-#signinmodal .modal-ctn, #volunteer-signup-modal .modal-ctn {
+#signinmodal .modal-ctn, #volunteer-signup-modal .modal-ctn,
+#reportmodal .modal-ctn {
     top: 20px !important;
 }
 
@@ -6303,6 +6318,11 @@ hr.grey {
     right: 1rem;
     top: 1rem;
 }
+.laogiving a.file-upload__remove {
+    position: absolute;
+    right: 10px;
+    bottom: 4px;
+}
 
 .ico-upload {
     background-image: url(../svg/ic-upload.svg);
@@ -7317,13 +7337,15 @@ a.sqr-panel-item:focus {
 }
 
 .causes-panel .sqr-panel-item:hover svg path[fill][fill-rule="nonzero"], .causes-panel .sqr-panel-item:hover svg g[fill][fill-rule="nonzero"],
-.causes-panel .sqr-panel-item:hover svg path[fill].fill-color, .causes-panel .sqr-panel-item:hover svg g[fill].fill-color {
+.causes-panel .sqr-panel-item:hover svg path[fill].fill-color, .causes-panel .sqr-panel-item:hover svg g[fill].fill-color,
+.causes-panel .sqr-panel-item:hover svg [fill].fill-color, .causes-panel .sqr-panel-item:hover svg .fill-color{
     fill: white;
 }
 
 
 .causes-panel .sqr-panel-item svg path[fill][fill-rule="nonzero"], .causes-panel .sqr-panel-item svg g[fill][fill-rule="nonzero"],
-.causes-panel .sqr-panel-item svg path[fill].fill-color, .causes-panel .sqr-panel-item svg g[fill].fill-color {
+.causes-panel .sqr-panel-item svg path[fill].fill-color, .causes-panel .sqr-panel-item svg g[fill].fill-color,
+.causes-panel .sqr-panel-item svg [fill].fill-color, .causes-panel .sqr-panel-item svg .fill-color{
     transition: fill .4s;
     fill: #666666;
 }
@@ -7408,6 +7430,76 @@ a.sqr-panel-item:focus {
 .laogiving .mt-24-tablet-landscape-up-0 {
     margin-top: 1.5rem;
 }
+
+
+/*@ResetPassword*/
+
+.reset-container {
+    padding-top: 66px;
+}
+
+#resetpwd-header {
+    width: 100%;
+    font-stretch: normal;
+    font-style: normal;
+    font-variant-caps: normal;
+    font-variant-ligatures: normal;
+    font-variant-numeric: normal;
+    font-weight: normal;
+    max-height: 400px;
+    float: none;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+#resetpwd-header .signup-section {
+    margin-bottom: 25px;
+}
+
+#resetpwd-header .control-label h5 {
+    color: #172a35;
+    height: 23px;
+}
+
+#resetpwd-header .text-center {
+    border-width: 0 0 1px;
+    box-shadow: none;
+    width: 320px;
+}
+
+#resetpwd-header input {
+    margin-bottom: 10px;
+}
+#resetpwd-header .alternate-actions {
+    text-decoration: underline;
+}
+#resetpwd-header a {
+    color: #6bc1cc!important;
+}
+.small, .laogiving .small {
+    font-size: 12px;
+}
+
+.laogiving .control-group input.form-control:focus, .laogiving .control-group input.field:focus {
+    border-color: #58c1ee !important;
+    box-shadow: none !important;
+}
+
+.laogiving .control-group {
+    margin-bottom: 10px;
+}
+
+/*@End Reset Password*/
+
+.laogiving .file-upload.error .error-msg {
+    position: absolute;
+    top: 1rem;
+    text-align: center;
+    width: 100%;
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
 
 /**@Media Screen */
 
@@ -8453,6 +8545,21 @@ a.sqr-panel-item:focus {
 
     .laogiving .mt-24-tablet-landscape-up-0 {
         margin-top: 0;
+    }
+
+    .accordion-card__head.is-collapsed {
+        border-bottom: 1px solid #CCCCCC;
+    }
+    .accordion-card--borderless .accordion-card__head.is-collapsed {
+        border-bottom: 0;
+    }
+
+    .accordion-card__body.is-collapsed {
+        display: block;
+    }
+
+    .reset-container {
+        padding-top: 152px;
     }
 
 }

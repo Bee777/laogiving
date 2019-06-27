@@ -11,6 +11,7 @@ namespace App\Responses\User;
 use App\Http\Controllers\Helpers\Helpers;
 use App\Models\Cause;
 use App\Models\CauseDetail;
+use App\Models\Media;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
 
@@ -61,6 +62,12 @@ class UserProfileOptions implements Responsable
                     $data['user_profile']['profile_image_base64'] = '';
                 }
                 $data['user_causes'] = CauseDetail::list('user', $user->id)->pluck('cause_id');
+                $user_causes = CauseDetail::list('user', $user->id);
+                $user_causes->map(function ($item) {
+                    $item->cause_data = $item->cause;
+                    return $item;
+                });
+                $data['user_causes_display'] = $user_causes->pluck('cause_data');
             } else if ($type === 'organize') {
                 $userProfile = $user->userProfile($type);
                 $data['user_profile'] = $userProfile;
@@ -72,6 +79,31 @@ class UserProfileOptions implements Responsable
 
                 }
                 $data['user_causes'] = CauseDetail::list('user', $user->id)->pluck('cause_id');
+                $user_causes = CauseDetail::list('user', $user->id);
+                $user_causes->map(function ($item) {
+                    $item->cause_data = $item->cause;
+                    return $item;
+                });
+                $data['user_causes_display'] = $user_causes->pluck('cause_data');
+                $data['user_media'] = [
+                    'video' => ['validated' => '', 'url' => ''],
+                    'images' => [
+                        [
+                            'image_base64' => '',
+                            'image' => null,
+                            'validated' => '',
+                            'removable' => false
+                        ]
+                    ]
+                ];
+                $userMediaVideo = Media::single('user', 'youtube', $user->id);
+                if (isset($userMediaVideo)) {
+                    $data['user_media']['video'] = $userMediaVideo;
+                }
+                $userMediaImages = Media::list('user', 'image', $user->id);
+                if (count($userMediaImages) > 0) {
+                    $data['user_media']['images'] = $userMediaImages;
+                }
             }
         }
         return $data;

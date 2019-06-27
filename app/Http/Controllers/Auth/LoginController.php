@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
@@ -64,8 +65,9 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
+
         if ($this->isNotAllowedAccount($user->status)) {//check if user is allowed or not
-            return response()->json(['errors' => ['auth_failed' => ['Your account status is ' . title_case($user->status) . '.']]], 422);
+            return response()->json(['errors' => ['auth_failed' => ['Your account status is ' .  Str::title($user->status) . '.']]], 422);
         }
 
         $personal_token = $user->createToken($user->getTokenName());
@@ -81,7 +83,7 @@ class LoginController extends Controller
 
     protected function isNotAllowedAccount($status): bool
     {
-        $statuses = ['disabled', 'pending'];
+        $statuses = ['disabled'];
         if (in_array($status, $statuses, true)) {
             return true;
         }

@@ -46,12 +46,11 @@
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/vendor/owlcarousel/owl.carousel.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/swiper.min.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/vendor/fancybox/css/fancybox.css">
-    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/default.css"
-          id="theme_base">
-    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/default.date.css"
-          id="theme_date">
-    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/default.time.css"
-          id="theme_time">
+
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.css" id="theme_base">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.date.css" id="theme_date">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.time.css" id="theme_time">
+
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/global.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/style.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/laogiving.css{{$s['fresh_version']}}">
@@ -114,6 +113,6 @@
     </script>
     {{-- @GeneratedResourcesBottom--}}
     <script type="text/javascript"
-            src="{{url('/bundles/generated')}}/general/general.d2f74f93fa7a3311c16d.bundle.js"></script>
+            src="{{url('/bundles/generated')}}/general/general.fe3aa245f7219a4a07d5.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection

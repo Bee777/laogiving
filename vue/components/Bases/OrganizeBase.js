@@ -134,6 +134,7 @@ export default Vue.extend({
                 toaster.css('display', 'none');
             }, delay)
         }
+        //Toaster
     },
     created() {
         this.getItems = this.debounce(this.getItems, 150);

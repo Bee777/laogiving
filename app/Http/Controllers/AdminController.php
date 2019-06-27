@@ -74,6 +74,7 @@ class AdminController extends Controller
         $this->validate($request, [
             'name' => 'required|max:191|unique:causes',
             'icon' => 'required|max:3000|mimes:svg',
+            'small_icon' => 'required|max:3000|mimes:jpeg,png,jpg,gif,svg',
             'background_image' => 'required|max:3000|mimes:jpeg,png,jpg,gif,svg',
         ]);
         return new CausesResponse('insert');
@@ -84,6 +85,7 @@ class AdminController extends Controller
         $this->validate($request, [
             'name' => 'required|max:191',
             'icon' => 'max:3000|mimes:svg',
+            'small_icon' => 'max:3000|mimes:jpeg,png,jpg,gif,svg',
             'background_image' => 'max:3000|mimes:jpeg,png,jpg,gif,svg',
         ]);
         $name = $request->get('name');

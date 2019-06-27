@@ -1,3 +1,4 @@
+import ForgotPassword from '@com/General/Default/ForgotPassword.vue'
 import ResetPassword from '@com/General/Default/ResetPassword.vue'
 import RegisterOverview from '@com/General/Default/RegisterOverview.vue'
 import Register from '@com/General/Default/Register.vue'
@@ -91,12 +92,22 @@ export default [
         },
     },
     {
+        path: "/forgot-password",
+        component: ForgotPassword,
+        name: 'forgot-password',
+        meta: {
+            ...metas.guestMeta, ...metas.df({
+                hideNavFooter: false,
+            })
+        },
+    },
+    {
         path: "/password/reset/:token",
         component: ResetPassword,
         name: 'reset-password',
         meta: {
             ...metas.guestMeta, ...metas.df({
-                navFixed: false,
+                hideNavFooter: false,
             })
         },
     },

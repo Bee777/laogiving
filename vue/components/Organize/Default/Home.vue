@@ -699,7 +699,7 @@
             <!--Saved EndActivities-->
             <!--OrganizeProfile-->
             <div v-show="tab===4">
-                <OrganizeProfile @editProfileClicked="()=> { setRouteProfile('true') }" v-if="!isEditProfile"/>
+                <OrganizeProfile :visible="tab===4" @editProfileClicked="()=> { setRouteProfile('true') }" v-if="!isEditProfile"/>
                 <EditOrganizeProfile @cancelEditProfile="()=> {setRouteProfile(''); $utils.scrollToY('html,body', 2); }"
                                      v-if="isEditProfile"/>
             </div>

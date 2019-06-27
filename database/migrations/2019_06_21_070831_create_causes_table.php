@@ -16,6 +16,7 @@ class CreateCausesTable extends Migration
         Schema::create('causes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('icon');
+            $table->string('small_icon');
             $table->string('background_image');
             $table->string('name');
             $table->timestamps();

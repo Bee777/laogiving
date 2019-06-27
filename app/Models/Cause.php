@@ -39,6 +39,7 @@ class Cause extends Model
             } else {
                 $cause->icon = Cache::get($key_cache . $cause->id);
             }
+            $cause->small_icon = url('/assets/images/icon/causes') . '/' . $cause->small_icon;
             $cause->background_image = url('/assets/images/icon/causes') . '/' . $cause->background_image;
             return $cause;
         });

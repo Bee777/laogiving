@@ -99,7 +99,7 @@
                                                            class="user-square-footer-button">Add account</a>
                                                     </div>
                                                     <div>
-                                                        <a @click="Logout" class="user-square-footer-button"
+                                                        <a @click="Logout()" class="user-square-footer-button"
                                                            target="_top">Sign out</a>
                                                     </div>
                                                 </div>
@@ -201,7 +201,7 @@
                                                     <div><a @click="goTo($event, 'members')"
                                                             class="user-square-footer-button">Add account</a>
                                                     </div>
-                                                    <div><a @click="Logout" class="user-square-footer-button"
+                                                    <div><a @click="Logout()" class="user-square-footer-button"
                                                             target="_top">Sign out</a>
                                                     </div>
                                                 </div>

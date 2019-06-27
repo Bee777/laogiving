@@ -50,7 +50,7 @@
                                                    placeholder="e.g. john@laogiving.la" name="email"
                                                    autocomplete="username"
                                                    v-model="user.email">
-                                            <label v-if="validated().email" for="firstName" class="error-msg" style="display: block;">{{ validated().email }}</label>
+                                            <label v-if="validated().email" for="email" class="error-msg" style="display: block;">{{ validated().email }}</label>
                                         </div>
                                         <div class="input-ctrl">
                                             <label class="lbl">
@@ -62,7 +62,7 @@
                                                    autocomplete="current-password" name="password"
                                                    v-model="user.password"
                                                    type="password">
-                                            <label v-if="validated().password" for="firstName" class="error-msg" style="display: block;">{{ validated().password }}</label>
+                                            <label v-if="validated().password" for="password" class="error-msg" style="display: block;">{{ validated().password }}</label>
                                         </div>
                                     </div>
                                     <div class="body-txt body-txt--smaller body-txt--no-letter-space pt-8 text-center">

@@ -26,7 +26,7 @@
                                             :inputType="'file'"/>
                             </div>
                         </div>
-                        <label for="displayName" style="display: block"
+                        <label style="display: block"
                                class="error-msg">{{validated().profile_image}}</label>
                     </div>
                     <div class="input-ctrl">
@@ -128,7 +128,7 @@
                     </div>
                     <label class="lbl">Please select at least ONE and at most FOUR causes</label>
 
-                    <Causes v-model="userCauses" :items="causes"/>
+                    <Causes ref="user-causes" :max="4" v-model="userCauses" :items="causes"/>
 
                     <hr class="hr">
                     <form class="form">
@@ -279,7 +279,7 @@
 </template>
 
 <script>
-    import Causes from '@com/Volunteer/Default/Includes/Causes.vue'
+    import Causes from '@com/Utils/Causes.vue'
     import {mapActions, mapMutations, mapState, mapGetters} from 'vuex'
 
     export default {
@@ -378,6 +378,7 @@
                                 this.setUserProfileKey({key: 'public_email', value: d.email});
                             }
                             this.userCauses = d.user_causes;
+                            this.$refs['user-causes'].setValue(this.userCauses);
                             this.causes = d.causes;
                             this.fetchAuthUserInfo();
                             this.$nextTick(() => {
@@ -410,7 +411,7 @@
                     max: new Date(),
                     onOpen: () => {
                     },
-                    onSet: function(){
+                    onSet: function () {
                         that.setUserProfileKey({key: 'registration_date', value: this.get('select', 'yyyy-mm-dd')});
                         //console.log(this.get('select', 'yyyy-mm-dd'))
                     }
@@ -419,7 +420,9 @@
             }
         },
         created() {
-            this.getUserProfile();
+            if (this.visible) {
+                this.getUserProfile();
+            }
         }
     }
 </script>

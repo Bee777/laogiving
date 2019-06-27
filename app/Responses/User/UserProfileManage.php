@@ -11,6 +11,7 @@ namespace App\Responses\User;
 
 use App\Http\Controllers\Helpers\Helpers;
 use App\Models\CauseDetail;
+use App\Models\Media;
 use App\Models\OrganizeProfile;
 use App\Models\VolunteerProfile;
 use Illuminate\Contracts\Support\Responsable;
@@ -102,6 +103,36 @@ class UserProfileManage implements Responsable
                     }
                     //@Save User Profile
                 } else if ($type === 'organize' && $user->isUser('organize')) { //@End Volunteer
+
+                    //media video and images
+                    #youtube
+                    $userMediaVideoModel = Media::single('user', 'youtube', $user->id);
+                    $user_media_video_url = $request->get('user_media_video_url');
+
+                    if (isset($userMediaVideoModel)) {
+                        Media::updateUser($userMediaVideoModel->id, $user->id, 'youtube', $user_media_video_url | '');
+                    } else {
+                        Media::saveUser($user, 'youtube', $user_media_video_url | '');
+                    }
+                    //#images
+                    $userMediaImagesModel = Media::list('user', 'image', $user->id);
+                    $user_media_images = $request->file('user_media_images');
+                    $user_media_images_cleared = $request->get('user_media_images_cleared');
+
+                    #delete cleared images
+                    if (is_array($user_media_images_cleared) && count($user_media_images_cleared) > 0) {
+                        Media::deleteMultiData($user_media_images_cleared);
+                    }
+                    #manage slide images data
+                    if (is_array($user_media_images) && count($user_media_images) > 0) {
+                        Media::saveMultiData($user->id, 'user', 'image', $user_media_images);
+                    } else {
+                        foreach ($userMediaImagesModel as $imageModel) {
+                            Helpers::removeFile(Media::$uploadPath . $imageModel->url);
+                            $imageModel->delete();
+                        }
+                    }
+
                     $hasProfile = true;
                     $userProfile = $user->userProfile($type);
                     if (!isset($userProfile)) {

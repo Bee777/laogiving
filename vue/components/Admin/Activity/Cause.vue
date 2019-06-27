@@ -42,7 +42,7 @@
                                             :validateText="validated().icon"
                                             :label="'Feature Icon'"
                                             :inputType="'file'"
-                                            placeholder="Choose feature icon"
+                                            placeholder="Choose icon"
                                         ></AdminInput>
                                     </div>
                                     <div v-if="models.formTop.imageSrc"
@@ -51,6 +51,28 @@
                                             <div class="media-centered">
                                                 <figure class="image is-128x128">
                                                     <img :src="models.formTop.imageSrc">
+                                                </figure>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="layout-align-space-around-start layout-row">
+                                        <AdminInput
+                                            @inputImageBase64="(d)=> models.formTop.smallSrc=d"
+                                            @inputFile="(d)=> models.formTop.small_icon=d"
+                                            :validateText="validated().small_icon"
+                                            :label="'Feature Small Icon'"
+                                            :inputType="'file'"
+                                            placeholder="Choose icon"
+                                        ></AdminInput>
+                                    </div>
+                                    <div v-if="models.formTop.smallSrc"
+                                         class="layout-align-space-around-start layout-row">
+                                        <div class="box">
+                                            <div class="media-centered">
+                                                <figure class="image is-128x128">
+                                                    <img :src="models.formTop.smallSrc">
                                                 </figure>
                                             </div>
                                         </div>
@@ -114,7 +136,7 @@
                                         :label="'Feature Image'"
                                         :validateText="rowContent.validated.icon"
                                         :inputType="'file'"
-                                        placeholder="Choose feature image"
+                                        placeholder="Choose icon"
                                         @onInputEnter="editNews(fireEvent, rowContent.data, position)"
                                     />
                                 </div>
@@ -124,6 +146,29 @@
                                             <figure class="image is-128x128">
                                                 <img v-if="rowContent.options.imageSrc"
                                                      :src="rowContent.options.imageSrc">
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="layout-align-space-around-start layout-row">
+                                    <AdminInput
+                                        v-model="rowContent.data.filename_small"
+                                        @inputImageBase64="(d)=> rowContent.options.smallSrc=d"
+                                        @inputFile="(d) => rowContent.data.small_icon = d"
+                                        :label="'Feature Small Icon'"
+                                        :validateText="rowContent.validated.small_icon"
+                                        :inputType="'file'"
+                                        placeholder="Choose small icon"
+                                        @onInputEnter="editNews(fireEvent, rowContent.data, position)"
+                                    />
+                                </div>
+                                <div class="layout-align-space-around-start layout-row">
+                                    <div class="box">
+                                        <div class="media-centered">
+                                            <figure class="image is-128x128">
+                                                <img v-if="rowContent.options.smallSrc"
+                                                     :src="rowContent.options.smallSrc">
                                             </figure>
                                         </div>
                                     </div>
@@ -212,18 +257,27 @@
             headers: [
                 {class: 'th-sortable', name: 'Category Name', width: '30%'},
                 {class: "hide-xs th-sortable", name: "Icon", width: "10%"},
+                {class: "hide-xs th-sortable", name: "Small Icon", width: "10%"},
                 {class: "hide-xs th-sortable", name: "Bg Image", width: "10%"},
                 {class: 'hide-xs th-sortable', name: 'Created At', width: '28%'},
                 {class: 'hide-xs th-sortable', name: 'Updated At', width: '28%'},
                 {class: 'th-not-sortable', name: '', width: '80'},
             ],
-            models: {formTop: {name: '', imageSrc: null, icon: null, bgSrc: null, background_image: null}},
+            models: {
+                formTop: {
+                    name: '',
+                    imageSrc: null, icon: null,
+                    smallSrc: null, small_icon: null,
+                    bgSrc: null, background_image: null
+                }
+            },
         }),
         methods: {
             ...mapActions(['postCreateCategory', 'postUpdateCategory', 'postDeleteCategory']),
             callbackBuildItem(data) {
                 //options data
                 data.options = {
+                    smallSrc: `${this.baseUrl}${data.small_icon}`,
                     imageSrc: `${this.baseUrl}${data.icon}`,
                     bgSrc: `${this.baseUrl}${data.background_image}`
                 };
@@ -241,6 +295,11 @@
                         {data: data.name, type: 'id', class: 'user-email'},
                         {
                             data: `${this.baseUrl}${data.icon}`,
+                            type: "image",
+                            class: "hide-xs"
+                        },
+                        {
+                            data: `${this.baseUrl}${data.small_icon}`,
                             type: "image",
                             class: "hide-xs"
                         },
@@ -294,11 +353,10 @@
                             this.getItems();
                             ft.show = false;
                             this.models.formTop = {
-                                imageSrc: null,
                                 name: '',
-                                icon: null,
-                                bgSrc: null,
-                                background_image: null
+                                imageSrc: null, icon: null,
+                                smallSrc: null, small_icon: null,
+                                bgSrc: null, background_image: null
                             };
                         }
                         ft.loading = false;

@@ -37,7 +37,7 @@ class CausesResponse implements Responsable
         $request->request->add(['fields' => $fields]);
         $text = $this->options['text'];
         $paginateLimit = $this->options['limit'];
-        $data = Cause::select(array_merge($fields, ['icon', 'background_image']));
+        $data = Cause::select(array_merge($fields, ['icon', 'small_icon', 'background_image']));
         $data->where(function ($query) use ($request, $text) {
             foreach ($request->fields as $k => $f) {
                 if ($f === 'created_at' || $f === 'updated_at') {
@@ -54,6 +54,8 @@ class CausesResponse implements Responsable
         $data->map(function ($d) {
             $d->filename = $d->icon;
             $d->icon = self::$uploadPath . $d->icon;
+            $d->filename_small = $d->small_icon;
+            $d->small_icon = self::$uploadPath . $d->small_icon;
             $d->filename_bg = $d->background_image;
             $d->background_image = self::$uploadPath . $d->background_image;
             return $d;
@@ -71,12 +73,21 @@ class CausesResponse implements Responsable
                 $fileExt = strtolower($file->getClientOriginalExtension());
                 $imgOriginalName = Helpers::subFileName($file->getClientOriginalName()) . md5('^');
                 $img_filename = $imgOriginalName . md5(uniqid('icon-causes', true)) . '_icon.' . $fileExt;
-                if ($fileExt === 'gif' || $fileExt === 'svg') {
+                if ($fileExt === 'svg') {
                     $location = public_path(self::$uploadPath);
                     $file->move($location, $img_filename);
+                }
+                #small icon
+                $file_small = $request->file('small_icon');
+                $fileExtSmall = strtolower($file_small->getClientOriginalExtension());
+                $imgOriginalNameSmall = Helpers::subFileName($file_small->getClientOriginalName()) . md5('^');
+                $img_filename_small = $imgOriginalNameSmall . md5(uniqid('icon-causes-small', true)) . '_small_icon.' . $fileExtSmall;
+                if ($fileExtSmall === 'gif' || $fileExtSmall === 'svg') {
+                    $location = public_path(self::$uploadPath);
+                    $file_small->move($location, $img_filename_small);
                 } else {
-                    $img = Image::make($file);
-                    $location = public_path(self::$uploadPath . $img_filename);
+                    $img = Image::make($file_small);
+                    $location = public_path(self::$uploadPath . $img_filename_small);
                     $img->save($location)->destroy();
                 }
                 #bg image
@@ -96,6 +107,7 @@ class CausesResponse implements Responsable
                 $info = new Cause();
                 $info->name = $request->get('name');
                 $info->icon = $img_filename;
+                $info->small_icon = $img_filename_small;
                 $info->background_image = $img_bg_filename;
                 $info->save();
                 $data = $info;
@@ -108,16 +120,29 @@ class CausesResponse implements Responsable
                         $fileExt = strtolower($file->getClientOriginalExtension());
                         $imgOriginalName = Helpers::subFileName($file->getClientOriginalName()) . md5('^');
                         $img_filename = $imgOriginalName . md5(uniqid('icon-causes', true)) . '_icon.' . $fileExt;
-                        if ($fileExt === 'gif' || $fileExt === 'svg') {
+                        if ($fileExt === 'svg') {
                             $location = public_path(self::$uploadPath);
                             $file->move($location, $img_filename);
-                        } else {
-                            $img = Image::make($file);
-                            $location = public_path(self::$uploadPath . $img_filename);
-                            $img->save($location)->destroy();
                         }
                         Helpers::removeFile(self::$uploadPath . $info->icon);
                     }
+
+                    if ($request->hasFile('small_icon')) {
+                        $file_small = $request->file('small_icon');
+                        $fileExtSmall = strtolower($file_small->getClientOriginalExtension());
+                        $imgOriginalNameSmall = Helpers::subFileName($file_small->getClientOriginalName()) . md5('^');
+                        $img_filename_small = $imgOriginalNameSmall . md5(uniqid('icon-causes-small', true)) . '_small_icon.' . $fileExtSmall;
+                        if ($fileExtSmall === 'gif' || $fileExtSmall === 'svg') {
+                            $location = public_path(self::$uploadPath);
+                            $file_small->move($location, $img_filename_small);
+                        } else {
+                            $img = Image::make($file_small);
+                            $location = public_path(self::$uploadPath . $img_filename_small);
+                            $img->save($location)->destroy();
+                        }
+                        Helpers::removeFile(self::$uploadPath . $info->small_icon);
+                    }
+
 
                     if ($request->hasFile('background_image')) {
                         $file_bg = $request->file('background_image');
@@ -137,6 +162,7 @@ class CausesResponse implements Responsable
 
                     $info->name = $request->get('name');
                     $info->icon = $img_filename ?? $info->icon;
+                    $info->small_icon = $img_filename_small ?? $info->small_icon;
                     $info->background_image = $img_bg_filename ?? $info->background_image;
                     $info->save();
                     $data = $info;
@@ -145,6 +171,7 @@ class CausesResponse implements Responsable
                 $info = Cause::find($request->id);
                 if (isset($info)) {
                     Helpers::removeFile(self::$uploadPath . $info->icon);
+                    Helpers::removeFile(self::$uploadPath . $info->small_icon);
                     Helpers::removeFile(self::$uploadPath . $info->background_image);
                     $info->delete();
                     $data = $info;

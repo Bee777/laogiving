@@ -22,7 +22,7 @@
              :class="[(isMobile && $route.meta.navFixed) ? 'add-padding-top-content': '']">
             <router-view></router-view>
         </div>
-        <Footer v-if="!$route.meta.hideNavFooter" />
+        <Footer v-if="!$route.meta.hideNavFooter"/>
 
         <Sidebar/>
 
@@ -38,7 +38,7 @@
     import Sidebar from '@com/Organize/Partial/Sidebar.vue';
     import Footer from '@com/General/Partial/Footer.vue';
 
-    const Modals = () => import('@com/Organize/Default/Includes/Modals.vue')
+    const Modals = () => import('@com/Utils/Modals.vue')
     export default {
         name: 'app-volunteer',
         components: {
@@ -67,8 +67,8 @@
             }
         },
         methods: {
-            ...mapMutations(['setMobile']),
-            ...mapActions(['fetchHomeData', 'fetchAuthUserInfo']),
+            ...mapMutations(['setMobile', 'setUserProfile', 'setUserProfileKey']),
+            ...mapActions(['fetchHomeData', 'fetchAuthUserInfo', 'fetchOptionProfileData']),
             getClient: (e, context) => {
                 context.breakPoint = e.currentTarget.innerWidth;
                 context.windowHeight = e.currentTarget.innerHeight;
@@ -88,7 +88,23 @@
                 this.Event.listen('preload', (d) => {
                     this.onLoading(d.loading);
                 })
-            }
+            },
+            getUserProfile() {
+                this.fetchOptionProfileData()
+                    .then(res => {
+                        let s = res.success, d = res.data;
+                        if (s) {
+                            if (!this.$utils.isEmptyVar(d.user_profile)) {
+                                this.setUserProfile(d.user_profile);
+                            } else {
+                                this.setUserProfileKey({key: 'display_name', value: d.name});
+                                this.setUserProfileKey({key: 'public_email', value: d.email});
+                            }
+                        }
+                    })
+                    .catch(err => {
+                    })
+            },
         },
         mounted() {
             this.breakPoint = this.$el.clientWidth;
@@ -102,6 +118,7 @@
         },
         created() {
             this.fetchAuthUserInfo({no_redirect: true});//get first user data
+            this.getUserProfile();
         },
         beforeDestroy() {
             if (window.removeEventListener) {

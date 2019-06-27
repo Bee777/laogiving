@@ -14,11 +14,11 @@
                         <div class="body-txt body-txt--smaller body-txt--no-letter-space pt-8 text-center">Your
                             information is safe and secure with us.
                         </div>
-                        <form name="loginform" v-on:submit.prevent method="post" class="activity">
+                        <form name="loginform" @submit.prevent method="post" class="activity">
                             <label> Email
                                 <input v-model="user.email" class="input-ctn" autocomplete="username email" name="email"
                                        value=""
-                                       type="text">
+                                       type="email">
                             </label>
 
                             <label v-if="validated().email" class="error-msg" style="display: block;">{{
@@ -27,11 +27,11 @@
                             <label class="mt-16">
                                 Password <span class="tooltip__mark" data-toggle="tooltip" data-placement="right"
                                                title="Your password must be between 8-24 characters with at least one number. Only special characters @$!%*?&amp;+-.=^_|~ are accepted.">?</span>
-                                <input @keyup.enter="LoginUser({userInfo: user, refreshPage: true})"
-                                       v-model="user.password"
-                                       autocomplete="current-password" name="password" value=""
-                                       class="input-ctn"
-                                       type="password">
+                                <input
+                                    v-model="user.password"
+                                    autocomplete="current-password" name="password" value=""
+                                    class="input-ctn"
+                                    type="password">
                             </label>
 
                             <label v-if="validated().password" class="error-msg" style="display: block;">{{
@@ -41,9 +41,11 @@
                                 validated().auth_failed }}
                             </div>
 
-                            <label class="mb-16"><a>Forgot Password?</a></label>
-                            <button @click="LoginUser({userInfo: user, refreshPage: true})"
-                                    class="button-ctn button--large button--full">
+                            <label class="mb-16"><a @click="Route({name: 'forgot-password'})">Forgot
+                                Password?</a></label>
+                            <button
+                                @click="LoginUser({userInfo: user, refreshPage: true})"
+                                class="button-ctn button--large button--full">
                                 Login
                             </button>
                             <p class="p-modal-footer"> Don't have an account? <a
@@ -414,7 +416,6 @@
             this.modalWidth = wWidth - SCROLL_WIDTH < MODAL_WIDTH
                 ? wWidth - ((wWidth + SCROLL_WIDTH) * 8 / 100)
                 : MODAL_WIDTH;
-            this.LoginUser = this.$throttle(this.LoginUser, 1000);
         }
     }
 </script>

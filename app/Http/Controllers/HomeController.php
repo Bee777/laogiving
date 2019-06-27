@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendContactInfo;
+use App\Jobs\SendReportAbuse;
 use App\Models\Banner;
 use App\Models\Cause;
 use App\Models\NewsLetter;
@@ -112,4 +113,21 @@ class HomeController extends Controller
         return new SaveNewsLetterResponse('save');
     }
     /***@POST_NEWSLETTER */
+
+    /***@POST_REPORT_FEEDBACK
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function responsePostReportAbuse(Request $request)
+    {
+        $this->validate($request, [
+            'email' => ['required', 'string', 'email', 'max:191'],
+            'reason' => ['required', 'string', 'max:800'],
+        ]);
+        $this->dispatch(new SendReportAbuse($request->all()));
+        return response()->json(['success' => true, 'msg' => 'The report abuse information was sent!.']);
+    }
+    /***@POST_REPORT_FEEDBACK */
+
 }

@@ -106,7 +106,7 @@
                         }, 3500);
                     }
                 }).catch((err) => {
-                    console.log(err);
+                    //console.log(err);
                 })
             },
         }

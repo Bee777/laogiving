@@ -24,7 +24,7 @@
                                             <content>Thank you for registration</content>
                                         </h1>
                                         <div class="headingSubtext">
-                                            <content>Continue to create your Profile after your account has been approved.</content>
+                                            <content>Continue to create your Profile to make your account be approved.</content>
                                         </div>
                                     </div>
                                 </div>

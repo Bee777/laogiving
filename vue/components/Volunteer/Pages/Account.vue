@@ -26,7 +26,7 @@
                                             :inputType="'file'"/>
                             </div>
                         </div>
-                        <label v-if="validated().profile_image" for="displayName" style="display: block"
+                        <label v-if="validated().profile_image" style="display: block"
                                class="error-msg">{{validated().profile_image}}</label>
                     </div>
                     <div class="input-ctrl">
@@ -120,7 +120,7 @@
                     <h3 class="h3 font-dark-grey">My Causes (Optional)</h3>
                     <!--<div class="error-msg">You have not select anything</div>-->
                     <!--Causes-->
-                    <Causes v-model="userCauses" :items="causes"/>
+                    <Causes ref="user-causes" :max="4" v-model="userCauses" :items="causes"/>
                     <!--End Causes-->
                     <hr class="hr">
                     <h3 class="h3 font-dark-grey passwordLabel">Change Password (Optional)</h3>
@@ -186,7 +186,7 @@
 </template>
 
 <script>
-    import Causes from '@com/Volunteer/Default/Includes/Causes.vue'
+    import Causes from '@com/Utils/Causes.vue'
     import {mapActions, mapMutations, mapState, mapGetters} from 'vuex'
 
     export default {
@@ -285,6 +285,7 @@
                                 this.setUserProfileKey({key: 'public_email', value: d.email});
                             }
                             this.userCauses = d.user_causes;
+                            this.$refs['user-causes'].setValue(this.userCauses);
                             this.causes = d.causes;
                             this.fetchAuthUserInfo();
                             this.$nextTick(() => {

@@ -33,14 +33,17 @@
                 class="admin-input"
                 :placeholder="placeholder"
                 :class="[customClass, hasError()]"/>
-            <input :id="id" @change="onFileSelected" ref="main-input" type="file" v-show="false"/>
+            <form ref="form-file-input">
+                <input :id="id" @change="onFileSelected" ref="main-input" type="file" v-show="false"/>
+            </form>
+
         </template>
         <template v-else-if="inputType==='checkbox'">
             <div class="checklist-items-list">
                 <div class="checklist-item">
                     <div class="checklist-item-checkbox" :class="[{'is-disabled': isDisabled}]">
                         <label class="icon-check" :for="'main-input-' + _uid"> </label>
-                        <input :id="'main-input-' + _uid"  v-model="inputText" ref="main-input" type="checkbox"/>
+                        <input :id="'main-input-' + _uid" v-model="inputText" ref="main-input" type="checkbox"/>
                         <i class="material-icons icon-check">done</i>
                     </div>
                     <div class="checklist-item-details">
@@ -175,6 +178,10 @@
             },
             triggerInputClick() {
                 this.$refs['main-input'].click();
+            },
+            clearInput() {
+                this.$refs['form-file-input'].reset();
+                this.$refs['main-input'].value = "";
             },
             onFileSelected() {
                 let inputFile = this.$refs['main-input'], file, fileSize, fileName, fileBase64;

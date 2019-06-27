@@ -14,6 +14,7 @@ Route::group(['prefix' => '/guest', 'middleware' => ['cors']], function () {
     Route::post('/login', 'Auth\LoginController@login')->name('api.post.login');
     Route::post('/register-user', 'Auth\RegisterController@register')->name('api.post.register');
     //Users Email Forgot Password
+    Route::post('/forgot-password', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('api.post.send-user-reset-link');
     Route::post('/forgot-password/email/{token}', 'Auth\ForgotPasswordController@getEmailFromToken')->name('api.post.getEmailFromToken');
     //Users Password Reset
     Route::post('/password/reset', 'Auth\ResetPasswordController@reset')->name('api.post.resetPassword');
@@ -33,6 +34,9 @@ Route::group(['prefix' => '/home', 'middleware' => ['cors', 'parseToken:guest-be
     /****@NewsLetter */
     Route::post('/save-receive-news-letter', 'HomeController@responsePostNewsLetter')->name('api.post.saveNewsLetter');
     /****@NewsLetter */
+    /****@ReportAbuse */
+    Route::post('/send-report-abuse', 'HomeController@responsePostReportAbuse')->name('api.post.sendReportAbuse');
+    /****@ReportAbuse */
 });
 /******************** @HomeSection ****************** */
 

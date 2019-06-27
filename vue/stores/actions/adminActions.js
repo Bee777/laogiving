@@ -487,12 +487,14 @@ export const createActions = (utils) => {
                 utils.Validate(data, {
                     'name': ['required', {max: 191}],
                     'icon': ['required', {mimes: 'svg'}, {max: 3000}],
+                    'small_icon': ['required', {mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
                     'background_image': ['required', {mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
                 }).then(v => {
 
                     let formData = new FormData();
                     utils.addDataForm(['name'], formData, data);
                     formData.append('icon', data.icon.file);
+                    formData.append('small_icon', data.small_icon.file);
                     formData.append('background_image', data.background_image.file);
 
                     client.post(`${apiUrl}/admin/volunteering/category/create`, formData, ajaxToken(c, true))
@@ -515,12 +517,16 @@ export const createActions = (utils) => {
                 utils.Validate(data, {
                     'name': ['required', {max: 191}],
                     'icon': [{mimes: 'svg'}, {max: 3000}],
+                    'small_icon': [{mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
                     'background_image': [{mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
                 }).then(v => {
                     let formData = new FormData();
                     utils.addDataForm(['name'], formData, data);
                     if (data.icon && data.icon.file) {//check if user change icon
                         formData.append('icon', data.icon.file);
+                    }
+                    if (data.small_icon && data.small_icon.file) {//check if user change small icon
+                        formData.append('small_icon', data.small_icon.file);
                     }
                     if (data.background_image && data.background_image.file) {//check if user change background_image
                         formData.append('background_image', data.background_image.file);

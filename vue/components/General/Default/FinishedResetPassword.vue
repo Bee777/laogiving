@@ -24,7 +24,7 @@
                                             <content>Thank you for attention</content>
                                         </h1>
                                         <div class="headingSubtext">
-                                            <content>Sign in to continue to Jaol Memebers with your new password.
+                                            <content>Sign in to continue to our site with your new password.
                                             </content>
                                         </div>
                                     </div>

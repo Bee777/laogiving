@@ -5109,7 +5109,7 @@ button.navbar-alert-menu-button-bell {
 [p-header-host-2] .fire-featurebar-title[p-content-1] {
     color: #fff;
     margin: 0;
-    font-family: "Google Sans", sans-serif;
+    font-family: "Google Sans", 'noto-regular', sans-serif;
     font-size: 26px;
     line-height: 32px;
     font-weight: 500;

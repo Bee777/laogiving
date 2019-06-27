@@ -1289,5 +1289,14 @@ export default {
             hash |= 0; // Convert to 32bit integer
         }
         return hash;
+    },
+    httpOrHttps(url, gen = false) {
+        let regex = /(http(s?)):\/\//gi;
+        if (gen) {
+            if (!regex.test(url)) {
+                return `http://${url}`;
+            }
+        }
+        return regex.test(url);
     }
 }

@@ -24,6 +24,28 @@ export const createActions = (utils) => {
                     c.dispatch('HandleError', err.response);
                 });
         },
+        postReportAbuse(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data, {
+                    'email': ['required', 'email', {max: 191}],
+                    'reason': ['required', {max: 800}],
+                }).then(v => {
+                    client.post(`${apiUrl}/home/send-report-abuse`, data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data);
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err);
+                        });
+
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
         /***  @UsersSettings Profile **/
         /*** @UserProfile **/
         fetchOptionProfileData(c, data) {
@@ -100,9 +122,32 @@ export const createActions = (utils) => {
                         formData.append('user_causes[]', i);
                     });
 
+                    //user media
+                    let video = info.user_media.video;
+                    if (!utils.isEmptyVar(video.url)) {
+                        formData.append('user_media_video_url', video.url);
+                    }
+                    let images = info.user_media.images;
+                    images.map((i) => {
+                        if (i.clear) {
+                            formData.append('user_media_images_cleared[]', i.id);
+                        } else if (i.id && i.url) {
+                            formData.append('user_media_images[]', new File([""], i.url));
+                        } else {
+                            utils.Validate(i, {
+                                'image': ['required', {mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
+                            }).then(v => {
+                                formData.append('user_media_images[]', i.image.file);
+                            }).catch(e => {
+
+                            });
+                        }
+                    });
+                    //user profile image
                     if (info.profile_image) {//check if user change image
                         formData.append('profile_image', info.profile_image.file);
                     }
+
                     client.post(`${apiUrl}/users/profile-manage?type=organize`, formData, ajaxToken(c, true))
                         .then(res => {
                             c.commit('setClearMsg');

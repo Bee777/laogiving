@@ -11,7 +11,7 @@ namespace App\Http\Controllers\Helpers;
 use DateTime;
 use Exception, Log;
 use Carbon\Carbon;
-use Image;
+use Image, File;
 
 class Helpers
 {
@@ -55,9 +55,9 @@ class Helpers
         $post_fix = (string)self::removeSpaces($post_fix);
         if ($includeName) {
             $imgOriginalName = self::subFileName($file->getClientOriginalName()) . md5('^');
-            $img_filename = $imgOriginalName . md5(date('Y-m-d H:i:s') . microtime()) . time() . $post_fix . '.' . $fileExt;
+            $img_filename = $imgOriginalName . self::fileNameHash($post_fix) . $post_fix . '.' . $fileExt;
         } else {
-            $img_filename = md5(date('Y-m-d H:i:s') . microtime()) . time() . $post_fix . '.' . $fileExt;
+            $img_filename = self::fileNameHash($post_fix) . $post_fix . '.' . $fileExt;
         }
         if ($fileExt === 'gif' || $fileExt === 'svg') {
             $location = public_path($uploadPath);
@@ -69,6 +69,11 @@ class Helpers
         }
         return $img_filename;
         #Image
+    }
+
+    public static function fileNameHash($id): string
+    {
+        return md5(uniqid($id . '_uid', true));
     }
 
     public static function removeSpaces($str = '')

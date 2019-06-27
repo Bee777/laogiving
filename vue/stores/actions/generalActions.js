@@ -37,6 +37,30 @@ export const createActions = (utils) => {
 
             })
         },
+        forgotPassword(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data, {
+                    'email': ['email', 'required', {max: 191}],
+                }).then((v) => {
+                    c.commit('setValidated', {errors: {loading: 'yes'}});
+                    client.post(`${apiUrl}/guest/forgot-password`, data, ajaxConfig)
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data);
+                            if(res.data.success){
+                                c.commit('setSucceed', {succeed: {msg: res.data.status}})
+                            }
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err.response);
+                        })
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
         /*** @HomeData **/
         fetchHomeData(c, i) {
             client.get(`${apiUrl}/home/index`, ajaxConfig.getHeaders())

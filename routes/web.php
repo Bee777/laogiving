@@ -33,7 +33,8 @@ Route::get('/organisation/profile/{id}', 'HomeController@index')->name('get.home
 /**@Posts */
 
 /**@ResetPasswordForm */
-Route::get('password/reset/{token}', 'HomeController@index')->name('password.reset');
+Route::get('/forgot-password', 'HomeController@index')->name('get.home.forgot-password')->middleware('guest');
+Route::get('/password/reset/{token}', 'HomeController@index')->name('password.reset');
 Route::get('/reset-password-successfully', 'HomeController@index')->name('get.home.reset-password-successfully');
 /**@ResetPasswordForm */
 
