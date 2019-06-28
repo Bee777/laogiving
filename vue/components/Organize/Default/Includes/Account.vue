@@ -128,7 +128,7 @@
                     </div>
                     <label class="lbl">Please select at least ONE and at most FOUR causes</label>
 
-                    <Causes ref="user-causes" :max="4" v-model="userCauses" :items="causes"/>
+                    <Causes ref="user-causes" :max="4" v-model="userProfile.user_causes" :items="userProfile.causes"/>
 
                     <hr class="hr">
                     <form class="form">
@@ -295,21 +295,8 @@
         data: () => ({
             ...mapGetters(['validated', 'succeeded']),
             userCredential: {},
-            userCauses: [],
             isLoading: false,
-            causes: [],
             datePicker: null,
-            userMedia: {
-                video: {validated: '', url: ''},
-                images: [
-                    {
-                        image_base64: '',
-                        image: null,
-                        validated: '',
-                        removable: false,
-                    }
-                ],
-            },
         }),
         watch: {
             visible: function (n) {
@@ -337,8 +324,6 @@
             saveProfileSettings() {
                 let dt = 3500;
                 this.isLoading = true;
-                this.setUserProfileKey({key: 'user_causes', value: this.userCauses});
-                this.setUserProfileKey({key: 'user_media', value: this.userMedia});
 
                 if (!this.$utils.isEmptyObject(this.userCredential)) {
                     this.saveUserCredentials();
@@ -375,7 +360,6 @@
                         this.isLoading = false;
                     })
                     .catch(err => {
-
                         this.showErrorToast({msg: 'Failed to update your credentials!', dt});
                         this.isLoading = false;
                     });
@@ -391,11 +375,16 @@
                                 this.setUserProfileKey({key: 'display_name', value: d.name});
                                 this.setUserProfileKey({key: 'public_email', value: d.email});
                             }
-                            this.userMedia.video = d.user_media.video;
-                            this.userMedia.images = d.user_media.images;
-                            this.userCauses = d.user_causes;
-                            this.$refs['user-causes'].setValue(this.userCauses);
-                            this.causes = d.causes;
+
+                            this.setUserProfileKey({key: 'user_causes', value: d.user_causes});
+                            this.setUserProfileKey({key: 'user_causes_display', value: d.user_causes_display});
+                            this.setUserProfileKey({key: 'causes', value: d.causes});
+                            this.setUserProfileKey({
+                                key: 'user_media',
+                                value: {video: d.user_media.video, images: d.user_media.images}
+                            });
+
+                            this.$refs['user-causes'].setValue(d.user_causes);
                             this.fetchAuthUserInfo();
                             this.$nextTick(() => {
                                 this.setDatePicker(this.userProfile.registration_date);
@@ -416,7 +405,7 @@
                 });
                 if (this.datePicker) {
                     let picker = dateOfBirthPickerEl.pickadate('picker');
-                    if(date){
+                    if (date) {
                         picker.set('select', new Date(date));
                     }
                     return;

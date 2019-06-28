@@ -1,19 +1,19 @@
 <template>
     <div class="rounded-card__body rounded-card__body--responsive">
         <form class="form" id="volunteer-step-3">
-            <div class="bulk-booking mb-24">
-                <h3 class="h3 font-dark-grey">Enable Organisation or Groups to sign up for
-                    this activity?</h3> <label
-                class="ios-switch mt-16">
-                <input type="checkbox"
-                       id="bulk_booking"
-                       name="bulk_booking"
-                       class="ios-switch__checkbox"> <span
-                class="ios-switch__off">No</span>
-                <div class="ios-switch__base"></div>
-                <span class="ios-switch__on">Yes</span> </label>
-                <hr class="hr">
-            </div>
+            <!--<div class="bulk-booking mb-24">-->
+                <!--<h3 class="h3 font-dark-grey">Enable Organisation or Groups to sign up for-->
+                    <!--this activity?</h3> <label-->
+                <!--class="ios-switch mt-16">-->
+                <!--<input type="checkbox"-->
+                       <!--id="bulk_booking"-->
+                       <!--name="bulk_booking"-->
+                       <!--class="ios-switch__checkbox"> <span-->
+                <!--class="ios-switch__off">No</span>-->
+                <!--<div class="ios-switch__base"></div>-->
+                <!--<span class="ios-switch__on">Yes</span> </label>-->
+                <!--<hr class="hr">-->
+            <!--</div>-->
             <h3 class="h3 font-dark-grey">Volunteer positions</h3>
             <span class="body-txt body-txt--small">You can only create one volunteer position</span>
 
@@ -28,6 +28,9 @@
 
                     <!--POSITION BODY-->
                     <div class="accordion-card__body mt-16">
+
+                        <div class="text-right"> <button type="button" class="button-ctn button--with-icon button--no-bg button--font-dark-grey button--dark button--large font-dark-grey button--no-right-pad js-create-volunteer-act__role-remove create-volunteer-act__role-remove"> <div class="button--with-icon__wrapper font-dark-grey"> <i class="ico ico-remove-gray button--with-icon__icon"></i> REMOVE POSITION </div> </button> </div>
+
                         <div class="input-ctrl success">
                             <label class="lbl">Position title</label>
                             <input
@@ -262,6 +265,8 @@
 
                 </div>
             </div>
+
+            <button class="button-ctn button--with-icon button--no-bg button--large button--no-left-pad" style="display: inline-block;"> <div class="button--with-icon__wrapper button--with-icon__wrapper"> <i class="ico ico-add button--with-icon__icon"></i> ADD ANOTHER POSITION </div> </button>
 
             <hr class="hr">
             <div class="input-ctrl mt-16 success">

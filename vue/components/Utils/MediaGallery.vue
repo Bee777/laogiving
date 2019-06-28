@@ -45,7 +45,7 @@
                         <i class="ico ico-upload"></i>
                         <div class="file-upload__upload-btn-text">UPLOAD IMAGE</div>
                     </a></div>
-                    <a @click="clearImage(idx)"
+                    <a @click="clearImageSrc(idx)"
                        class="button-ctn cursor button--small button--icon file-upload__cancel remove-image-button"
                        :class="[{'hide': item.image_base64 === ''}]">
                         <i style="color: #ffffff;" class="ico material-icons button--icon__icon">close</i></a>
@@ -53,7 +53,7 @@
                         {{ item.validated }}
                     </div>
                     <AdminInput :ref="`image-${idx}`" v-show="false"
-                                @inputImageBase64="(d) => item.image_base64=d"
+                                @inputImageBase64="setImageSrc(idx, $event)"
                                 @inputFile="(d) => item.image=d"
                                 :inputType="'file'"/>
                 </div>
@@ -109,12 +109,16 @@
                 this.video = video;
                 this.images = images;
             },
-            clearImage(idx) {
+            setImageSrc(idx, src) {
+                this.images[idx].image_base64 = src;
+                this.$emit('setImageSrc', {index: idx, image: this.images[idx]});
+            },
+            clearImageSrc(idx) {
                 this.images[idx].image_base64 = '';
                 this.images[idx].image = null;
                 this.images[idx].validated = '';
                 this.$refs[`image-${idx}`][0].clearInput();
-                this.$emit('clearImage', {index: idx, image: this.images[idx]});
+                this.$emit('clearImageSrc', {index: idx, image: this.images[idx]});
             },
             setVideo(video) {
                 this.video = video;
@@ -142,9 +146,6 @@
             chooseProfileImage(idx) {
                 this.$refs[`image-${idx}`][0].triggerInputClick();
             },
-        },
-        mounted() {
-
         },
         created() {
             this.video = this.value.video;

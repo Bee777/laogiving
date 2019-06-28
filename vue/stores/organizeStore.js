@@ -39,6 +39,20 @@ export default new Vuex.Store({
             profile_image_base64: '',
             visibility: true,
             website_in_our_site: '',
+            user_causes: [],
+            user_causes_display: [],
+            causes: [],
+            user_media: {
+                video: {validated: '', url: ''},
+                images: [
+                    {
+                        image_base64: '',
+                        image: null,
+                        validated: '',
+                        removable: false,
+                    }
+                ],
+            },
         },
         dashboardData: {
             activities_count: 0,

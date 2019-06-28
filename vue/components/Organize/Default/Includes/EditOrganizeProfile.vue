@@ -86,11 +86,12 @@
 
                         <!--</div>-->
 
-                        <MediaGallery @clearImage="clearImageData" ref="media-gallery" v-model="userMedia"/>
+                        <MediaGallery @setImageSrc="serImageSrcData" @clearImageSrc="clearImageSrcData" ref="media-gallery"
+                                      v-model="user_media"/>
 
                     </div>
                     <!--ENDImages-->
-                    <button @click="AddMedia()" v-if="userMedia.images.length <= ImageLimit"
+                    <button @click="AddMedia()" v-if="user_media.images.length <= ImageLimit"
                             class="button-ctn button--with-icon button--no-bg button--large button--no-left-pad">
                         <div class="button--with-icon__wrapper button--with-icon__wrapper"><i
                             class="ico ico-add  button--with-icon__icon"></i> ADD IMAGE
@@ -187,7 +188,8 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
                             </div>
                             <div id="causes-wrapper"><p class="body-txt" id="causes-title">Please select up to 4 causes
                                 <span id="causes-error"></span></p>
-                                <Causes ref="user-causes" :max="4" v-model="userCauses" :items="causes"/>
+                                <Causes ref="user-causes" :max="4" v-model="userProfile.user_causes"
+                                        :items="userProfile.causes"/>
                             </div>
                         </template>
                     </AccordionCard>
@@ -346,11 +348,10 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
         },
         data: () => ({
             ...mapGetters(['validated', 'succeeded']),
-            userCauses: [],
             isLoading: false,
-            causes: [],
             ImageLimit: 4,
-            userMedia: {
+            clearImage: false,
+            user_media: {
                 video: {validated: '', url: ''},
                 images: [
                     {
@@ -361,7 +362,6 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
                     }
                 ],
             },
-            clearImage: false,
         }),
         computed: {
             ...mapState(['authUserInfo', 'userProfile']),
@@ -380,9 +380,7 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
             saveProfileSettings() {
                 let dt = 3500;
                 this.isLoading = true;
-                this.setUserProfileKey({key: 'user_causes', value: this.userCauses});
-                this.setUserProfileKey({key: 'user_media', value: this.userMedia});
-
+                this.setUserProfileKey({key: 'user_media', value: this.user_media});
                 this.postManageUserProfile(this.userProfile)
                     .then(res => {
                         if (res.success) {
@@ -400,6 +398,7 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
                     })
             },
             getUserProfile(isReset = false) {
+
                 this.fetchOptionProfileData()
                     .then(res => {
                         let s = res.success, d = res.data;
@@ -410,15 +409,23 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
                                 this.setUserProfileKey({key: 'display_name', value: d.name});
                                 this.setUserProfileKey({key: 'public_email', value: d.email});
                             }
-                            this.userCauses = d.user_causes;
+                            this.setUserProfileKey({key: 'user_causes', value: d.user_causes});
+                            this.setUserProfileKey({key: 'user_causes_display', value: d.user_causes_display});
+                            this.setUserProfileKey({key: 'causes', value: d.causes});
+                            this.setUserProfileKey({
+                                key: 'user_media',
+                                value: {video: d.user_media.video, images: d.user_media.images}
+                            });
+                            this.user_media = this.userProfile.user_media;
+
                             if (!isReset) {
                                 this.$refs['media-gallery'].set(d.user_media.video, d.user_media.images);
                                 this.$refs['about-textarea-limit'].set(this.userProfile.about);
                                 this.$refs['program-textarea-limit'].set(this.userProfile.our_programmes);
                                 this.$refs['vision_mission-textarea-limit'].set(this.userProfile.vision_mission);
-                                this.$refs['user-causes'].setValue(this.userCauses);
+                                this.$refs['user-causes'].setValue(d.user_causes);
                             }
-                            this.causes = d.causes;
+
                             this.fetchAuthUserInfo();
                         }
                         this.isLoading = false;
@@ -433,15 +440,21 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
                 this.clearImage = true;
                 this.$refs['profile-image'].clearInput();
             },
-            clearImageData({index, image}) {
+            serImageSrcData({index, image}) {
+                if (image.clear) {
+                    image.clear = null;
+                    image.change = true;
+                }
+            },
+            clearImageSrcData({index, image}) {
                 image.clear = true;
             },
             AddMedia() {
-                if (this.userMedia.images.length > this.ImageLimit) {
+                if (this.user_media.images.length > this.ImageLimit) {
                     return;
                 }
                 for (let i = 0; i < 2; i++) {
-                    if (this.userMedia.images.length > this.ImageLimit) {
+                    if (this.user_media.images.length > this.ImageLimit) {
                         return;
                     }
                     this.$refs['media-gallery'].addImage({
@@ -451,10 +464,14 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
                         removable: true
                     });
                 }
+            },
+            initData() {
+                this.user_media = this.userProfile.user_media;
+                this.getUserProfile();
             }
         },
         created() {
-            this.getUserProfile();
+            this.initData();
         }
     }
 </script>

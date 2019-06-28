@@ -53,7 +53,7 @@ class CreateOrganizeProfilesTable extends Migration
     public function down()
     {
         Schema::table('organize_profiles', function ($table) {
-            $table->dropForeign('user_id');
+            $table->dropForeign(['user_id']);
         });
         Schema::dropIfExists('organize_profiles');
     }

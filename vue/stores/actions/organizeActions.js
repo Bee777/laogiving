@@ -129,9 +129,9 @@ export const createActions = (utils) => {
                     }
                     let images = info.user_media.images;
                     images.map((i) => {
-                        if (i.clear) {
+                        if (i.clear && i.id) {
                             formData.append('user_media_images_cleared[]', i.id);
-                        } else if (i.id && i.url) {
+                        } else if (i.id && i.url && !i.change) {
                             formData.append('user_media_images[]', new File([""], i.url));
                         } else {
                             utils.Validate(i, {

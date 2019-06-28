@@ -34,7 +34,7 @@ class CreateCauseDetailsTable extends Migration
     public function down()
     {
         Schema::table('cause_details', function ($table) {
-            $table->dropForeign('cause_id');
+            $table->dropForeign(['cause_id']);
         });
         Schema::dropIfExists('cause_details');
     }

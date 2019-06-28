@@ -11,23 +11,46 @@
             <section class="company-profile__body ctn clearfix">
                 <div class="company-profile__main objectfit ">
                     <div class="swiper-arrow-wrap swiper-container-horizontal">
-                        <div class="swiper-container--images swiper-container">
-                            <div class="swiper-wrapper">
-                                <div class="swiper-slide">
-                                    <img alt="" class="img-placeolder"
-                                         src="https://www.giving.sg/image/logo?img_id=6080036">
+
+                        <Carousel :hasVideos="true" ref="organize-profile">
+                            <template slot="slide-item">
+                                <div class="swiper-slide" v-if="user_media.video.url !==''">
+                                    <div class="video-container none-active"
+                                         :data-embed="covertYoutubeUrlToEmBed(user_media.video.url)">
+                                    </div>
                                 </div>
-                                <div class="swiper-slide">
-                                    <img alt="" class="img-placeolder"
-                                         src="https://www.giving.sg/image/logo?img_id=9040323">
+                                <div class="swiper-slide" v-for="(item, idx) in user_media.images"
+                                     v-if="item.image_base64!==''" :key="idx">
+                                    <img :alt="item.url" class="img-placeolder"
+                                         :src="item.image_base64">
                                 </div>
-                            </div>
-                            <div class="swiper-button-prev rotage"></div>
-                            <div class="swiper-button-next"></div>
-                        </div>
+                            </template>
+                        </Carousel>
+
                         <div class="swiper-pagination swiper-pagination-bullets"><span
                             class="swiper-pagination-bullet swiper-pagination-bullet-active"></span></div>
+
                     </div>
+
+                    <!--<div class="swiper-arrow-wrap swiper-container-horizontal">-->
+                    <!--<div class="swiper-container&#45;&#45;images swiper-container">-->
+                    <!--<div class="swiper-wrapper">-->
+                    <!--<div class="swiper-slide">-->
+                    <!--<img alt="" class="img-placeolder"-->
+                    <!--src="https://www.giving.sg/image/logo?img_id=6080036">-->
+                    <!--</div>-->
+                    <!--<div class="swiper-slide">-->
+                    <!--<img alt="" class="img-placeolder"-->
+                    <!--src="https://www.giving.sg/image/logo?img_id=9040323">-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="swiper-button-prev rotage"></div>-->
+                    <!--<div class="swiper-button-next"></div>-->
+                    <!--</div>-->
+                    <!--<div class="swiper-pagination swiper-pagination-bullets"><span-->
+                    <!--class="swiper-pagination-bullet swiper-pagination-bullet-active"></span></div>-->
+                    <!--</div>-->
+
                 </div>
                 <div class="company-profile__donate">
                     <AccordionCard>
@@ -98,7 +121,7 @@
                         </template>
                         <template slot="body-content">
                             <ul class="list list--spacing">
-                                <li v-for="(item, idx) in userCauses" :key="idx"><i
+                                <li v-for="(item, idx) in userProfile.user_causes_display" :key="idx"><i
                                     :style="`background-image: url('${baseUrl}/assets/images/icon/causes/${item.small_icon}');`"
                                     class="ico ico--medium ico-community mr-8"></i>{{item.name}}
                                 </li>
@@ -143,6 +166,7 @@
 
 <script>
     import AccordionCard from '@com/Utils/AccordionCard.vue'
+    import Carousel from '@com/Utils/Carousel.vue'
     import ReportAbuse from '@com/Utils/ReportAbuse.vue'
 
     import {mapActions, mapMutations, mapState, mapGetters} from 'vuex'
@@ -156,16 +180,29 @@
         },
         data: () => ({
             ...mapGetters([]),
-            userCauses: [],
+            user_media: {
+                video: {validated: '', url: ''},
+                images: [
+                    {
+                        image_base64: '',
+                        image: null,
+                        validated: '',
+                        removable: false,
+                    }
+                ],
+            },
         }),
         components: {
             AccordionCard,
             ReportAbuse,
+            Carousel
         },
         watch: {
             visible: function (n) {
                 if (n) {
                     this.getUserProfile();
+                } else {
+                    this.destroyCarousel();
                 }
             }
         },
@@ -175,21 +212,6 @@
         methods: {
             ...mapMutations(['setUserProfile', 'setUserProfileKey']),
             ...mapActions(['showErrorToast', 'fetchOptionProfileData']),
-            initCarousel() {
-                new Swiper('.swiper-container', {
-                    loop: true,
-                    // Navigation arrows
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
-                    },
-                    pagination: {
-                        el: '.swiper-pagination',
-                        clickable: true,
-                    },
-                    spaceBetween: 10,
-                })
-            },
             getUserProfile() {
                 this.fetchOptionProfileData()
                     .then(res => {
@@ -201,21 +223,56 @@
                                 this.setUserProfileKey({key: 'display_name', value: d.name});
                                 this.setUserProfileKey({key: 'public_email', value: d.email});
                             }
-                            this.userCauses = d.user_causes_display;
+                            this.setUserProfileKey({key: 'user_causes', value: d.user_causes});
+                            this.setUserProfileKey({key: 'user_causes_display', value: d.user_causes_display});
+                            this.setUserProfileKey({key: 'causes', value: d.causes});
+                            this.setUserProfileKey({
+                                key: 'user_media',
+                                value: {video: d.user_media.video, images: d.user_media.images}
+                            });
+                            this.user_media = this.userProfile.user_media;
+                            this.$nextTick(() => {
+                                this.initCarousel();
+                            })
                         }
                     })
                     .catch(err => {
+                        console.log(err);
                         this.showErrorToast({msg: 'Failed to load your profile!', dt: 3500});
                     })
             },
-        },
-        mounted() {
-            this.initCarousel();
+            covertYoutubeUrlToEmBed(url) {
+                let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                let match = url.match(regExp);
+
+                if (match && match[2].length === 11) {
+                    return `${match[2]}`;
+                } else {
+                    return '';
+                }
+            },
+
+            initCarousel() {
+                let carousel = this.$refs['organize-profile'];
+                if (carousel) {
+                    carousel.initCarousel();
+                }
+            },
+            destroyCarousel() {
+                let carousel = this.$refs['organize-profile'];
+                if (carousel) {
+                    carousel.removeCarousel();
+                }
+            },
+            initData() {
+                if (this.visible) {
+                    this.user_media = this.userProfile.user_media;
+                    this.getUserProfile();
+                }
+            }
         },
         created() {
-            if (this.visible) {
-                this.getUserProfile();
-            }
+            this.initData();
         }
     }
 </script>

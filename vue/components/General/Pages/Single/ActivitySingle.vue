@@ -221,7 +221,7 @@
                         <h3 class="h3">More Opportunities</h3>
                         <div class="swiper-pad">
                             <div class="swiper-arrow-wrap" style="transition-duration: 0ms;transform: translate3d(0px, 0px, 0px);">
-                                <div class="swiper-container js-cards-swiper-2" id="swiper-container-opportunities">
+                                <div class="swiper-container" id="swiper-container-opportunities">
                                     <div class="swiper-wrapper ">
                                         <div class="swiper-slide" v-for="i in 3" :key="i">
                                             <!--CardItem-->
