@@ -50,7 +50,11 @@
                 this.$emit('input', this.text);
             },
             set(val) {
-                this.text = val;
+                if (this.max && this.max > 0) {
+                    this.text = this.$utils.sub(val, this.max);
+                } else {
+                    this.text = val;
+                }
             }
         },
         created() {

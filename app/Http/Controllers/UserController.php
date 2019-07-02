@@ -12,6 +12,9 @@ use App\Responses\User\UserProfileManage;
 use App\Responses\User\UserProfileOptions;
 use App\Responses\User\UserProfileSingle;
 use App\Models\Site;
+use App\Responses\User\UserVolunteeringActivityManage;
+use App\Responses\User\UserVolunteeringActivityOptions;
+use App\Rules\VolunteerPosition;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Helpers\Helpers;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -96,6 +100,61 @@ class UserController extends Controller
         return response()->json(['data' => $data]);
     }
     /****@ResponsesSearches api and action  ** */
+
+
+    /****@ResponsesUserVolunteeringActivity  api and action  *** */
+    public function responseVolunteeringActivityOptions(Request $request): UserVolunteeringActivityOptions
+    {
+        return new UserVolunteeringActivityOptions();
+    }
+
+    public function responseVolunteeringActivityCreate(Request $request): UserVolunteeringActivityManage
+    {
+        $this->validate($request, [
+            #step 1
+            'title' => 'required|max:191',
+            'description' => 'required|max:500',
+            'causes' => 'required|array',
+            'media_video_url' => 'string|max:191',
+            'media_images' => 'required|array',
+            'media_images.*' => 'required|max:3000|mimes:jpeg,png,jpg,gif,svg',
+            'user_media_images_cleared' => 'array',
+            #step 2
+            'frequency' => ['required', 'max:191', Rule::in($this->getFrequencies())],
+            'duration' => 'required|min:1|max:24|numeric',
+            'days_of_week' => ['required', 'array', Rule::in($this->getDaysOfWeek())],
+            'volunteering_type' => ['required', 'max:191', Rule::in($this->getVolunteerTypes())],
+            'commitment_from_date' => 'required|date|date_format:Y-m-d',
+            'commitment_to_date' => 'required|date|date_format:Y-m-d|after:today|after:commitment_from_date',
+            'deadline_for_sign_ups_date' => 'required|date|date_format:Y-m-d|after:today|before:commitment_to_date|after:commitment_from_date',
+            'town' => 'required|max:191',
+            'block_street' => 'required|max:191',
+            'building_name' => 'string|max:191',
+            'unit' => 'string|max:191',
+            #step 3
+            'positions' => ['required', 'array', new VolunteerPosition()],//do next time
+            'points_to_note' => 'max:500',
+            'volunteer_gender' => 'max:191',
+            'volunteer_contact_phone_number' => 'max:191',
+            'other_response_required' => 'max:191',
+            'volunteer_signups_confirm' => 'max:191',
+            #step 4
+            'contact_title' => ['required', 'max:191', Rule::in($this->getSalutations())],
+            'contact_name' => 'required|max:191',
+            'contact_designation' => 'required|max:191',
+            'contact_phone_number' => 'required|max:191',
+            'contact_email' => 'required|email|max:191',
+        ]);
+
+        if (!Helpers::isValidPhoneNumber($request->get('contact_phone_number'))) {
+            return response()->json(['errors' => ['contact_phone_number' => ['Your contact phone number is invalid.']]], 422);
+        }
+
+        dd($request->all());
+
+        return new UserVolunteeringActivityManage('create');
+    }
+    /****@ResponsesUserVolunteeringActivity  api and action  *** */
 
     /****@ResponsesUserProfile  api and action  *** */
     public function responseProfileOptions(Request $request): UserProfileOptions
@@ -279,6 +338,42 @@ class UserController extends Controller
     {
         $user = User::where('email', $email)->first();
         return isset($user);
+    }
+
+    public function getFrequencies(): array
+    {
+        return [
+            '1_DAY_PER_WEEK',
+            '2_3_DAYS_PER_WEEK',
+            'FORTNIGHTLY',
+            'MONTHLY',
+            'QUARTERLY',
+            'FLEXIBLE',
+            'FULL_TIME',
+        ];
+    }
+
+    public function getDaysOfWeek(): array
+    {
+        return [
+            'WEEKDAY',
+            'WEEKEND'
+        ];
+    }
+
+    private function getVolunteerTypes()
+    {
+        return [
+            'regular',
+            'ad-hoc'
+        ];
+    }
+
+    public function getSalutations()
+    {
+        return [
+            'mr', 'ms', 'mrs', 'miss', 'mdm', 'dr'
+        ];
     }
 
     /**

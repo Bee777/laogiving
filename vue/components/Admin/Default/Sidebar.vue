@@ -109,12 +109,12 @@
                             icon: "keyboard_arrow_up"
                         },
                         items: [
-                            {
-                                name: "ສ້າງກິດຈະກໍາ", //required
-                                icon: "add_circle", //required
-                                action: this.Route, //required
-                                params: {name: "create-activity"} //required
-                            },
+                            // {
+                            //     name: "ສ້າງກິດຈະກໍາ", //required
+                            //     icon: "add_circle", //required
+                            //     action: this.Route, //required
+                            //     params: {name: "create-activity"} //required
+                            // },
                             {
                                 name: "ກິດຈະກໍາ", //required
                                 icon: "list_alt", //required
@@ -172,7 +172,7 @@
                                 params: {name: "site-setting"} //required
                             },
                             {
-                                name: "ຂໍ້ມູນກ່ຽວກັວ", //required
+                                name: "ຂໍ້ມູນກ່ຽວກັບ", //required
                                 icon: "business", //required
                                 action: this.Route, //required
                                 params: {name: "about"} //required

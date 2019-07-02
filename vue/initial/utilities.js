@@ -128,11 +128,11 @@ export default {
             this.scrollToTop(this.offsetTop(id) + more)
         }, 200)
     },
-    // ValidateException(message) {
-    //     this.message = message;
-    //     this.type = 'Visibility';
-    //     this.name = 'Validate Exception';
-    // },
+    ValidateException(message) {
+        this.message = message;
+        this.type = 'Visibility';
+        this.name = 'Validate Exception';
+    },
     addDataForm(acceptFields = [], form = new FormData(), obj = {}) {
         acceptFields.forEach(keyVal => {
             if (this.isKeyExists(keyVal, obj)) {
@@ -147,9 +147,9 @@ export default {
         array.splice(i, l)
     },
     /**
-     * @return {Promise}
+     * @return {?}
      */
-    Validate(data, rules, opts = {}) {
+    Validate(data, rules, async = true, callback = null) {
         /**@My Validation Method V1.0 */
             //@usage:'email': ['email', { min: 6 }, { max: 40 }, 'required'],
         var ol = Object.keys(rules);
@@ -161,8 +161,12 @@ export default {
                 var rule = rules[ol[i]][j],
                     value = data[ol[i]],
                     mimes = [], c = 1000, size = 0,
+                    type = rule.type,
                     isFile = (value && value.file && value.file.size), isType,
                     attribName = `${ol[i].replace(/_/g, " ")}`;
+                let sameAsRule = keyRuleNames[ol[i]] === ol[i],
+                    isNotEmpty = (value !== '' && value !== null) && sameAsRule;
+
                 rules[ol[i]].filter(d => {
                     if (!this.isEmptyVar(d.mimes)) {
                         mimes = String(d.mimes).split(',');
@@ -174,10 +178,10 @@ export default {
                     value = data[ol[i]]
                 }
                 /**@Required Section **/
-                if ('required' === rule && (value === '' || value === null) && keyRuleNames[ol[i]] === ol[i]) {
+                if ('required' === rule && (value === '' || value === null) && sameAsRule) {
                     errorsObj[ol[i]] = `The ${attribName} field is required.`;
                 } else if (typeof value === 'object' && 'required' === rule
-                    && this.isArray(value) && value.length <= 0 && keyRuleNames[ol[i]] === ol[i]) {
+                    && this.isArray(value) && value.length <= 0 && sameAsRule) {
                     errorsObj[ol[i]] = `The ${attribName} field is required.`;
                 } else if (mimes.length > 0 && 'required' === rule && !isFile) {
                     errorsObj[ol[i]] = `The ${attribName} field is required.`;
@@ -186,7 +190,7 @@ export default {
 
                 /**@RequiredObject Section **/
                 if (rule.required) {
-                    if (rule.required.when && this.accessObjectLevels(data, rule.required.when) === rule.required.equals && keyRuleNames[ol[i]] === ol[i] && (value === '' || value === null ||
+                    if (rule.required.when && this.accessObjectLevels(data, rule.required.when) === rule.required.equals && sameAsRule && (value === '' || value === null ||
                         (typeof value === 'object' && this.isArray(value) && value.length <= 0))) {
                         errorsObj[ol[i]] = `The ${attribName} field is required.`;
                     }
@@ -204,13 +208,13 @@ export default {
                 /**@RuleType Section **/
 
                 /**@Email Section **/
-                if ('email' === rule && (value !== '' && value !== null) && keyRuleNames[ol[i]] === ol[i]) {
+                if ('email' === rule && isNotEmpty) {
                     if (!this.isEmail(value)) {
                         errorsObj[ol[i]] = `Your ${rule} address is invalid.`;
                     }
                 }
                 /**@ConfirmPassword Section **/
-                if ('confirm' === rule && (value !== '' && value !== null) && keyRuleNames[ol[i]] === ol[i]) {
+                if ('confirm' === rule && isNotEmpty) {
                     var password_confirmation = data['password_confirmation'];
                     (typeof password_confirmation === undefined) ? password_confirmation = '' : password_confirmation = data['password_confirmation'];
                     (typeof password_confirmation === 'undefined') ? password_confirmation = '' : password_confirmation = data['password_confirmation'];
@@ -218,23 +222,23 @@ export default {
                         errorsObj['password_confirmation'] = `Your confirmation password and ${attribName} do not match.`;
                     }
                 }
-                if ('phone number' === rule && (value !== '' && value !== null) && keyRuleNames[ol[i]] === ol[i]) {
+                if ('phone number' === rule && isNotEmpty) {
                     if (!this.isPhoneNumber(value)) {
                         errorsObj[ol[i]] = `Your ${attribName} is invalid.`;
                     }
                 }
-                if ('number' === rule && (value !== '' && value !== null) && keyRuleNames[ol[i]] === ol[i]) {
+                if ('number' === rule && isNotEmpty) {
                     if (!this.isNumber(value)) {
                         errorsObj[ol[i]] = `The ${attribName} field must be a number.`;
                     }
                 }
-                if ('>now' === rule && (value !== '' && value !== null) && keyRuleNames[ol[i]] === ol[i]) {
+                if ('>now' === rule && isNotEmpty) {
                     if (!this.isGreaterThanNow(value)) {
-                        errorsObj[ol[i]] = `The ${attribName} field may not less then now.`;
+                        errorsObj[ol[i]] = `The ${attribName} may not be less than or equals to today.`;
                     }
                 }
 
-                if ('emails' === rule && (value !== '' && value !== null) && keyRuleNames[ol[i]] === ol[i]) {
+                if ('emails' === rule && isNotEmpty) {
                     var emails = this.rmSpaces(value.toString()).split(',');
                     emails = emails.filter(e => {
                         return e !== ""
@@ -252,7 +256,7 @@ export default {
                 }
                 /** @Check if a file **/
                 if (rule.mimes && mimes.length > 0) {
-                    if (isFile && keyRuleNames[ol[i]] === ol[i] && !this.isFileExtAllowed(value.file, mimes)) {
+                    if (isFile && sameAsRule && !this.isFileExtAllowed(value.file, mimes)) {
                         errorsObj[ol[i]] = `The ${attribName} must be a file of type: ${mimes.join(", ")}.`;
                     }
                 }
@@ -263,38 +267,64 @@ export default {
                     }
                 }
                 if (rule.min) {
-                    if (mimes.length > 0 && rule.min > size && keyRuleNames[ol[i]] === ol[i] && isFile) {
+                    if (mimes.length > 0 && rule.min > size && sameAsRule && isFile) {
                         errorsObj[ol[i]] = `The ${attribName} may not be less than ${this.formatBytes(rule.min * c)}.`;
-                    } else if (rule.min > value.length && keyRuleNames[ol[i]] === ol[i] && (value !== '' && value !== null)) {
-                        errorsObj[ol[i]] = `The minimum ${attribName} is ${rule.min} characters.`;
+                    } else if (type === 'number' && sameAsRule && (value !== '' && value !== null)) {
+                        if (parseInt(rule.min) > parseInt(value)) {
+                            errorsObj[ol[i]] = `The minimum of ${attribName} is ${rule.min}.`;
+                        }
+                    } else if (rule.min > value.length && sameAsRule && (value !== '' && value !== null)) {
+                        errorsObj[ol[i]] = `The minimum of ${attribName} is ${rule.min} characters.`;
                     }
                 }
                 if (rule.max) {
-                    if (mimes.length > 0 && rule.max < size && keyRuleNames[ol[i]] === ol[i] && isFile) {
+                    if (mimes.length > 0 && rule.max < size && sameAsRule && isFile) {
                         errorsObj[ol[i]] = `The ${attribName} may not be greater than ${this.formatBytes(rule.max * c)}.`;
-                    } else if (rule.max < value.length && keyRuleNames[ol[i]] === ol[i] && (value !== '' && value !== null)) {
-                        errorsObj[ol[i]] = `The  maximum ${attribName} is ${rule.max} characters.`;
+                    } else if (type === 'number' && sameAsRule && (value !== '' && value !== null)) {
+                        if (parseInt(rule.max) < parseInt(value)) {
+                            errorsObj[ol[i]] = `The maximum of ${attribName} is ${rule.max}.`;
+                        }
+                    } else if (rule.max < value.length && sameAsRule && (value !== '' && value !== null)) {
+                        errorsObj[ol[i]] = `The  maximum of ${attribName} is ${rule.max} characters.`;
+                    }
+                }
+                if (rule.greaterThan && type && isNotEmpty) {
+                    let attribName2 = `${rule.greaterThan.replace(/_/g, " ")}`;
+                    if (type === 'date' && !this.isEmptyVar(data[rule.greaterThan]) && this.isCompareDate(value, data[rule.greaterThan], '<=')) {
+                        errorsObj[ol[i]] = `The ${attribName} may not be less than or equals to ${attribName2}.`;
+                    }
+                }
+                if (rule.lessThan && type && isNotEmpty) {
+                    let attribName2 = `${rule.lessThan.replace(/_/g, " ")}`;
+                    if (type === 'date' && !this.isEmptyVar(data[rule.lessThan]) && this.isCompareDate(value, data[rule.lessThan], '>=')) {
+                        errorsObj[ol[i]] = `The ${attribName} may not be greater than or equals to ${attribName2}.`;
                     }
                 }
             }
         }
-        return new Promise((resolve, reject) => {
-            if (this.isEmptyObject(errorsObj)) {
-                resolve({success: true, errors: {}, validated: data})
-            } else {
-                // this.scrollValidate(`validate-${Object.keys(errorsObj).length > 0 ? Object.keys(errorsObj)[0] : ''}`,
-                //     this.isKeyExists("scrollTop", opts) ? opts.scrollTop : 0);
-                reject({success: false, errors: errorsObj});
-            }
-        });
-        // if (this.isEmptyObject(errorsObj)) {
-        //     callback({success: true, errors: {}});
-        //     return true
-        // }
+        let res = {success: true, errors: {}, validated: data},
+            err = {success: false, errors: errorsObj};
+        if (async) {
+            return new Promise((resolve, reject) => {
+                if (this.isEmptyObject(errorsObj)) {
+                    resolve(res)
+                } else {
+                    // this.scrollValidate(`validate-${Object.keys(errorsObj).length > 0 ? Object.keys(errorsObj)[0] : ''}`,
+                    //     this.isKeyExists("scrollTop", opts) ? opts.scrollTop : 0);
+                    reject(err);
+                }
+            });
+        }
+        if (this.isEmptyObject(errorsObj) && callback) {
+            callback(res);
+            return true;
+        }
         // this.scrollValidate(`validate-${Object.keys(errorsObj).length > 0 ? Object.keys(errorsObj)[0] : ''}`,
         //     this.isKeyExists("scrollTop", opts) ? opts.scrollTop : 0);
-        // callback({success: false, errors: errorsObj});
-        // throw new this.ValidateException('Please complete all required fields!.');
+        if (callback) {
+            callback(err);
+        }
+        throw new this.ValidateException('Please complete all required fields!.');
     },
     createFileBase64(file, callback) {
         var reader = new FileReader();
@@ -445,12 +475,36 @@ export default {
         return Object.prototype.toString.call(obj) === '[object Array]';
     },
     isGreaterThanNow(date_string) {
-        var Now = new Date().getTime();
-        var chDay = new Date(date_string).getTime();
-        return Now <= chDay;
+        const Now = new Date().getTime();
+        const chDate = new Date(date_string).getTime();
+        return Now <= chDate;
+    },
+    isCompareDate(date1_string, date2_string, sign = ">") {
+
+        const chDate1 = new Date(date1_string).getTime();
+        const chDate2 = new Date(date2_string).getTime();
+
+        switch (sign) {
+            case ">": {
+                return chDate1 > chDate2;
+            }
+            case "<": {
+                return chDate1 < chDate2;
+            }
+            case  ">=": {
+                return chDate1 >= chDate2;
+            }
+            case "<=" : {
+                return chDate1 <= chDate2;
+            }
+            default: {
+                return chDate1 === chDate2;
+            }
+        }
+
     },
     rmSpaces(n) {
-        n = n.replace(/\s/g, '')
+        n = n.replace(/\s/g, '');
         return n
     },
     Location(href, delay) {
@@ -807,9 +861,13 @@ export default {
         }
         return rv;
     },
-    firstUpper(s) {
-        if (this.isEmptyVar(s))
+    firstUpper(s, rm = false) {
+        if (this.isEmptyVar(s)) {
             s = "";
+        }
+        if (rm) {
+            s = s.replace(/[^a-zA-Z ]/g, " ");
+        }
         return s.charAt(0).toUpperCase() + s.slice(1)
     },
     getDateTime(time) {

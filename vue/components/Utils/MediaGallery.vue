@@ -1,8 +1,6 @@
 <template>
     <div class="ctn gallery gallery-tablet-portrait-up-6">
-
-
-        <div class="file-upload gallery__item">
+        <div :class="[{'error': video.validated }]" class="file-upload gallery__item">
             <div class="file-upload__holder">
                 <div class="file-upload__spacer"></div>
                 <div class="file-upload__video">
@@ -103,13 +101,19 @@
                 this.$emit('send', {video: this.video, images: this.images});
             },
             set(video, images) {
-                for (let i in this.images) {
-                    this.$refs[`image-${i}`][0].clearInput();
-                }
                 this.video = video;
                 this.images = images;
+                this.$nextTick(() => {
+                    for (let i in this.images) {
+                        let img = this.$refs[`image-${i}`];
+                        if (img && img[0]) {
+                            img[0].clearInput();
+                        }
+                    }
+                })
             },
             setImageSrc(idx, src) {
+                this.images[idx].validated = '';
                 this.images[idx].image_base64 = src;
                 this.$emit('setImageSrc', {index: idx, image: this.images[idx]});
             },
@@ -124,10 +128,15 @@
                 this.video = video;
             },
             setImages(images) {
-                for (let i in this.images) {
-                    this.$refs[`image-${i}`][0].clearInput();
-                }
                 this.images = images;
+                this.$nextTick(() => {
+                    for (let i in this.images) {
+                        let img = this.$refs[`image-${i}`];
+                        if (img && img[0]) {
+                            img[0].clearInput();
+                        }
+                    }
+                })
             },
             addImage(data) {
                 this.images.push(this.schema(data));

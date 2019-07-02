@@ -228,5 +228,33 @@ export const createActions = (utils) => {
             })
         },
         /***@SaveNewsLetter */
+        /***@VolunteeringActivityData */
+        fetchVolunteeringActivityData(c, data) {
+            return new Promise((r, n) => {
+                client.get(`${apiUrl}/users/volunteering-activity-options?activity_id=${(data.id || '')}`, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data);
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err);
+                    });
+            });
+        },
+        saveVolunteeringActivityData(c, formData) {
+            return new Promise((r, n) => {
+                client.post(`${apiUrl}/users/volunteering-activity-create`, formData, ajaxToken(c, true))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data);
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err.response);
+                    });
+            });
+        },
+        /***@VolunteeringActivityData */
     }
 };

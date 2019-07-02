@@ -134,6 +134,10 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
         /***@AutoUserLogin*/
         Route::post('auto-login', 'UserController@responseActionUserAutoLogin')->name('api.users.post.UserAutoLogin');
         /***@AutoUserLogin*/
+        /*** @UserVolunteeringActivity ** */
+        Route::get('/volunteering-activity-options', 'UserController@responseVolunteeringActivityOptions')->name('api.user.get.volunteeringActivity');
+        Route::post('/volunteering-activity-create', 'UserController@responseVolunteeringActivityCreate')->name('api.user.create.volunteeringActivity');
+        /*** @UserVolunteeringActivity ** */
     });
     /******************** @UserSection ****************** */
     /** @Logout */

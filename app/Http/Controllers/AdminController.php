@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Helpers\Helpers;
 use App\Jobs\SendUserChangeStatus;
 use App\Models\Cause;
+use App\Models\CauseDetail;
+use App\Models\Media;
 use App\Models\Posts;
 use App\Models\Skill;
 use App\Models\Suitable;
@@ -461,6 +463,18 @@ class AdminController extends Controller
         ]);
         $user = User::find($id);
         if (isset($user) && (int)$id === (int)$request->get('id') && $user->destroyInfo()) {
+            if ($user->isUser('organize')) {
+                $userMediaImagesModel = Media::list('user', 'image', $user->id);
+                foreach ($userMediaImagesModel as $imageModel) {
+                    Helpers::removeFile(Media::$uploadPath . $imageModel->url);
+                    $imageModel->delete();
+                }
+                $userMediaVideoModel = Media::single('user', 'youtube', $user->id, false);
+                if (isset($userMediaVideoModel)) {
+                    Media::where('id', $userMediaVideoModel->id)->delete();
+                }
+            }
+            CauseDetail::saveUser($user, []);
             $user->delete();
             return response()->json(['success' => true, 'message' => 'The user account has been deleted!']);
         }

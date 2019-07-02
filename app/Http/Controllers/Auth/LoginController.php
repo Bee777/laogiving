@@ -67,7 +67,7 @@ class LoginController extends Controller
     {
 
         if ($this->isNotAllowedAccount($user->status)) {//check if user is allowed or not
-            return response()->json(['errors' => ['auth_failed' => ['Your account status is ' .  Str::title($user->status) . '.']]], 422);
+            return response()->json(['errors' => ['auth_failed' => ['Your account status is ' . Str::title($user->status) . '.']]], 422);
         }
 
         $personal_token = $user->createToken($user->getTokenName());

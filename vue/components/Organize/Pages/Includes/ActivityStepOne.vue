@@ -1,89 +1,51 @@
 <template>
     <div class="rounded-card__body rounded-card__body--responsive">
-        <form novalidate class="form" id="volunteer-step-1">
-            <div class="input-ctrl">
+        <form novalidate class="form" id="volunteer-step-1" @submit.prevent>
+            <div class="input-ctrl" :class="[{'error': validated().title}]">
                 <label class="lbl"
                        for="volunteer_title">
                     <h3 class="h3 font-dark-grey">Activity name</h3></label>
                 <input
+                    v-model="title"
                     id="volunteer_title"
                     name="volunteer_title" type="text"
                     class="input-ctn form-control field-required" placeholder="Type the activity name here" value="">
-                <label for="volunteer_title" class="error-msg"></label>
+                <label style="display: block" for="volunteer_title"
+                       class="error-msg">{{ validated().title }}</label>
             </div>
             <hr class="hr">
-            <div class="input-ctrl">
+            <div class="input-ctrl" :class="[{'error': validated().description}]">
                 <label class="lbl">
                     <h3 class="h3 font-dark-grey">Activity description</h3>
                     <p class="body-txt body-txt--small mb-16">What is it about? Who are the beneficiaries? What purpose
                         does it serve?</p>
                 </label>
-                <textarea id="activityDesc" rows="10"
-                          max-length="500" class="textarea-ctn" cols="10"
-                          name="volunteer_description"
-                          placeholder="Type the activity details here"></textarea>
-                <label for="activityDesc"
-                       class="error-msg"></label>
+
+                <TextareaLimit
+                    placeholder="Type the activity details here"
+                    ref="activity-desc-limit" max="500"
+                    v-model="description"
+                    rows="10"/>
+
+                <label style="display: block;" class="help-block error-msg">{{
+                    validated().description
+                    }}</label>
+
             </div>
             <hr class="hr">
             <div class="input-ctrl clearfix">
                 <h3 class="h3 font-dark-grey">Media gallery (for slider)</h3>
                 <p class="body-txt body-txt--small mb-16">Add at least 1 image or video to make it more compelling to
                     volunteer</p>
-                <div class=" ctn gallery gallery-tablet-portrait-up-6">
 
-                    <div class="file-upload gallery__item">
-                        <div class="file-upload__holder">
-                            <div class="file-upload__spacer"></div>
-                            <div class="file-upload__video">
 
-                                <div class="file-upload__video-icon">
-                                    <div class="video_icon_container">
-                                        <i style="padding-left: 1px;" class="video_icon material-icons">videocam</i>
-                                    </div>
-                                </div>
-                                <div class="input-ctrl input-ctrl--full">
-                                    <label class="lbl" for="youtubeLink">
-                                        <p class="body-txt body-txt--small mb-0">Add YouTube video (optional)</p>
-                                    </label>
-                                    <a class="button button--small button--icon file-upload__cancel remove-video-button"
-                                       style="display:none;"><i class="ico ico-remove button--icon__icon"></i></a>
-                                    <input id="youtubeLink" type="text" class="input-ctn"
-                                           placeholder="Enter YouTube Link"
-                                           name="carouselVideo">
-                                </div>
+                <MediaGallery @setImageSrc="serImageSrcData" @clearImageSrc="clearImageSrcData" ref="media-gallery"
+                              v-model="media"/>
 
-                            </div>
-                        </div>
-                        <div class="file-upload__lbl bold font-black body-txt body-txt--small">SLIDE 1</div>
-                    </div>
 
-                    <div class="file-upload gallery__item input-ctrl">
-                        <div class="file-upload__holder">
-                            <div class="file-upload__spacer"></div>
-                            <div class="file-upload__image">
-                                <img class="img-placeholder" id="orgImg1Uploaded"> <a
-                                class="file-upload__upload-btn imageUploadBtn upload-image-button"> <i
-                                class="ico ico-upload"></i>
-                                <div class="file-upload__upload-btn-text">UPLOAD IMAGE</div>
-                            </a> <a
-                                class="button-ctn button--small button--icon file-upload__cancel remove-image-button"
-                                style="display: none;"><i
-                                class="ico ico-remove button--icon__icon"></i></a>
-                                <div id="uploadimage-error" class="error-msg" style="display: none;">You need to upload
-                                    at least one image
-                                </div>
-                            </div>
-                            <a href="" class="button-ctn button--small button--icon file-upload__cancel"
-                               style="display: none;"><i
-                                class="ico ico-upload button--icon__icon"></i></a>
-                            <div class="file-upload__lbl bold font-black body-txt body-txt--small"> SLIDE 2</div>
-                        </div>
-                    </div>
-
-                </div>
             </div>
             <button
+                @click="AddMedia()" v-if="media.images.length <= ImageLimit"
                 class="button-ctn button--with-icon button--no-bg button--large button--no-left-pad js-add-fileupload">
                 <div class="button--with-icon__wrapper button--with-icon__wrapper"><i
                     class="ico ico-add button--with-icon__icon"></i> ADD IMAGE
@@ -93,117 +55,11 @@
             <hr class="hr">
             <div class="input-ctrl clearfix">
                 <h3 class="h3 font-dark-grey">Causes supported by this activity</h3>
-                <div class="error-msg">You have not select anything</div>
-                <label class="lbl">Choose up to 4 causes</label>
-                <div class="ctn gallery gallery-tablet-portrait-up-6 mt-24 clearfix"
-                     id="orgCausesSelection">
-                    <ul class="gallery__item checkbox-list">
-
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26746">
-                            <div class="checkbox-list__lbl-spn">Animal
-                                Welfare
-                            </div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26747">
-                            <div class="checkbox-list__lbl-spn">Arts
-                                &amp; Heritage
-                            </div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26748">
-                            <div class="checkbox-list__lbl-spn">
-                                Children &amp; Youth
-                            </div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26749">
-                            <div class="checkbox-list__lbl-spn">Community</div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   checked
-                                   value="26750">
-                            <div class="checkbox-list__lbl-spn">Disability
-                            </div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26751"
-                                   checked>
-                            <div class="checkbox-list__lbl-spn">Education</div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26752">
-                            <div class="checkbox-list__lbl-spn">Elderly</div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26753">
-                            <div class="checkbox-list__lbl-spn" data-content="Environment">Environment
-                            </div>
-                        </label></li>
-                    </ul>
-                    <ul class="gallery__item checkbox-list">
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26754">
-                            <div class="checkbox-list__lbl-spn" data-content="Families">Families</div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26755">
-                            <div class="checkbox-list__lbl-spn" data-content="Health">Health</div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="1637026">
-                            <div class="checkbox-list__lbl-spn" data-content="Humanitarian">
-                                Humanitarian
-                            </div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26756">
-                            <div class="checkbox-list__lbl-spn" data-content="Social Service">Social
-                                Service
-                            </div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26745"
-                                   checked>
-                            <div class="checkbox-list__lbl-spn" data-content="Sports">Sports</div>
-                        </label></li>
-                        <li><label class="checkbox-list__checkbox">
-                            <input type="checkbox"
-                                   name="causeBox[]"
-                                   value="26757">
-                            <div class="checkbox-list__lbl-spn" data-content="Women &amp; Girls">Women
-                                &amp; Girls
-                            </div>
-                        </label></li>
-                    </ul>
+                <div v-if="validated().causes" style="display: block;" class="error-msg">You have not select anything
                 </div>
+                <label class="lbl">Choose up to 4 causes</label>
+                <Causes ref="activity-causes" :max="4" v-model="selectedCauses"
+                        :items="causes"/>
             </div>
 
         </form>
@@ -211,8 +67,161 @@
 </template>
 
 <script>
+    import Causes from '@com/Utils/Causes.vue'
+    import MediaGallery from '@com/Utils/MediaGallery.vue'
+    import TextareaLimit from '@com/Utils/TextAreaLimiter.vue'
+
+    import {mapGetters, mapMutations, mapActions} from 'vuex'
+
     export default {
-        name: "ActivityStepOne"
+        name: "ActivityStepOne",
+        props: {
+            edit: {
+                default: false,
+            },
+            causes: {
+                default: function () {
+                    return [];
+                }
+            }
+        },
+        components: {
+            Causes,
+            MediaGallery,
+            TextareaLimit
+        },
+        data: () => ({
+            ...mapGetters(['validated', 'succeeded']),
+            title: '',
+            description: '',
+            selectedCauses: [],
+            ImageLimit: 4,
+            media: {
+                video: {validated: '', url: ''},
+                images: [
+                    {
+                        image_base64: '',
+                        image: null,
+                        validated: '',
+                        removable: false,
+                    }
+                ],
+            },
+        }),
+        methods: {
+            ...mapActions([]),
+            ...mapMutations(['setValidated']),
+            serImageSrcData({index, image}) {
+                if (image.clear) {
+                    image.clear = null;
+                    image.change = true;
+                }
+            },
+            clearImageSrcData({index, image}) {
+                image.clear = true;
+            },
+            AddMedia() {
+                if (this.media.images.length > this.ImageLimit) {
+                    return;
+                }
+                for (let i = 0; i < 2; i++) {
+                    if (this.media.images.length > this.ImageLimit) {
+                        return;
+                    }
+                    this.$refs['media-gallery'].addImage({
+                        image_base64: '',
+                        image: null,
+                        validated: '',
+                        removable: true
+                    });
+                }
+            },
+            setTile(title) {
+                this.title = title;
+            },
+            setDescription(description) {
+                this.description = description;
+                this.$refs['activity-desc-limit'].set(this.description);
+            },
+            setMedia(video, images) {
+                this.$refs['media-gallery'].set(video, images);
+            },
+            setCauses(activity_causes) {
+                this.$refs['activity-causes'].setValue(activity_causes);
+            },
+            getData() {
+                return new Promise((res, rej) => {
+                    //images
+                    let images = this.media.images;
+                    let firstImage = images[0];
+                    //validate data
+                    let formData = new FormData();
+                    let data = {
+                        title: this.title,
+                        description: this.description,
+                        causes: this.selectedCauses,
+                        media: this.media,
+                    };
+                    this.$utils.Validate(data, {
+                        'title': ['required', {max: 191}],
+                        'description': ['required', {max: 500}],
+                    }, false, (e) => {
+                        this.setValidated({errors: e.errors});
+                    });
+                    //add first data
+                    formData.append('title', this.title);
+                    formData.append('description', this.description);
+                    let video = this.media.video;
+                    if (!this.$utils.isEmptyVar(video.url)) {
+                        formData.append('media_video_url', video.url);
+                    }
+                    //end end first data
+                    //validate first image
+                    if (!this.edit) {
+                        this.$utils.Validate(firstImage, {
+                            'image': ['required', {mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
+                        }, false, (e) => {
+                            firstImage.validated = e.errors.image;
+                        });
+                    } else {
+                        this.$utils.Validate(firstImage, {
+                            'image': ['required', {max: 3000}],
+                        }, false, (e) => {
+                            firstImage.validated = e.errors.image;
+                        });
+                    }
+                    //add images data
+                    images.map((i, idx) => {
+                        this.$utils.Validate(i, {
+                            'image': [{mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
+                        }).then(() => {
+                            if (i.clear && i.id) {
+                                formData.append('user_media_images_cleared[]', i.id);
+                            } else if (i.id && i.url && !i.change) {
+                                formData.append('media_images[]', new File([""], i.url));
+                            } else if (i.image && i.image.file) {
+                                formData.append('media_images[]', i.image.file);
+                            }
+                            if (idx === images.length - 1) {
+                                //validate cause
+                                this.$utils.Validate(data, {
+                                    'causes': ['required'],
+                                }, false, (e) => {
+                                    this.setValidated({errors: e.errors});
+                                });
+                                this.selectedCauses.map((i) => {
+                                    formData.append('causes[]', i);
+                                });
+                                //everything is ok
+                                res({formData, data});
+                            }
+                        }).catch(e => {
+                        });
+                    });
+                    //add images data
+                });
+            }
+        },
     }
 </script>
 

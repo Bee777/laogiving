@@ -4874,6 +4874,10 @@ card__body > div > *, .activity .card__body > div > * {
 .error input.input-ctn, input.input-ctn.error {
     border-color: #FF001F;
 }
+.error .textarea-ctn, .textarea-ctn.error, .error .laogiving .textarea-ctn, .laogiving .textarea-ctn.error,
+.laogiving .error textarea.textarea-ctn, .laogiving .error .uneditable-input{
+    border-color: #FF001F;
+}
 
 .laogiving input.input--h-36[type="text"].input--icon, .laogiving input.input--h-36.input--icon {
     padding-left: 2.5rem;
@@ -6319,6 +6323,7 @@ hr.grey {
     position: absolute;
     right: 1rem;
     top: 1rem;
+    z-index: 2;
 }
 
 .laogiving a.file-upload__remove {
@@ -9110,6 +9115,16 @@ a.sqr-panel-item:focus {
 
     .bcrumb__child p, .laogiving .bcrumb__child p {
         font-size: 14px;
+    }
+    .grid-tablet-portrait-up-8 {
+        width: 65.81197%;
+        float: left;
+        margin-right: 2.5641%;
+    }
+    .grid-tablet-portrait-up-4-last {
+        width: 31.62393%;
+        float: right;
+        margin-right: 0;
     }
 }
 

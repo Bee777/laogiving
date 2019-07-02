@@ -285,6 +285,7 @@ export const defaultActions = (api) => {
                 } else if (i.status === 404) {
                     c.commit('setValidated', {errors: {unknown: "Sorry, the page you are looking for could not be found."}});
                 } else if (i.data.errors) {
+                    console.log(i.data.errors)
                     c.commit('setValidated', {errors: $utils.fetchErrors(i.data.errors)})
                 } else {
                     c.commit('setValidated', {errors: {unknown: "Sorry!, Something went wrong."}})

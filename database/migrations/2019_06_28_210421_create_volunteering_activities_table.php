@@ -19,6 +19,10 @@ class CreateVolunteeringActivitiesTable extends Migration
             $table->string('name');
             $table->text('description');
             $table->enum('volunteer_type', ['regular', 'ad-hoc'])->default('regular');
+            $table->enum('frequency', ['1_DAY_PER_WEEK', '2_3_DAYS_PER_WEEK', 'FORTNIGHTLY', 'MONTHLY', 'QUARTERLY', 'FLEXIBLE', 'FULL_TIME'])->default('regular');
+            $table->unsignedInteger('duration');
+            $table->enum('weekday', ['yes', 'no'])->default('no');
+            $table->enum('weekend', ['yes', 'no'])->default('no');
             $table->date('start_date');
             $table->date('end_date');
             $table->date('deadline_sign_ups_date');
@@ -27,9 +31,10 @@ class CreateVolunteeringActivitiesTable extends Migration
             $table->enum('volunteer_gender', ['yes', 'no'])->default('no');
             $table->enum('volunteer_contact_phone_number', ['yes', 'no'])->default('no');
             $table->string('other_response_required')->nullable();
-            $table->enum('volunteer_signups_comfirm', ['yes', 'no'])->default('no');
+            $table->enum('volunteer_signups_confirm', ['yes', 'no'])->default('no');
 
             //location
+            $table->string('town');
             $table->string('block_street');
             $table->string('building_name')->nullable();
             $table->string('building_unit_number')->nullable();

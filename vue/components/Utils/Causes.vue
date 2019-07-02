@@ -177,7 +177,7 @@
             emit() {
                 if (this.max && this.max < this.mSelected.length) {
                     this.msg = `Please select up to ${this.max} causes.`;
-                    let scrollTop = this.$utils.offsetTop(`orgCausesSelection`);
+                    let scrollTop = this.$utils.findPos(document.getElementById(`orgCausesSelection`)).y;
                     if (scrollTop > 0) {
                         this.$utils.scrollToY('html,body', scrollTop + 20);
                     }
