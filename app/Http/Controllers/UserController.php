@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Posts;
+use App\Models\VolunteeringActivity;
 use App\Responses\Admin\DashboardResponse;
 use App\Responses\IndexUserResponse;
 use App\Responses\User\UserCredentials;
@@ -27,6 +28,9 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
     protected $rootView = 'main.user';
+
+    protected $maxCauses = 4;
+    protected $maxImages = 5;
 
     protected $excepts = [
         'except' => [
@@ -87,17 +91,28 @@ class UserController extends Controller
     public function responseSearches(Request $request, $type): JsonResponse
     {
         $data = [];
+        $options = [];
+
         $paginateLimit = ($request->exists('limit') && !empty($request->get('limit'))) ? $request->get('limit') : 10;
         $paginateLimit = Helpers::isNumber($paginateLimit) ? $paginateLimit : 10;
         $text = $request->get('q');
+        $volunteering = $request->get('volunteering', '');
 
         if ($type === 'news') {
             $data = (new UserNewsResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
+        } else if ($type === 'volunteering') {
+            $data = (new UserVolunteeringActivityManage('get', ['text' => $text, 'limit' => $paginateLimit, 'volunteering' => $volunteering]))->get($request);
+            $options = DB::table('volunteering_activities')
+                ->selectRaw("SUM(CASE WHEN status = 'live' THEN 1 ELSE 0 END) AS `LIVE_COUNT`,
+                SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) AS `CLOSED_COUNT`,
+                SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS `DRAFT_COUNT`,
+                SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS `CANCELLED_COUNT`")->first();
         }
+
         if (count($data) > 0) {
-            $data->appends(['limit' => $request->exists('limit'), 'q' => $request->get('q')]);
+            $data->appends(['limit' => $request->exists('limit'), 'q' => $request->get('q'), 'volunteering' => $volunteering]);
         }
-        return response()->json(['data' => $data]);
+        return response()->json(['data' => $data, 'options' => $options]);
     }
     /****@ResponsesSearches api and action  ** */
 
@@ -110,15 +125,22 @@ class UserController extends Controller
 
     public function responseVolunteeringActivityCreate(Request $request): UserVolunteeringActivityManage
     {
-        $this->validate($request, [
+        $step = (int)$request->step;
+        $duplicate_id = $request->get('duplicate');
+        $duplicateModel = VolunteeringActivity::find($duplicate_id);
+        $isDuplicate = isset($duplicateModel);
+
+        $rule_step_1 = [
             #step 1
             'title' => 'required|max:191',
             'description' => 'required|max:500',
             'causes' => 'required|array',
             'media_video_url' => 'string|max:191',
             'media_images' => 'required|array',
-            'media_images.*' => 'required|max:3000|mimes:jpeg,png,jpg,gif,svg',
-            'user_media_images_cleared' => 'array',
+            'media_images.*' => $isDuplicate ? '' : 'required|max:3000|mimes:jpeg,png,jpg,gif,svg'
+        ];
+
+        $rule_step_2 = [
             #step 2
             'frequency' => ['required', 'max:191', Rule::in($this->getFrequencies())],
             'duration' => 'required|min:1|max:24|numeric',
@@ -129,31 +151,131 @@ class UserController extends Controller
             'deadline_for_sign_ups_date' => 'required|date|date_format:Y-m-d|after:today|before:commitment_to_date|after:commitment_from_date',
             'town' => 'required|max:191',
             'block_street' => 'required|max:191',
-            'building_name' => 'string|max:191',
-            'unit' => 'string|max:191',
+            'building_name' => 'max:191',
+            'unit' => 'max:191'
+        ];
+
+        $rule_step_3 = [
             #step 3
-            'positions' => ['required', 'array', new VolunteerPosition()],//do next time
+            'positions' => ['required', 'array'],
+            'positions.*' => ['required', new VolunteerPosition()],
             'points_to_note' => 'max:500',
             'volunteer_gender' => 'max:191',
             'volunteer_contact_phone_number' => 'max:191',
             'other_response_required' => 'max:191',
-            'volunteer_signups_confirm' => 'max:191',
+            'volunteer_signups_confirm' => 'max:191'
+        ];
+
+        $rule_step_4 = [
+            #step 4
+            'contact_title' => ['required', 'max:191', Rule::in($this->getSalutations())],
+            'contact_name' => 'required|max:191',
+            'contact_designation' => 'required|max:191',
+            'contact_phone_number' => 'required|max:191',
+            'contact_email' => 'required|email|max:191'
+        ];
+        $rules = [];
+        if ($this->checkSteps($step)) {
+            $rule_step = 'rule_step_' . $step;
+            $rules = $$rule_step;
+        } else {
+            $rules = array_merge($rule_step_2, $rule_step_3, $rule_step_4);
+            $request->request->set('step', 5);
+        }
+        $this->validate($request, array_merge($rule_step_1, $rules));
+        if ($step >= 4 && !Helpers::isValidPhoneNumber($request->get('contact_phone_number'))) {
+            return response()->json(['errors' => ['contact_phone_number' => ['Your contact phone number is invalid.']]], 422);
+        }
+        $causes = $request->get('causes', []);
+        $media_images = $request->file('media_images', []);
+
+        if (count($causes) > $this->maxCauses) {
+            return response()->json(['errors' => ['causes' => ['Your causes is invalid.']]], 422);
+        }
+        if (count($media_images) > $this->maxImages) {
+            return response()->json(['errors' => ['media_images' => ['Your media images is invalid.']]], 422);
+        }
+        return new UserVolunteeringActivityManage('create');
+    }
+
+    public function responseVolunteeringActivityUpdate(Request $request, $id)
+    {
+
+        $step = (int)$request->step;
+        $rule_step_1 = [
+            #step 1
+            'title' => 'required|max:191',
+            'description' => 'required|max:500',
+            'causes' => 'required|array',
+            'media_video_url' => 'string|max:191',
+            'media_images' => 'required|array',
+            'user_media_images_cleared' => 'array'
+        ];
+        $rule_step_2 = [
+            #step 2
+            'frequency' => ['required', 'max:191', Rule::in($this->getFrequencies())],
+            'duration' => 'required|min:1|max:24|numeric',
+            'days_of_week' => ['required', 'array', Rule::in($this->getDaysOfWeek())],
+            'volunteering_type' => ['required', 'max:191', Rule::in($this->getVolunteerTypes())],
+            'commitment_from_date' => 'required|date|date_format:Y-m-d',
+            'commitment_to_date' => 'required|date|date_format:Y-m-d|after:commitment_from_date',
+            'deadline_for_sign_ups_date' => 'required|date|date_format:Y-m-d|before:commitment_to_date|after:commitment_from_date',
+            'town' => 'required|max:191',
+            'block_street' => 'required|max:191',
+            'building_name' => 'max:191',
+            'unit' => 'max:191'
+        ];
+        $rule_step_3 = [
+            #step 3
+            'positions' => ['required', 'array'],
+            'positions.*' => ['required', new VolunteerPosition()],
+            'points_to_note' => 'max:500',
+            'volunteer_gender' => 'max:191',
+            'volunteer_contact_phone_number' => 'max:191',
+            'other_response_required' => 'max:191',
+            'volunteer_signups_confirm' => 'max:191'
+        ];
+        $rule_step_4 = [
             #step 4
             'contact_title' => ['required', 'max:191', Rule::in($this->getSalutations())],
             'contact_name' => 'required|max:191',
             'contact_designation' => 'required|max:191',
             'contact_phone_number' => 'required|max:191',
             'contact_email' => 'required|email|max:191',
-        ]);
+        ];
+        $rule = [];
+        if ($this->checkSteps($step)) {
+            $rule_step = 'rule_step_' . $step;
+            $rule = $$rule_step;
+        } else {
+            $rule = array_merge($rule_step_2, $rule_step_3, $rule_step_4);
+            $step = 5;
+            $request->request->set('step', 5);
+        }
+        $this->validate($request, array_merge($rule_step_1, $rule));
 
-        if (!Helpers::isValidPhoneNumber($request->get('contact_phone_number'))) {
+        if ($step >= 4 && !Helpers::isValidPhoneNumber($request->get('contact_phone_number'))) {
             return response()->json(['errors' => ['contact_phone_number' => ['Your contact phone number is invalid.']]], 422);
         }
 
-        dd($request->all());
+        $causes = $request->get('causes', []);
+        $media_images = $request->file('media_images', []);
 
-        return new UserVolunteeringActivityManage('create');
+        if (count($causes) > $this->maxCauses) {
+            return response()->json(['errors' => ['causes' => ['Your causes is invalid.']]], 422);
+        }
+        if (count($media_images) > $this->maxImages) {
+            return response()->json(['errors' => ['media_images' => ['Your media images is invalid.']]], 422);
+        }
+
+        return new UserVolunteeringActivityManage('update');
     }
+
+    public function responseVolunteeringActivityDiscard(Request $request, $id)
+    {
+        return new UserVolunteeringActivityManage('discard');
+    }
+
     /****@ResponsesUserVolunteeringActivity  api and action  *** */
 
     /****@ResponsesUserProfile  api and action  *** */
@@ -187,6 +309,7 @@ class UserController extends Controller
 
     public function responseProfileManage(Request $request): UserProfileManage
     {
+
         if ($request->user()->isUser('organize')) {
             $rules = [
                 'user_causes' => 'required',
@@ -204,6 +327,17 @@ class UserController extends Controller
             'public_email' => 'email|max:191',
             'phone_number' => 'max:191',
         ]));
+
+        $causes = $request->get('user_causes', []);
+        $media_images = $request->file('user_media_images', []);
+
+        if (count($causes) > $this->maxCauses) {
+            return response()->json(['errors' => ['user_causes' => ['Your causes is invalid.']]], 422);
+        }
+        if (count($media_images) > $this->maxImages) {
+            return response()->json(['errors' => ['user_media_images' => ['Your media images is invalid.']]], 422);
+        }
+
         return new UserProfileManage($request);
     }
 
@@ -376,6 +510,11 @@ class UserController extends Controller
         ];
     }
 
+    public function checkSteps(int $step)
+    {
+        $steps = [1, 2, 3, 4];
+        return in_array($step, $steps, true);
+    }
     /**
      * @Helper helper functions
      */

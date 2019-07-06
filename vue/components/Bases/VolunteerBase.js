@@ -12,7 +12,7 @@ export default Vue.extend({
             isSearch: false,
             isTyped: false,
             query: '',
-            filters: {},
+            filters: { volunteering: {} },
             singleId: -1,
         }
     },

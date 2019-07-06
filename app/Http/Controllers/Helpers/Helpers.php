@@ -16,6 +16,11 @@ use Image, File;
 class Helpers
 {
 
+    public static function isValidJson($strJson): bool
+    {
+        json_decode($strJson);
+        return (json_last_error() === JSON_ERROR_NONE);
+    }
     public static function time_elapsed_string($datetime, $full = false): string
     {
         $now = new DateTime;

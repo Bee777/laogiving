@@ -2,11 +2,6 @@
     <div class="rounded-card__body rounded-card__body--responsive">
         <form id="volunteer-step-4" novalidate="novalidate" class="active"><h3 class="h3 mb-16 font-dark-grey">Contact
             details</h3>
-
-            contact_designation
-            contact_phone_number
-            contact_email
-
             <div class="input-ctrl mt-16"
                  :class="[{'error': validated().contact_title }]"><label class="lbl">Title</label>
                 <select class="select-ctn select--full"
@@ -69,6 +64,11 @@
 
     export default {
         name: "ActivityStepFour",
+        props: {
+            edit: {
+                default: false,
+            },
+        },
         data: () => ({
             ...mapGetters(['validated', 'succeeded']),
             contact_title: '',

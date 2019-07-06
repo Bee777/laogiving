@@ -60,6 +60,9 @@
     export default {
         name: "ActivityStepFive",
         props: {
+            edit: {
+                default: false,
+            },
             visible: {
                 default: false
             },

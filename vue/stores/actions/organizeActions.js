@@ -13,11 +13,17 @@ export const axiosClient = () => createAxiosClient();
 export const createActions = (utils) => {
     return {
         fetchSearches(c, i) {
-            let request = `limit=${i.limit}&page=${i.page}&q=${i.q}`;
+            let filters = '';
+            for (let filter in i.filters) {
+                if (i.filters.hasOwnProperty(filter)) {
+                    filters += `&${filter}=${i.filters[filter] || ''}`;
+                }
+            }
+            let request = `limit=${i.limit}&page=${i.page}&q=${i.q}${filters}`;
             c.commit('setValidated', {errors: {loading_searches: true}});
             client.get(`${apiUrl}/users/searches/${i.type}?${request}`, ajaxToken(c))
                 .then(res => {
-                    c.commit('setSearchesData', {type: i.type, data: res.data.data});
+                    c.commit('setSearchesData', {type: i.type, data: res.data.data, options: res.data.options});
                     c.commit('setClearMsg');
                 })
                 .catch(err => {
@@ -245,6 +251,46 @@ export const createActions = (utils) => {
         saveVolunteeringActivityData(c, formData) {
             return new Promise((r, n) => {
                 client.post(`${apiUrl}/users/volunteering-activity-create`, formData, ajaxToken(c, true))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data);
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        let res = err.response
+                        if (res && res.data && res.data.errors) {
+                            c.dispatch('showErrorToast', {
+                                msg: 'Something went wrong with your volunteering information!.',
+                                dt: 3500
+                            });
+                        }
+                        n(err.response);
+                    });
+            });
+        },
+        updateVolunteeringActivityData(c, data) {
+            return new Promise((r, n) => {
+                client.post(`${apiUrl}/users/volunteering-activity-update/${data.id}`, data.data, ajaxToken(c, true))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data);
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        let res = err.response
+                        if (res && res.data && res.data.errors) {
+                            c.dispatch('showErrorToast', {
+                                msg: 'Something went wrong with your volunteering information!.',
+                                dt: 3500
+                            });
+                        }
+                        n(err.response);
+                    });
+            });
+        },
+        discardVolunteeringActivityData(c, data) {
+            return new Promise((r, n) => {
+                client.delete(`${apiUrl}/users/volunteering-activity-discard/${data.id}`, ajaxToken(c))
                     .then(res => {
                         c.commit('setClearMsg');
                         r(res.data);

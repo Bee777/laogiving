@@ -12,7 +12,7 @@
                 <h3 class="h3 mb-16 font-dark-grey">Frequency</h3>
                 <div class="input-ctrl grid-12 grid-tablet-portrait-up-8 mt-16 success"
                      :class="[{'error': validated().frequency}]">
-                    <select id="volunteer_frequency" class="select-ctn select--full valid" name="volunteer_frequency"
+                    <select :disabled="disabledRequiredField" id="volunteer_frequency" class="select-ctn select--full valid" name="volunteer_frequency"
                             v-model="frequency">
                         <option value="" disabled>Please select</option>
 
@@ -34,7 +34,7 @@
                 </div>
                 <div class="input-ctrl grid-12 grid-tablet-portrait-up-4-last mt-16 success"
                      :class="[{'error': validated().duration}]">
-                    <input v-model="duration" id="volunteer_duration" type="number"
+                    <input :disabled="disabledRequiredField" v-model="duration" id="volunteer_duration" type="number"
                            class="input-ctn frequency_duration_input valid"
                            name="volunteer_duration" placeholder="Hours per session" value="">
                     <label for="volunteer_duration" class="error-msg"
@@ -46,14 +46,14 @@
                 <ul class="checkbox-list">
                     <li>
                         <label class="checkbox-list__checkbox">
-                            <input v-model="days_of_week" type="checkbox" value="WEEKDAY" id="givingsgportlet_weekday"
+                            <input :disabled="disabledRequiredField" v-model="days_of_week" type="checkbox" value="WEEKDAY" id="givingsgportlet_weekday"
                                    name="volunteer_daysOfTheWeek[]" class="valid">
                             <div class="checkbox-list__lbl-spn">Weekday</div>
                         </label>
                     </li>
                     <li>
                         <label class="checkbox-list__checkbox">
-                            <input v-model="days_of_week" type="checkbox" value="WEEKEND" id="givingsgportlet_weekend"
+                            <input :disabled="disabledRequiredField" v-model="days_of_week" type="checkbox" value="WEEKEND" id="givingsgportlet_weekend"
                                    name="volunteer_daysOfTheWeek[]">
                             <div class="checkbox-list__lbl-spn">Weekend</div>
                         </label>
@@ -70,7 +70,7 @@
                          :class="[{'error': validated().commitment_from_date}]">
                         <div>
                             <label class="lbl" for="event_startDate">From</label>
-                            <input id="event_startDate" type="text"
+                            <input :disabled="disabledRequiredField" id="event_startDate" type="text"
                                    class="input-ctn input--icon-right pickadate-datepicker regular-start-date picker__input"
                                    value="" name="event_startDate" placeholder="DD/MM/YYYY" readonly="">
                             <i class="ico material-icons input-ctrl__icon input-ctrl__icon--right input-ctrl__icon--with-error-msg">event</i>
@@ -82,7 +82,7 @@
                          :class="[{'error': validated().commitment_to_date}]">
                         <div>
                             <label class="lbl" for="event_endDate">To</label>
-                            <input id="event_endDate" type="text"
+                            <input :disabled="disabledRequiredField" id="event_endDate" type="text"
                                    class="input-ctn input--icon-right pickadate-datepicker regular-end-date picker__input"
                                    value="" name="event_endDate" placeholder="DD/MM/YYYY" readonly="">
                             <i class="ico material-icons input-ctrl__icon input-ctrl__icon--right input-ctrl__icon--with-error-msg">event</i>
@@ -95,7 +95,7 @@
                     <h3 class="h3 font-dark-grey font-16-tablet-portrait-down">Deadline for sign ups</h3>
 
                     <div class="input-ctrl" :class="[{'error': validated().deadline_for_sign_ups_date}]">
-                        <input id="reg-closed-date" type="text"
+                        <input :disabled="disabledRequiredField" id="reg-closed-date" type="text"
                                class="input-ctn input--icon-right pickadate-datepicker picker__input"
                                name="registrationClosedDate"
                                value="" placeholder="DD/MM/YYYY" readonly="">
@@ -167,6 +167,14 @@
 
     export default {
         name: "ActivityStepTwo",
+        props: {
+            disabledRequiredField: {
+                default: false,
+            },
+            edit: {
+                default: false,
+            },
+        },
         data: () => ({
             ...mapGetters(['validated', 'succeeded']),
             volunteering_type: 'regular',
@@ -290,7 +298,7 @@
                         block_street: this.block_street,
                         building_name: this.building_name,
                         unit: this.unit,
-                    };
+                    }, validateWithCurrentDate = !this.edit ? '>now': '';
 
                     this.$utils.Validate(data, {
                         'volunteering_type': ['required', {max: 191}],
@@ -298,11 +306,11 @@
                         'duration': ['required', {min: 1, type: 'number'}, {max: 24, type: 'number'}],
                         'days_of_week': ['required', {max: 191}],
                         'commitment_from_date': ['required', {max: 191}],
-                        'commitment_to_date': ['required', '>now', {
+                        'commitment_to_date': ['required', validateWithCurrentDate, {
                             greaterThan: 'commitment_from_date',
                             type: 'date'
                         }, {max: 191}],
-                        'deadline_for_sign_ups_date': ['required', '>now', {
+                        'deadline_for_sign_ups_date': ['required', validateWithCurrentDate, {
                             greaterThan: 'commitment_from_date',
                             lessThan: 'commitment_to_date',
                             type: 'date'

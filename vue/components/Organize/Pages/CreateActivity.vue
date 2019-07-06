@@ -2,7 +2,8 @@
     <main class="laogiving activity clearfix" style="padding-right: 1rem; padding-left: 1rem;">
         <div
             class="pad-navbar hero-container hero-container--light-grey hero-container--auto-w create-volunteer-act__head">
-            <h2 class="h2 create-volunteer-act__title text-center">New Volunteering Opportunity</h2>
+            <h2 class="h2 create-volunteer-act__title text-center">{{$utils.isEmptyVar(id)? 'New': (isDuplicate ? 'Duplicate' :  'Edit')}} Volunteering
+                Opportunity</h2>
             <p class="body-txt body-txt--small mb-16"> You are setting up a volunteer activity for <b>Bee
                 Organisation</b></p>
             <!--Tabs-->
@@ -44,21 +45,25 @@
             <div
                 class="rounded-card rounded-card--no-pad rounded-card--light-shadow rounded-card--height-auto rounded-card--full create-volunteer-act__main">
                 <StepOne :edit="!$utils.isEmptyVar(id)" ref="step-1" :causes="causes" v-show="tab===0"/>
-                <StepTwo ref="step-2" v-show="tab===1"/>
-                <StepThree :skills="skills" :suitables="suitables" ref="step-3" v-show="tab===2"/>
-                <StepFour ref="step-4" v-show="tab===3"/>
-                <StepFive :suitables="suitables" :finalData="{formData: this.formData, volunteering: this.volunteering}"
+                <StepTwo :edit="!$utils.isEmptyVar(id)"
+                         :disabled-required-field="status==='cancelled'||status==='closed'" ref="step-2"
+                         v-show="tab===1"/>
+                <StepThree :edit="!$utils.isEmptyVar(id)" :skills="skills" :suitables="suitables" ref="step-3"
+                           v-show="tab===2"/>
+                <StepFour :edit="!$utils.isEmptyVar(id)" ref="step-4" v-show="tab===3"/>
+                <StepFive :edit="!$utils.isEmptyVar(id)" :suitables="suitables"
+                          :finalData="{formData: this.formData, volunteering: this.volunteering}"
                           :visible="tab===4"
                           ref="step-5" v-show="tab===4"/>
                 <div class="clearfix"></div>
                 <div class="create-volunteer-act__footer"> <!-- mobile back btn-->
                     <button
                         v-show="tab !== 0"
-                        @click="Route({name: 'create-activity', query: { active_page: nextPages[active_page].prev }})"
+                        @click="Route({name: 'create-activity', query: { active_page: nextPages[active_page].prev, volunteering_id: id }})"
                         class="create-volunteer-act__footer-show-mobile button-ctn button--icon button--ghost mr-24">
                         <i class="ico material-icons">keyboard_backspace</i></button> <!-- desktop back btn-->
                     <button id="volunteer-prev-btn"
-                            @click="Route({name: 'create-activity', query: { active_page: nextPages[active_page].prev }})"
+                            @click="Route({name: 'create-activity', query: { active_page: nextPages[active_page].prev, volunteering_id: id }})"
                             class="create-volunteer-act__footer-hide-mobile button-ctn button--with-icon button--no-bg button--large mr-8 button-page-back"
                             v-show="tab !== 0">
                         <div class="button--with-icon__wrapper button--with-icon__wrapper"><i
@@ -66,13 +71,17 @@
                         </div>
                     </button> <!-- mobile save draft btn-->
                     <button
+                        v-if="!((tab > 3 && !(status==='' || status==='draft' || isDuplicate)))"
+                        @click="saveVolunteering()"
                         class="create-volunteer-act__footer-show-mobile button-ctn button--icon button--ghost mr-24"><i
                         class="ico ico--small material-icons" style="padding-top: 1px; padding-left: 1px;">save</i>
                     </button>
                     <!-- desktop save draft btn-->
                     <button
+                        v-if="!((tab > 3 && !(status==='' || status==='draft' || isDuplicate)))"
+                        @click="saveVolunteering()"
                         class="button-ctn button--135 button--large create-volunteer-act__footer-hide-mobile mr-24 button-save-draft">
-                        SAVE DRAFT
+                        {{ status==='' || status==='draft' || isDuplicate ? 'SAVE DRAFT' : 'SAVE'}}
                     </button>
                     <button id="volunteer-submit-btn"
                             @click="publishVolunteering()"
@@ -103,7 +112,7 @@
     import StepFour from "@com/Organize/Pages/Includes/ActivityStepFour.vue"
     import StepFive from "@com/Organize/Pages/Includes/ActivityStepFive.vue"
 
-    import {mapActions, mapMutations} from 'vuex'
+    import {mapActions, mapState, mapMutations} from 'vuex'
 
     export default Base.extend({
         name: "CreateActivity",
@@ -116,6 +125,10 @@
         },
         data: () => ({
             id: null,
+            status: '',
+            isDraft: false,
+            isDuplicate: false,
+            stepSave: 0,
             tab: 0,
             tabs: {
                 'general-info-&-permissions': 0,
@@ -145,15 +158,19 @@
             formData: null,
             volunteering: {}
         }),
+        computed: {
+            ...mapState(['volunteeringDuplicateData']),
+        },
         watch: {
             '$route.query': function (n, o) {
                 this.setTab();
             }
         },
         methods: {
-            ...mapActions(['fetchVolunteeringActivityData', 'saveVolunteeringActivityData', 'showErrorToast', 'showInfoToast',]),
-            ...mapMutations([]),
+            ...mapActions(['fetchVolunteeringActivityData', 'saveVolunteeringActivityData', 'updateVolunteeringActivityData', 'showErrorToast', 'showInfoToast',]),
+            ...mapMutations(['setVolunteeringDuplicateData']),
             setTab() {
+                this.id = this.$route.query.volunteering_id;
                 let tab = this.$route.query.active_page;
                 if (tab && typeof this.tabs[tab] !== "undefined") {
                     this.tab = this.tabs[tab];
@@ -164,25 +181,37 @@
                     if (!(this.step >= this.tab)) {
                         this.Route({
                             name: 'create-activity',
-                            query: {active_page: this.nextPages[this.active_page].prev}
+                            query: {active_page: this.nextPages[this.active_page].prev, volunteering_id: this.id}
                         });
                     }
                 }
             },
             setRouteTab(n) {
-                this.Route({name: 'create-activity', query: {active_page: n}});
+                this.Route({name: 'create-activity', query: {active_page: n, volunteering_id: this.id}});
             },
-            getVolunteeringActivityData() {
-                this.fetchVolunteeringActivityData({id: this.id})
+            getVolunteeringActivityData(id = null) {
+                this.fetchVolunteeringActivityData({id: id || this.id})
                     .then(res => {
-
                         if (res.success) {
-
                             this.causes = res.data.causes;
                             this.skills = res.data.skills;
                             this.suitables = res.data.suitables;
-
-                            this.setData();
+                            if (this.id !== null) {
+                                if (res.data.volunteering) {
+                                    this.setData(res.data.volunteering);
+                                    if (!this.$utils.isEmptyObject(this.volunteeringDuplicateData)
+                                        && this.$route.query.duplicate_id === this.$route.query.volunteering_id) {
+                                        this.setData(this.volunteeringDuplicateData);
+                                        this.isDuplicate = true;
+                                    }
+                                } else {
+                                    this.id = null;
+                                    this.Route({
+                                        name: 'create-activity',
+                                        query: {active_page: this.tabs[0]}
+                                    });
+                                }
+                            }
                         }
                     })
                     .catch(err => {
@@ -190,16 +219,23 @@
                         console.log(err);
                     })
             },
-            serializeFormData(callback) {
+            serializeFormData(callback, stepSave = 0) {
                 this.formData = new FormData();
-                for (let i = 0; i < this.step; i++) {
+                let maxStep = stepSave > 0 ? stepSave : this.step;
+                maxStep = maxStep > 4 ? 4 : maxStep;//max is 4
+                for (let i = 0; i < maxStep; i++) {
                     this.$refs[`step-${(i + 1)}`].getData().then(res => {
                         this.volunteering = {...this.volunteering, ...res.data};
                         for (let pair of res.formData.entries()) {
-                            this.formData.append(pair[0], pair[1]);
+                            pair[1] = pair[1] === 'null' ? '' : pair[1];
+                            this.formData.append(pair[0], pair[1] || '');
                         }
-                        if (i === this.step - 1) {
+                        if (i === maxStep - 1) {
                             callback();
+                        }
+                    }).catch(() => {
+                        if (stepSave > 0) {
+                            this.showErrorToast({msg: 'Please check your form again!', dt: 3500});
                         }
                     });
                 }
@@ -211,7 +247,7 @@
                         this.serializeFormData(() => {
                             this.Route({
                                 name: 'create-activity',
-                                query: {active_page: this.nextPages[this.active_page].next}
+                                query: {active_page: this.nextPages[this.active_page].next, volunteering_id: this.id}
                             });
                         });
                     }).catch(() => {
@@ -220,100 +256,107 @@
             },
             publishVolunteering() {
                 this.serializeFormData(() => {
-                    this.saveVolunteeringActivityData(this.formData).then(res => {
-                        console.log(res);
-                    }).catch(err => {
-                        console.log(err);
-                    });
-                });
-            },
-            setData() {
-                //this.id = 1;
-                this.$refs[`step-1`].setTile('Activity Landscape Farm Maintenance @  Kampung Kampus (May 2019)');
-                this.$refs[`step-1`].setDescription('Activity description\n' +
-                    'What is it about? Who are the beneficiaries? What purpose does it serve?');
+                    this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
+                    this.formData.append('step', this.stepSave);
+                    if (this.isDraft) {
+                        this.formData.append('draft', 'true');
+                    }
+                    if (this.isDuplicate) {
+                        this.formData.append('duplicate', this.id);
+                    }
+                    if (this.id && !this.isDuplicate) {
+                        this.updateVolunteeringActivityData({id: this.id, data: this.formData}).then(res => {
+                            if (res.success) {
+                                //reset data
+                                this.isDraft = false;
+                                this.stepSave = 0;
+                                //reset data
+                                this.toaster('Volunteer activity saved.');
+                                this.Route({
+                                    name: 'create-activity',
+                                    query: {active_page: 'general-info-&-permissions', volunteering_id: res.data.id}
+                                });
+                                this.getVolunteeringActivityData();
+                                this.$utils.scrollToY('html,body', 0);
+                            }
+                            this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                        }).catch(err => {
+                            console.log(err);
+                            this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                        });
 
-                this.$refs[`step-1`].setMedia(
-                    {validated: '', url: 'https://www.youtube.com/watch?v=gv5ZTtBUjVM'},
-                    [{
-                        id: 12,
-                        url: 'https://yt3.ggpht.com/proxy/OO1RWLgzGwj2A_u4crEwMlp8RN8949sLgmDodG_cAGBiIVUlUHZ9ArPQsMmmzypbdf1KxXIrETUgY-UUbLE=-w480-h360',
-                        image_base64: 'https://yt3.ggpht.com/proxy/OO1RWLgzGwj2A_u4crEwMlp8RN8949sLgmDodG_cAGBiIVUlUHZ9ArPQsMmmzypbdf1KxXIrETUgY-UUbLE=-w480-h360',
-                        image: 'https://yt3.ggpht.com/proxy/OO1RWLgzGwj2A_u4crEwMlp8RN8949sLgmDodG_cAGBiIVUlUHZ9ArPQsMmmzypbdf1KxXIrETUgY-UUbLE=-w480-h360',
-                        validated: '',
-                        removable: false,
-                    }]);
-                this.$refs[`step-1`].setCauses([1, 3, 4]);
+                    } else {
+                        this.saveVolunteeringActivityData(this.formData).then(res => {
+                            if (res.success) {
+                                //reset data
+                                this.isDraft = false;
+                                this.isDuplicate = false;
+                                this.stepSave = 0;
+                                this.setVolunteeringDuplicateData({});//reset duplicate data
+                                //reset data
+                                this.toaster('Volunteer activity created.');
+                                this.Route({
+                                    name: 'create-activity',
+                                    query: {active_page: 'general-info-&-permissions', volunteering_id: res.data.id}
+                                });
+                                this.getVolunteeringActivityData(res.data.id);
+                                this.$utils.scrollToY('html,body', 0);
+                            }
+                            this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                        }).catch(err => {
+                            console.log(err);
+                            this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                        });
+                    }
+                }, this.stepSave);
+            },
+            saveVolunteering() {
+                this.isDraft = this.status === '' || this.status === 'draft' || this.isDuplicate;
+                this.stepSave = this.tab + 1;
+                this.publishVolunteering();
+            },
+            setData(data) {
+                this.step = data.step;
+                this.status = data.status;
+
+                if (!this.$refs[`step-1`]) {
+                    return;
+                }
+
+                this.$refs[`step-1`].setTile(data.name);
+                this.$refs[`step-1`].setDescription(data.description);
+
+                this.$refs[`step-1`].setMedia(data.video_media, data.images_media);
+                this.$refs[`step-1`].setCauses(data.activity_causes);
 
                 this.$refs[`step-2`].setData({
-                    frequency: '2_3_DAYS_PER_WEEK',
-                    duration: 2,
-                    days_of_week: ['WEEKDAY', 'WEEKEND'],
-                    commitment_from_date: '2019/07/01',
-                    commitment_to_date: '2019/07/04',
-                    deadline_for_sign_ups_date: '2019/07/03',
-                    town: `Boon Lay`,
-                    block_street: `88 Geylang Bahru Singapore 339696`,
-                    building_name: `Tampines`,
-                    unit: 13
+                    frequency: data.frequency,
+                    duration: data.duration,
+                    days_of_week: data.days_of_week,
+                    commitment_from_date: data.start_date,
+                    commitment_to_date: data.end_date,
+                    deadline_for_sign_ups_date: data.deadline_sign_ups_date,
+                    town: data.town,
+                    block_street: data.block_street,
+                    building_name: data.building_name,
+                    unit: data.building_unit_number
                 });
-
 
                 this.$refs[`step-3`].setData({
-                    points_to_note: '"no matter how close I get to you, my heart is(ou) that of one"\n' +
-                        '(it\'s a pun on his name)\n',
-                    volunteer_gender: true,
-                    volunteer_contact_phone_number: true,
-                    other_response_required: `Do you have some money?`,
-                    volunteer_signups_confirm: true,
-                    positions: [
-                        {
-                            collapsed: false,
-                            position_title: 'Position Title 1',
-                            vacancies: 13,
-                            minimum_age: 13,
-                            position_skills: [1, 2, 5],
-                            position_suitables: [2, 3, 1],
-                            key_responsibilities: `คำอ่าน+คำแปลน้าา❤
-                        ねぇ、もしも全て投げ捨てられたら
-                        笑って生きることが楽になるの？
-                        また胸が痛くなるから
-                        もう何も言わないでよ
-                        nee moshimo subete nagesuteraretara
-                        waratte ikiru koto ga raku ni naru no?
-                        mata mune ga itakunaru kara
-                        mou nani mo iwanaide yo
-
-                        นี่ หากโยนทุกสิ่งทิ้งไปได้แล้ว
-                        ฉันจะยิ้มและมีชีวิตอยู่ได้อย่างสบายใจใช่ไหม?
-                        หัวใจของฉันมันจะเจ็บปวดขึ้นมาอีก
-                        ดังนั้นเธอไม่ต้องพูดอะไรอีกต่อไปแล้ว`,
-                            validated: {},
-                        },
-                        {
-                            collapsed: false,
-                            position_title: 'Position Title 2',
-                            vacancies: 13,
-                            minimum_age: 13,
-                            position_skills: [1, 2, 5],
-                            position_suitables: [4, 3, 1, 5],
-                            key_responsibilities: `nee moshimo subete nagesuteraretara
-                        waratte ikiru koto ga raku ni naru no?
-                        mata mune ga itakunaru kara
-                        mou nani mo iwanaide yo`,
-                            validated: {},
-                        }
-                    ]
+                    points_to_note: data.points_to_note,
+                    volunteer_gender: data.volunteer_gender === 'yes',
+                    volunteer_contact_phone_number: data.volunteer_contact_phone_number === 'yes',
+                    other_response_required: data.other_response_required,
+                    volunteer_signups_confirm: data.volunteer_signups_confirm === 'yes',
+                    positions: data.positions
                 });
-
                 this.$refs[`step-4`].setData({
-                    contact_title: 'mr',
-                    contact_name: 'SKT MM',
-                    contact_designation: 'Leader of faker',
-                    contact_phone_number: `020 533339696`,
-                    contact_email: `Tampines@gmail.com`
+                    contact_title: data.contact_title,
+                    contact_name: data.contact_name,
+                    contact_designation: data.contact_designation,
+                    contact_phone_number: data.contact_phone_number,
+                    contact_email: data.contact_email
                 });
-
             }
         },
         mounted() {

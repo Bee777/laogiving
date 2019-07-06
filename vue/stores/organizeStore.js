@@ -54,16 +54,18 @@ export default new Vuex.Store({
                 ],
             },
         },
+        volunteeringDuplicateData: {},
         dashboardData: {
             activities_count: 0,
             latest_members_count: 0,
         },
         searchesData: {
             members: {},
-            activity: {},
+            volunteering: {},
+            options: {volunteering: null},
         },
         searchesAllowed: {
-            activity: true,
+            volunteering: true,
             members: true,
         },
     },
@@ -103,6 +105,7 @@ export default new Vuex.Store({
             if (!!s.searchesAllowed[p.type]) {
                 s.searchesData[p.type] = p.data;
                 s.searchesData[p.type].items = [];
+                s.searchesData.options[p.type] = p.options;
             }
         },
         setSearchQuery(s, p) {
@@ -117,6 +120,9 @@ export default new Vuex.Store({
         },
         setUserProfileKey(s, p) {
             s.userProfile[p.key] = p.value;
+        },
+        setVolunteeringDuplicateData(s, p){
+            s.volunteeringDuplicateData = p;
         }
     },
     actions: {

@@ -3106,7 +3106,9 @@ main, menu, summary {
 .flag-obj__item {
     display: table-cell;
 }
-
+.flag-obj__item i {
+    line-height: 20px;
+}
 .activity p {
     margin: 0 0 10px;
     font-size: 16px;
@@ -5689,7 +5691,7 @@ hr.grey {
 
 .laogiving input[disabled], .laogiving select[disabled], .laogiving textarea[disabled], .laogiving input[readonly], .laogiving select[readonly], .laogiving textarea[readonly] {
     cursor: not-allowed;
-    background-color: #eee;
+    background-color: #ffffff;
 }
 
 .select-ctn.is-hidden {
@@ -8852,7 +8854,7 @@ a.sqr-panel-item:focus {
         position: static;
         background-color: transparent;
         box-shadow: none;
-        z-index: 1;
+        z-index: 3;
     }
 
     .laogiving #volunteer-signup-modal .modal-ctn {
@@ -9474,7 +9476,7 @@ a.sqr-panel-item:focus {
 .create-volunteer-act__footer, .laogiving .create-volunteer-act__footer {
     padding: 1rem;
     position: fixed;
-    z-index: 1;
+    z-index: 3;
     bottom: 0;
     left: 0;
     background-color: #FFFFFF;

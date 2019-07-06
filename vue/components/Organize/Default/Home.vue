@@ -232,223 +232,8 @@
             </div>
             <!--EndDashboard-->
             <!--Volunteering-->
-            <div class="ctn" v-show="tab===1">
-                <div class="cWidth-1200 clearfix">
-                    <div class="volunteer-admin__container" id="my-volunteer-activities">
-                        <form class="form">
-                            <div
-                                class="volunteer-admin__container-nav grid-12 grid-custom-1024-up-3 pt-16-custom-1024-up-86">
-                                <div class="nav-acdr" :class="[{'is-expanded' : toggleRadio}]">
-                                    <div class="nav-acdr__head" @click="toggleRadio=!toggleRadio"><span
-                                        class="nav-acdr__title">Live</span> <span
-                                        class="nav-acdr__stats live-count">3</span></div>
-                                    <div class="nav-acdr__body">
-                                        <div class="nav-acdr__grp nav-acdr__grp--single">
-                                            <div class="radio-filters radio-filters--blk"><label
-                                                class="radio-filters__lbl">
-                                                <input type="radio" checked=""
-                                                       name="filter_status"
-                                                       class="radio-filters__radio" value="LIVE">
-                                                <span class="radio-filters__text-left">Current Opportunities</span>
-                                                <span class="radio-filters__text-right live-count">2</span>
-                                                <div class="radio-filters--blk__hilite"></div>
-                                            </label>
-                                            </div>
-                                        </div>
-                                        <div class="nav-acdr__grp nav-acdr__grp--single">
-                                            <div class="radio-filters radio-filters--blk">
-                                                <label class="radio-filters__lbl">
-                                                    <input type="radio"
-                                                           name="filter_status"
-                                                           class="radio-filters__radio" value="CLOSED">
-                                                    <span class="radio-filters__text-left">Past Opportunities</span>
-                                                    <span class="radio-filters__text-right closed-count">5</span>
-                                                    <div class="radio-filters--blk__hilite"></div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="nav-acdr__grp nav-acdr__grp--single">
-                                            <div class="radio-filters radio-filters--blk">
-                                                <label class="radio-filters__lbl">
-                                                    <input type="radio"
-                                                           name="filter_status"
-                                                           class="radio-filters__radio" value="DRAFT">
-                                                    <span class="radio-filters__text-left">Drafts</span>
-                                                    <span class="radio-filters__text-right cancelled-count">0</span>
-                                                    <div class="radio-filters--blk__hilite"></div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="nav-acdr__grp nav-acdr__grp--single">
-                                            <div class="radio-filters radio-filters--blk">
-                                                <label class="radio-filters__lbl">
-                                                    <input type="radio"
-                                                           name="filter_status"
-                                                           class="radio-filters__radio" value="CANCELLED">
-                                                    <span class="radio-filters__text-left">Cancelled</span>
-                                                    <span class="radio-filters__text-right cancelled-count">0</span>
-                                                    <div class="radio-filters--blk__hilite"></div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="grid-12 grid-custom-1024-up-9-last">
-                                <!--Controls-->
-                                <div class="volunteer-admin__container-controls">
-
-                                    <button @click="Route({name: 'create-activity'})" class="button-ctn">CREATE NEW
-                                    </button>
-                                    <button @click="Route({name: 'all-volunteers'})" class="button-ctn button--ghost">
-                                        VIEW ALL VOLUNTEERS
-                                    </button>
-
-                                    <div id="sortSelectButton" class="search-result__sort-filter">
-                                        <div class="select-btn selectInButton">
-
-
-                                            <label class="mb-0 select-btn__lbl">
-                                            <span
-                                                class="select-btn__lbl-lbl mr-8 font-mid-grey body-txt body-txt--small"
-                                                style="padding-bottom:10px">Sort By</span>
-                                            </label>
-                                            <select name="" id="sort-listing"
-                                                    class="select-ctn select--small select-btn__select">
-                                                <option data-path=".volunteer-activity-name" value="title">
-                                                    Alphabetical
-                                                </option>
-                                                <option data-path=".volunteer-upcoming-datetime" value="date">Date
-                                                </option>
-                                                <option data-path=".volunteer-upcoming-datetime" value="date">Show
-                                                    latest
-                                                    first
-                                                </option>
-                                            </select>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--Controls-->
-                                <!--Loading-->
-                                <div class="preloader" id="loadingPartialGif" style="display: none;">
-                                    <div style="text-align: center;">Loading now..</div>
-                                    <div class="preloader-ctn" role="dialog" id="js-flex-ctn--preloader-modal">
-                                        <svg version="1.1" id="" class="preloader-ctn__svg"
-                                             xmlns="http://www.w3.org/2000/svg"
-                                             xmlns:xlink="http://www.w3.org/1999/xlink"
-                                             x="0px" y="0px" width="40px" height="40px" viewBox="0 0 50 50"
-                                             style="enable-background: new 0 0 50 50;" xml:space="preserve">
-                                        <path class="preloader-ctn__loader" fill="#000"
-                                              d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z"></path>
-                                    </svg>
-                                    </div>
-                                </div>
-                                <!--Loading-->
-                                <!--Items-->
-                                <div class="volunteer-cards-wrapper volunteer-cards-container">
-
-                                    <div
-                                        class="rounded-card--header-solid rounded-card--gray-border volunteer-card no-box-shadow">
-                                        <div
-                                            class="rounded-card--header-solid__header rounded-card--gray-border__header flex-ctn flex-ctn--just-spc-btw flex-ctn--dir-col-tablet-portrait-up-row">
-                                            <div>
-                                                <div
-                                                    class="flex-ctn flex-ctn--dir-col-tablet-portrait-up-row flex-ctn--just-start-mobile-tablet-portrait-up-center">
-                                                    <a href="/volunteer-event?event_activity_id=9109822"
-                                                       style="text-decoration: none;"><h3
-                                                        class="h3 mr-16 volunteer-activity-name">FOH Volunteers for
-                                                        TheatreWorks' Production</h3></a>
-                                                </div>
-
-
-                                                <div class="flag-obj mb-8 mt-8">
-                                                    <div class="flag-obj__item flag-obj__item--top dark-grey"><i
-                                                        class="material-icons">place</i></div>
-                                                    <div class="flag-obj__item"><p
-                                                        class="pb-8 volunteer-activity-location">
-                                                        88 GEYLANG BAHRU</p></div>
-                                                </div>
-
-                                                <div class="flag-obj mb-8 mt-8">
-                                                    <div class="flag-obj__item flag-obj__item--top dark-grey"><i
-                                                        class="material-icons">event</i></div>
-                                                    <div class="flag-obj__item"><p class="pb-8">1 active
-                                                        opportunity</p>
-                                                    </div>
-                                                </div>
-
-                                                <div class="flag-obj mb-8 mt-8">
-                                                    <div class="flag-obj__item flag-obj__item--top dark-grey"><i
-                                                        class="material-icons">group</i></div>
-                                                    <div class="flag-obj__item"><p class="font-orange pb-8">0 signup
-                                                        pending confirmation</p></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="flex-ctn flex-ctn--align-center">
-                                                <button
-                                                    class="button-ctn button--103 button--small ml-40-mr-16 edit-volunteer-button">
-                                                    EDIT
-                                                </button>
-                                                <button
-                                                    class="button-ctn button--ghost button--103 button--small duplicate-volunteer-button">
-                                                    DUPLICATE
-                                                </button>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="rounded-card--header-solid__body rounded-card--gray-border__body">
-                                            <ul class="list volunteer-admin__list">
-                                                <li class="0 volunteer-activity-li event-li">
-                                                    <div class="flag-obj mb-8 ">
-                                                        <div class="flag-obj__item flag-obj__item--top"><i
-                                                            class="ico material-icons">event</i></div>
-                                                        <div class="flag-obj__item flag-obj__item-with-button"><a
-                                                            href="/volunteer-event?event_activity_id=9109822"
-                                                            style="text-decoration: none;"><h4
-                                                            class="mt-0 h4">08/05/2019 to 22/05/2019 </h4></a>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="flag-obj">
-                                                        <div class="flag-obj__item flag-obj__item--top"><i
-                                                            class="ico material-icons">group</i></div>
-                                                        <div class="flag-obj__item flag-obj__item-with-button"><p
-                                                            class="font-green m-0">Registration open</p>
-                                                            <p class="m-0">Front of House: 1/10</p>
-                                                            <button @click="Route({name: 'manage-sign-up-volunteers'})"
-                                                                    class="button-ctn button--ghost button--small manage-signup-button">
-                                                                MANAGE
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                    </div>
-
-
-                                </div>
-                                <!--Items-->
-                                <nav
-                                    class="flex-ctn flex-ctn--dir-col-rev-tablet-portrait-up-row mt-16-tablet-portrait-up-40 relative pagination-nav-bar">
-                                    <ul class="pagi mt-16-tablet-portrait-up-0">
-                                        <li class="pagi__item" data-role="page-prev"><a href="#"><span
-                                            class="ico ico-page-prev"></span></a></li>
-                                        <li class="pagi__item is-active" data-role="page-num"><a href="#">1</a></li>
-                                        <li class="pagi__item" data-role="page-next"><a href="#"><span
-                                            class="ico ico-page-next"></span></a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <!---->
+            <Volunteering v-show="tab===1" :visible="tab===1" />
             <!--EndVolunteering-->
             <!--Members-->
             <Members v-show="tab===2"/>
@@ -719,6 +504,7 @@
 </style>
 <script>
     import Base from "@com/Bases/OrganizeBase.js";
+    import Volunteering from '@com/Organize/Default/Includes/Volunteering.vue'
     import Members from "@com/Organize/Default/Includes/Members.vue"
     import OrganizeProfile from "@com/Organize/Default/Includes/OrganizeProfile.vue"
     import EditOrganizeProfile from '@com/Organize/Default/Includes/EditOrganizeProfile.vue'
@@ -732,14 +518,14 @@
             Members,
             OrganizeProfile,
             EditOrganizeProfile,
-            Account
+            Account,
+            Volunteering
         },
         data: () => ({
             tab: 0,
             tabs: {dashboard: 0, 'our-volunteering': 1, members: 2, saved: 3, profile: 4, account: 5},
             volunteering: {filter: 'this1Month'},
             toggleRadio: false,
-            toggleDetail: false,
             isEditProfile: false,
         }),
         watch: {

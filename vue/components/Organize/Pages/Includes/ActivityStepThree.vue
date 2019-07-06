@@ -220,6 +220,9 @@
     export default {
         name: "ActivityStepThree",
         props: {
+            edit: {
+                default: false,
+            },
             skills: {
                 default: function () {
                     return [];

@@ -14,6 +14,7 @@ use App\Models\CauseDetail;
 use App\Models\Media;
 use App\Models\Skill;
 use App\Models\Suitable;
+use App\Models\VolunteeringActivity;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
 
@@ -30,80 +31,75 @@ class UserVolunteeringActivityOptions implements Responsable
     {
         $data = [];
         if (Helpers::isAjax($request)) {
-            $type = $request->get('type');
-
             $user = $request->user();
             if ($user->isUser('organize')) {
-                $data = [];
+                $data['volunteering'] = $this->transformUserActivity($user, $request->activity_id);
             }
             $data['causes'] = Cause::getCauses('all');
             $data['skills'] = Skill::getSkills('all');
             $data['suitables'] = Suitable::getSuitables('all');
             return response()->json(['success' => true, 'data' => $data]);
-
-            return response()->json(['success' => false, 'data' => $data]);
         }
     }
 
-    public function transformUserProfile(User $user, $type)
+    public function transformUserActivity(User $user, $id)
     {
-        $data = null;
+        $activity = null;
         if (isset($user)) {
-            $data = [];
-            $data['name'] = $user->name;
-            $data['email'] = $user->email;
-            if ($type === 'volunteer') {
-                $userProfile = $user->userProfile($type);
-                $data['user_profile'] = $userProfile;
-                if (isset($userProfile)) {
-                    $data['user_profile']['date_of_birth_formatted'] = isset($userProfile->date_of_birth) ? $userProfile->date_of_birth->format('d/m/Y') : '';
-                    $data['user_profile']['profile_image_base64'] = '';
-                }
-                $data['user_causes'] = CauseDetail::list('user', $user->id)->pluck('cause_id');
-                $user_causes = CauseDetail::list('user', $user->id);
-                $user_causes->map(function ($item) {
+            $activity = VolunteeringActivity::find($id);
+            if (isset($activity)) {
+                $activity->activity_causes = CauseDetail::list('activity', $activity->id)->pluck('cause_id');
+                $activity_causes = CauseDetail::list('activity', $activity->id);
+                $activity_causes->map(function ($item) {
                     $item->cause_data = $item->cause;
                     return $item;
                 });
-                $data['user_causes_display'] = $user_causes->pluck('cause_data');
-            } else if ($type === 'organize') {
-                $userProfile = $user->userProfile($type);
-                $data['user_profile'] = $userProfile;
-                if (isset($userProfile)) {
-                    $data['user_profile']['visibility'] = $userProfile->visibility === 'visible';
-                    $data['user_profile']['registration_date_formatted'] = isset($userProfile->registration_date) ? $userProfile->registration_date->format('d/m/Y') : '';
-                    $data['user_profile']['profile_image_base64'] = '';
-                    $data['user_profile']['website_in_our_site'] = $userProfile->visibility ? route('get.home.organize.profile', $user->id) : '';
+                $activity->activity_causes_display = $activity_causes->pluck('cause_data');
 
-                }
-                $data['user_causes'] = CauseDetail::list('user', $user->id)->pluck('cause_id');
-                $user_causes = CauseDetail::list('user', $user->id);
-                $user_causes->map(function ($item) {
-                    $item->cause_data = $item->cause;
-                    return $item;
-                });
-                $data['user_causes_display'] = $user_causes->pluck('cause_data');
-                $data['user_media'] = [
-                    'video' => ['validated' => '', 'url' => ''],
-                    'images' => [
+                $activityMediaVideo = Media::single('activity', 'youtube', $activity->id);
+                $activity->video_media = $activityMediaVideo ?? ['validated' => '', 'url' => ''];
+                $activityMediaImages = Media::list('activity', 'image', $activity->id);
+                if (count($activityMediaImages) > 0) {
+                    #set step 1
+                    $activity->step = 1;
+                    $activity->images_media = $activityMediaImages;
+                } else {
+                    $activity->images_media = [
                         [
                             'image_base64' => '',
                             'image' => null,
                             'validated' => '',
                             'removable' => false
                         ]
-                    ]
-                ];
-                $userMediaVideo = Media::single('user', 'youtube', $user->id);
-                if (isset($userMediaVideo)) {
-                    $data['user_media']['video'] = $userMediaVideo;
+                    ];
                 }
-                $userMediaImages = Media::list('user', 'image', $user->id);
-                if (count($userMediaImages) > 0) {
-                    $data['user_media']['images'] = $userMediaImages;
+
+                $days_of_week = [];
+                if ($activity->weekday === 'yes') {
+                    $days_of_week[] = 'WEEKDAY';
+                }
+                if ($activity->weekend === 'yes') {
+                    $days_of_week[] = 'WEEKEND';
+                }
+                if (count($days_of_week) > 0) {
+                    #set step 2
+                    $activity->step = 2;
+                }
+                $activity->days_of_week = $days_of_week;
+
+                $activity->positions = $activity->positions;
+                if (count($activity->positions) > 0) {
+                    #set step 3
+                    $activity->step = 3;
+                }
+                $activity->positions = $activity->positionsMap();
+
+                if (!empty($activity->contact_title)) {
+                    #set step 4
+                    $activity->step = 4;
                 }
             }
         }
-        return $data;
+        return $activity;
     }
 }

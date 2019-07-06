@@ -183,7 +183,7 @@
                         }, false, (e) => {
                             firstImage.validated = e.errors.image;
                         });
-                    } else {
+                    } else if (this.edit && this.$utils.isEmptyVar(firstImage.image_base64)) {
                         this.$utils.Validate(firstImage, {
                             'image': ['required', {max: 3000}],
                         }, false, (e) => {
@@ -216,6 +216,7 @@
                                 res({formData, data});
                             }
                         }).catch(e => {
+                            rej(e);
                         });
                     });
                     //add images data

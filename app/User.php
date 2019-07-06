@@ -6,6 +6,7 @@ use App\Http\Controllers\Helpers\Helpers;
 use App\Models\OrganizeProfile;
 use App\Models\Role;
 use App\Models\UserType;
+use App\Models\VolunteeringActivity;
 use App\Models\VolunteerProfile;
 use App\Traits\UserRoleTrait;
 use App\Traits\PersonalAccessTokenTrait;
@@ -135,10 +136,17 @@ class User extends Authenticatable
     {
         return $this->hasOne(VolunteerProfile::class);
     }
+
     public function organizeProfile()
     {
         return $this->hasOne(OrganizeProfile::class);
     }
+
+    public function volunteerings()
+    {
+        return $this->hasMany(VolunteeringActivity::class);
+    }
+
 
     public function roles(): BelongsToMany
     {

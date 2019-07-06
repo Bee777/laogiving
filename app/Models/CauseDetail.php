@@ -26,6 +26,11 @@ class CauseDetail extends Model
         self::saveData($user->id, 'user', $causes);
     }
 
+    public static function saveActivity($activity, $causes): void
+    {
+        self::saveData($activity->id, 'activity', $causes);
+    }
+
     protected static function saveData($id, $type, $causes): void
     {
         if (count($causes) <= 0) {
