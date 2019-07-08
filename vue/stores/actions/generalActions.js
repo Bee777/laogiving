@@ -47,7 +47,7 @@ export const createActions = (utils) => {
                         .then(res => {
                             c.commit('setClearMsg');
                             r(res.data);
-                            if(res.data.success){
+                            if (res.data.success) {
                                 c.commit('setSucceed', {succeed: {msg: res.data.status}})
                             }
                         })
@@ -116,8 +116,18 @@ export const createActions = (utils) => {
         /*** @PostsData **/
         fetchPostsData(c, i) {
             let request = `limit=${i.limit}&page=${i.page}&q=${i.q}`;
+
+            let options_request = '';
+            for (let o in i.options) {
+                if (i.options.hasOwnProperty(o)) {
+                    let op = i.options[o] || '';
+                    op = utils.isArray(op) ? op.join(',') : op;
+                    options_request += `&${o}=${op}`;
+                }
+            }
+
             c.commit('setValidated', {errors: {loading_search_posts: true}});
-            client.get(`${apiUrl}/home/posts/${i.type}?${request}`, ajaxConfig.getHeaders())
+            client.get(`${apiUrl}/home/posts/${i.type}?${request}${options_request}`, ajaxConfig.getHeaders())
                 .then(res => {
                     c.commit('setSearchQuery', {text: i.q, filters: i.filters});
                     c.commit('setClearMsg', {delay: 300});

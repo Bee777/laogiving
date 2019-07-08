@@ -30,7 +30,9 @@
                         <div class="search-nav-container flex flex-center flex-items-center flex">
                             <i @click="activeNavInputSearch(false)" class="material-icons cursor">search</i>
                             <input ref="navbar-input-search" @blur="activeNavInputSearch(false)"
+                                   @keyup.enter="$utils.Location(`/posts/activities?q=${dataQuery}&search=yes`)"
                                    class="nav-input-space-left nav-input-search"
+                                   v-model="dataQuery"
                                    type="text" placeholder="Search">
                             <i @click="activeNavInputSearch(false)" class="material-icons cursor">close</i>
                         </div>
@@ -57,7 +59,8 @@
                                 <ul class="nav navbar-nav flex flex-wrap flex-end ">
                                     <li :class="isRoute('activities')"><a
                                         :class="isRoute('activities')"
-                                        @click="Route({name: 'activities'})" class="cursor">Be a Volunteer</a></li>
+                                        @click="Route({name: 'activities', query: {type: 'volunteer'}})" class="cursor">Be
+                                        a Volunteer</a></li>
                                     <template v-if="LoggedIn()">
                                         <template v-if="authUserInfo.decodedType === 'organize'
                                         || authUserInfo.decodedType === 'admin'
@@ -125,7 +128,8 @@
                 isFixedNav: false,
                 transitionFixedNav: 200,
                 isTransitionFixedNav: false,
-                navInputSearch: {active: false, text: ''}
+                navInputSearch: {active: false, text: ''},
+                dataQuery: '',
             };
         },
         watch: {

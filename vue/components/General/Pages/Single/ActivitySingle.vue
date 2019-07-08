@@ -1,20 +1,32 @@
 <template>
     <div>
-        <main class="activity  pad clearfix">
+        <main class="activity  pad clearfix objectfit">
             <div class="cWidth-1200">
                 <section class="volunteer-event__body volunteer-event__body--flex">
 
-                    <section class="volunteer-event__head-main">
-                        <div class="swiper-container--images swiper-container">
-                            <div class="swiper-wrapper objectfit">
-                                <div class="swiper-slide">
-                                    <img alt="" class="img-placeolder"
-                                         src="https://www.giving.sg/image/logo?img_id=9040323">
+                    <section class="volunteer-event__head-main swiper-container-horizontal">
+
+                        <Carousel :hasVideos="true" ref="volunteering-profile">
+                            <template slot="slide-item">
+                                <div class="swiper-slide"
+                                     v-if="singlePostsData.activities.data.video_media && singlePostsData.activities.data.video_media.url !==''">
+                                    <div class="video-container none-active"
+                                         :data-embed="covertYoutubeUrlToEmBed(singlePostsData.activities.data.video_media.url)">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="swiper-button-prev rotage"></div>
-                            <div class="swiper-button-next"></div>
-                        </div>
+                                <div class="swiper-slide"
+                                     v-for="(item, idx) in singlePostsData.activities.data.images_media"
+                                     v-if="item.image_base64!==''" :key="idx">
+                                    <img :alt="item.url" class="img-placeolder"
+                                         :src="item.image_base64">
+                                </div>
+                            </template>
+                        </Carousel>
+
+                        <div class="swiper-pagination swiper-pagination-bullets"><span
+                            class="swiper-pagination-bullet swiper-pagination-bullet-active"></span></div>
+
+
                     </section>
 
                     <section class="volunteer-event__body-main order-2">
@@ -220,8 +232,9 @@
 
                         <h3 class="h3">More Opportunities</h3>
                         <div class="swiper-pad">
-                            <div class="swiper-arrow-wrap" style="transition-duration: 0ms;transform: translate3d(0px, 0px, 0px);">
-                                <div class="swiper-container" id="swiper-container-opportunities">
+                            <div class="swiper-arrow-wrap"
+                                 style="transition-duration: 0ms;transform: translate3d(0px, 0px, 0px);">
+                                <div class="swiper-container js-cards-swiper-2" id="swiper-container-opportunities">
                                     <div class="swiper-wrapper ">
                                         <div class="swiper-slide" v-for="i in 3" :key="i">
                                             <!--CardItem-->
@@ -285,7 +298,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="card__cta">
-                                                        <button class="btn button--no-bg button--full">LEARN MORE</button>
+                                                        <button class="btn button--no-bg button--full">LEARN MORE
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 <!--Card Body-->
@@ -315,23 +329,71 @@
 
 <script>
     import Base from '@com/Bases/GeneralBase.js'
+    import AccordionCard from '@com/Utils/AccordionCard.vue'
+    import Carousel from '@com/Utils/Carousel.vue'
+    import ReportAbuse from '@com/Utils/ReportAbuse.vue'
 
     export default Base.extend({
         name: 'ActivitySingle',
+        components: {
+            AccordionCard,
+            ReportAbuse,
+            Carousel
+        },
         data: () => ({
-            type: 'ActivitySingle',
+            type: 'activities',
+            link: '',
         }),
+        watch: {
+            'validate_errors.loading_single_posts': function (n) {
+                //please clone the queries for editable queries working
+                if (n) {
+                    this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
+                } else {
+                    this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                }
+            },
+            '$route.params': function (n, o) {
+                this.$utils.scrollToY('html,body', 10);
+                this.singleId = n.id;
+                this.link = this.baseUrl + this.$route.fullPath;
+                this.fetchSinglePostsData({type: this.type, id: this.singleId});
+            }
+        },
         methods: {
+            setItem(data) {
+                this.setPageTitle(data.data.name + ' - Activity Volunteering');
+                this.$nextTick(() => {
+                    this.initCarousel();
+                })
+            },
+            covertYoutubeUrlToEmBed(url) {
+                let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                let match = url.match(regExp);
+
+                if (match && match[2].length === 11) {
+                    return `${match[2]}`;
+                } else {
+                    return '';
+                }
+            },
             initCarousel() {
-                new Swiper('.swiper-container--images', {
-                    loop: true,
-                    // Navigation arrows
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
-                    },
-                    spaceBetween: 10,
-                });
+
+                let carousel = this.$refs['volunteering-profile'];
+                if (carousel) {
+                    carousel.initCarousel();
+                }
+
+                // new Swiper('.swiper-container--images', {
+                //     loop: true,
+                //     // Navigation arrows
+                //     navigation: {
+                //         nextEl: '.swiper-button-next',
+                //         prevEl: '.swiper-button-prev',
+                //     },
+                //     spaceBetween: 10,
+                // });
+
                 new Swiper('#swiper-container-opportunities', {
                     // Navigation arrows
                     navigation: {
@@ -360,10 +422,14 @@
             },
         },
         mounted() {
-            this.initCarousel();
+
         },
         created() {
-            this.setPageTitle('Activity - ');
+            this.setPageTitle('Activity Volunteering ');
+            this.link = this.baseUrl + this.$route.fullPath;
+            this.registerWatches();
+            this.singleId = this.$route.params.id;
+            this.fetchSinglePostsData({type: this.type, id: this.singleId});
         }
     });
 </script>

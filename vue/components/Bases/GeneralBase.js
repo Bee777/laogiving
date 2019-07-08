@@ -14,10 +14,11 @@ export default Vue.extend({
             query: '',
             filters: {},
             singleId: -1,
+            options_request: {},
         }
     },
     computed: {
-        ...mapState(['isMobile', 'postsData', 'singlePostsData', 'homeData', 'searchQuery']),
+        ...mapState(['isMobile', 'validate_errors', 'postsData', 'singlePostsData', 'homeData', 'searchQuery']),
     },
     watch: {
         query: function (n, o) {
@@ -67,8 +68,10 @@ export default Vue.extend({
             }
             this.isSearch = false;//set user searching to false
             //reset scroll bar position
-            this.$utils.animateScrollToY('html,body', t === 'no-scroll' ? 0 : 10);
+            if (t !== 'no-scroll')
+                this.$utils.animateScrollToY('html,body', 10);
             this.fetchPostsData({
+                options: this.options_request,
                 type: this.type, q: this.query,
                 limit: this.paginate.per_page, page: this.paginate.current_page
             });

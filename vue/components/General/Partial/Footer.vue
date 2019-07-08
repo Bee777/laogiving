@@ -27,7 +27,8 @@
                         <aside class="widget widget_nav_menu">
                             <ul class="menu">
                                 <li><a class="cursor" @click="goTo({name: 'home', href: '/'})">Home</a></li>
-                                <li><a class="cursor" @click="goTo({name: 'activities', href: '/posts/activities'})">Be
+                                <li><a class="cursor"
+                                       @click="goTo({name: 'activities' ,query: {type: 'volunteer'}, href: '/posts/activities?type=volunteer'})">Be
                                     a Volunteer</a></li>
                                 <li v-if="!LoggedIn()">
                                     <a class="cursor"

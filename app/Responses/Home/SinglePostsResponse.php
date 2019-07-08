@@ -9,7 +9,10 @@
 namespace App\Responses\Home;
 
 use App\Http\Controllers\Helpers\Helpers;
+use App\Models\CauseDetail;
+use App\Models\Media;
 use App\Models\Posts;
+use App\Models\VolunteeringActivity;
 use App\Traits\DefaultData;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\DB;
@@ -38,13 +41,117 @@ class SinglePostsResponse implements Responsable
     public function toResponse($request)
     {
         $type = $this->getPostsType($this->type);
-
         $post = Posts::where('type', $type)->whereIn('status', ['open', 'close'])->where('id', $this->id)->first();
         $post_type_name = ucfirst($this->type);
+        //@for checking volunteering
+        if ($type === 'activity') {
+            $post = VolunteeringActivity::find($this->id);
+        }
+        //@end for checking volunteering
         if (Helpers::isAjax($request)) {
             if (!isset($post)) {
                 return response()->json(['success' => false, 'msg' => 'The post does not exits!.']);
             }
+            //@for volunteering
+            if ($type === 'activity') {
+                $post->activity_causes = CauseDetail::list('activity', $post->id)->pluck('cause_id');
+                $activity_causes = CauseDetail::list('activity', $post->id);
+                $activity_causes->map(function ($item) {
+                    $item->cause_data = $item->cause;
+                    return $item;
+                });
+                $post->activity_causes_display = $activity_causes->pluck('cause_data');
+                $activityMediaVideo = Media::single('activity', 'youtube', $post->id);
+                $post->video_media = $activityMediaVideo ?? ['validated' => '', 'url' => ''];
+                $activityMediaImages = Media::list('activity', 'image', $post->id);
+                if (count($activityMediaImages) > 0) {
+                    $post->images_media = $activityMediaImages;
+                } else {
+                    $post->images_media = [
+                        [
+                            'image_base64' => '',
+                            'image' => null,
+                            'validated' => '',
+                            'removable' => false
+                        ]
+                    ];
+                }
+                $days_of_week = [];
+                if ($post->weekday === 'yes') {
+                    $days_of_week[] = 'WEEKDAY';
+                }
+                if ($post->weekend === 'yes') {
+                    $days_of_week[] = 'WEEKEND';
+                }
+                $post->days_of_week = $days_of_week;
+                $post->positions = $post->positionsMap();
+                #others volunteering
+                $fields = [
+                    'users.name as organize',
+                    'volunteering_activities.name',
+                    'volunteering_activities.description',
+                    'volunteering_activities.duration',
+                    'volunteering_activities.start_date',
+                    'volunteering_activities.end_date',
+                    'volunteering_activities.deadline_sign_ups_date',
+                    'volunteering_activities.town',
+                    'volunteering_activities.block_street',
+                    'volunteering_activities.building_name',
+                    'volunteering_activities.building_unit_number',
+                    'volunteering_activities.created_at',
+                    'volunteering_activities.updated_at'];
+
+                $data = VolunteeringActivity::select(array_merge($fields, [
+                    'volunteering_activities.id',
+                    'volunteering_activities.frequency',
+                    'volunteering_activities.weekday',
+                    'volunteering_activities.weekend',
+                    'volunteering_activities.status',
+                ]))->join('users', 'users.id', 'volunteering_activities.user_id')
+                    ->join('user_types', 'user_types.user_id', 'users.id')
+                    ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
+                    ->where('volunteering_activities.status', 'live')
+                    ->where('users.status', 'approved')
+                    ->where('volunteering_activities.id', '!=', $this->id);
+                #set data
+                $data = $data->orderBy('id', 'desc')->limit(6)->inRandomOrder()->get();
+                #map data
+                $data->map(function ($activity) {
+                    $activityMediaVideo = Media::single('activity', 'youtube', $activity->id);
+                    $activity->video_media = $activityMediaVideo ?? ['validated' => '', 'url' => ''];
+                    $activityMediaImages = Media::list('activity', 'image', $activity->id);
+                    if (count($activityMediaImages) > 0) {
+                        #set step 1
+                        $activity->step = 1;
+                        $activity->images_media = $activityMediaImages;
+                    } else {
+                        $activity->images_media = [
+                            [
+                                'image_base64' => '',
+                                'image' => null,
+                                'validated' => '',
+                                'removable' => false
+                            ]
+                        ];
+                    }
+                    $days_of_week = [];
+                    if ($activity->weekday === 'yes') {
+                        $days_of_week[] = 'WEEKDAY';
+                    }
+                    if ($activity->weekend === 'yes') {
+                        $days_of_week[] = 'WEEKEND';
+                    }
+                    $activity->days_of_week = $days_of_week;
+                    $activity->positions = $activity->positionsMap();
+                    #date map
+                    $activity->start_date_formatted = Helpers::toFormatDateString($activity->start_date, 'd/m/Y');
+                    $activity->end_date_formatted = Helpers::toFormatDateString($activity->end_date, 'd/m/Y');
+                    $activity->deadline_sign_ups_date_formatted = Helpers::toFormatDateString($activity->deadline_sign_ups_date, 'd/m/Y');
+                });
+                return ['data' => $post, 'others' => $data];
+            }
+            //@for volunteering
+            //@other posts
             Posts::IncreaseViews($post->id);
             return $this->postsPaginator($request);
         }
@@ -90,7 +197,7 @@ class SinglePostsResponse implements Responsable
             $d->author_image = $d->user->userInfo['imagePath'] . $d->user->userInfo['preThumb'] . $d->user->image;
             $d->image = Posts::$uploadPath . $d->image;
             $d->post_updated = Helpers::toFormatDateString($d->updated_at, 'H:i A, j M Y');
-            $d->isClosed = $d->status==='close';
+            $d->isClosed = $d->status === 'close';
 
             if ($d->type === 'activity') {
                 $d->formatted_start_date = Helpers::toFormatDateString($d->start_date, 'j M Y');
@@ -126,7 +233,7 @@ class SinglePostsResponse implements Responsable
         $data->image = Posts::$uploadPath . $data->image;
         $data->post_updated_ago = $data->updated_at->diffForHumans();
         $data->post_updated = Helpers::toFormatDateString($data->updated_at, 'H:i A, j M Y');
-        $data->isClosed = $data->status==='close';
+        $data->isClosed = $data->status === 'close';
         if ($data->type === 'activity') {
             $data->formatted_start_date = Helpers::toFormatDateString($data->start_date, 'j M Y');
             $data->formatted_start_date_ago = $data->start_date->diffForHumans();

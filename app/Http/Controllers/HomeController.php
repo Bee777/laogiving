@@ -8,6 +8,8 @@ use App\Models\Banner;
 use App\Models\Cause;
 use App\Models\NewsLetter;
 use App\Models\Posts;
+use App\Models\Skill;
+use App\Models\Suitable;
 use App\Responses\Home\PostsResponse;
 use App\Responses\Home\SinglePostsResponse;
 use App\Responses\SaveNewsLetterResponse;
@@ -76,7 +78,21 @@ class HomeController extends Controller
         $data['banners'] = Banner::getBanners(8);
         $data['latest_news'] = Posts::getPosts('news', 3);
         $data['states'] = $this->getStates();
-        $data['causes'] = Cause::getCauses(14);
+
+        $data['all_causes'] = Cause::getCauses('all');
+        $data['all_skills'] = Skill::getSkills('all');
+        $data['all_suitables'] = Suitable::getSuitables('all');
+        $data['dates'] = [
+            ['name' => 'All Dates', 'id' => 'all_date'],
+            ['name' => 'Tomorrow', 'id' => 'tomorrow'],
+        ];
+        $data['openings'] = [
+            ['name' => '1-10', 'id' => '1-10'],
+            ['name' => '11-20', 'id' => '11-20'],
+            ['name' => '21-30', 'id' => '21-30'],
+            ['name' => 'Above 30', 'id' => '31-9999'],
+        ];
+
         return $data;
     }
     /***@Get Home Data */

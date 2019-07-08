@@ -17,7 +17,8 @@
         <section class="our-causes-items">
             <div class="causes-primary">
                 <div class="causes-panel">
-                    <a :key="idx" v-for="(i, idx) in $store.state.homeData.causes" :href="`/posts/activities?q=&causeId=${i.id}`"
+                    <a :key="idx" v-for="(i, idx) in $store.state.homeData.all_causes.slice(0, 14)"
+                       :href="`/posts/activities?q=&causes=${i.id}&search=yes`"
                        class="sqr-panel-item"
                        :style="`background-image:url('${i.background_image}')`">
                         <content v-html="i.icon"></content>

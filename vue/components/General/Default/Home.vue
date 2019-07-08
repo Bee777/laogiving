@@ -31,7 +31,7 @@
                                 </h4>
                                 <p>Find a volunteer activity that you're interested in, to use the skills you have,
                                     right here in Laos.</p>
-                                <a @click="Route({name:'activities'})" class="btn btn-medium btn-blue">BE A VOLUNTEER <i
+                                <a @click="Route({name:'activities', query: {type: 'volunteer'}})" class="btn btn-medium btn-blue">BE A VOLUNTEER <i
                                     class="lnr lnr-arrow-right"></i></a>
                             </div>
                             <div class="col-xs-12 col-sm-5">

@@ -118,7 +118,7 @@
                 this.preview.suitable = '';
                 let suitablesTexts = [];
                 data.positions.map(i => {
-                    this.preview.total_vacancies += parseInt(i.vacancies);
+                    this.preview.total_vacancies += parseInt(i.vacancies) || 0;
                     i.position_suitables.map(suitable => {
                         let mSuitable = this.suitables.filter((filter) => {
                             return filter.id === suitable;

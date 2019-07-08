@@ -6,6 +6,7 @@ import {
     defaultMutations,
     defaultActions,
 } from '../initial/initializer';
+
 /**
  * @initialize
  */
@@ -26,11 +27,23 @@ export default new Vuex.Store({
             banners: banners,
             latest_news: latest_news,
             states: states,
-            causes: causes,
+            all_causes: all_causes,
+            all_suitables: all_suitables,
+            all_skills: all_skills,
+            openings: [
+                {name: '1-10', id: '1-10'},
+                {name: '11-20', id: '11-20'},
+                {name: '21-30', id: '21-30'},
+                {name: 'Above 30', id: '31-9999'},
+            ],
+            dates: [
+                {name: 'All Dates', id: 'all_date'},
+                {name: 'Tomorrow', id: 'tomorrow'},
+            ],
         },
         postsData: {
             news: news,//{posts: {}, mostViews: [], comingEvents: []},
-            activities: activities,// {posts: {}, mostViews: [], comingEvents: []},
+            activities: activities,
         },
         singlePostsData: {
             news: {data: {}, others: []},
@@ -39,6 +52,7 @@ export default new Vuex.Store({
         postsAllowed: {
             news: true,
             activities: true,
+            organizations: true,
         },
         searchQuery: {text: '', filters: {}},
     },

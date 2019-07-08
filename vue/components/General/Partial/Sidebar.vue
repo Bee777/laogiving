@@ -40,6 +40,14 @@
                                 <span>Home</span>
                             </router-link>
                         </li>
+                        <li v-if="($route.query.search !== 'yes')">
+                            <a class="cursor" @click="GoToSearchPage()">
+                                <i class="sidebar-icon-md material-icons">
+                                    search
+                                </i>
+                                <span>Search</span>
+                            </a>
+                        </li>
                         <li :class="isRoute('dashboard')" v-if="LoggedIn()">
                             <a class="cursor" @click="GoToAccountPage()">
                                 <i class="sidebar-icon-md material-icons">
@@ -57,7 +65,8 @@
                             </router-link>
                         </li>
                         <li :class="isRoute('activities')">
-                            <router-link :to="{ name: 'activities' }" @click.native.prevent="maskClick()">
+                            <router-link :to="{ name: 'activities', query: {type: 'volunteer'} }"
+                                         @click.native.prevent="maskClick()">
                                 <i class="sidebar-icon-md material-icons">
                                     list_alt
                                 </i>
@@ -165,10 +174,13 @@
                     this.$utils.Location('/volunteer/me?active_page=' + (t ? active_page : ''));
                 }
             },
+            GoToSearchPage() {
+                this.$utils.Location(`/posts/activities?q=&search=yes`);
+            },
             LoginModal() {
                 this.$modal.show('signin');
                 this.maskClick();
-            }
+            },
         },
     }
 </script>

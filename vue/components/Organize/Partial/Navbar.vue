@@ -30,6 +30,8 @@
                         <div class="search-nav-container flex flex-center flex-items-center flex">
                             <i @click="activeNavInputSearch(false)" class="material-icons cursor">search</i>
                             <input ref="navbar-input-search" @blur="activeNavInputSearch(false)"
+                                   @keyup.enter="$utils.Location(`/posts/activities?q=${dataQuery}&search=yes`)"
+                                   v-model="dataQuery"
                                    class="nav-input-space-left nav-input-search"
                                    type="text" placeholder="Search">
                             <i @click="activeNavInputSearch(false)" class="material-icons cursor">close</i>
@@ -55,8 +57,11 @@
                             </div>
                             <div class="collapse navbar-collapse">
                                 <ul class="nav navbar-nav flex flex-wrap flex-end ">
-                                    <li><a @click="$utils.Location('/posts/activities')" class="cursor">Be a Volunteer</a></li>
-                                    <li :class="isRoute('home')"><a :class="isRoute('home')" @click="Route({name: 'home', query: {active_page: 'account'}})" class="cursor">My Account</a></li>
+                                    <li><a @click="$utils.Location('/posts/activities?type=volunteer')" class="cursor">Be
+                                        a Volunteer</a></li>
+                                    <li :class="isRoute('home')"><a :class="isRoute('home')"
+                                                                    @click="Route({name: 'home', query: {active_page: 'account'}})"
+                                                                    class="cursor">My Account</a></li>
                                     <li><a @click="Logout()" class="menu-button">Sign
                                         Out</a>
                                     </li>
@@ -93,7 +98,8 @@
                 isFixedNav: false,
                 transitionFixedNav: 200,
                 isTransitionFixedNav: false,
-                navInputSearch: {active: false, text: ''}
+                navInputSearch: {active: false, text: ''},
+                dataQuery: '',
             };
         },
         watch: {

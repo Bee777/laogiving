@@ -379,13 +379,6 @@ class UserController extends Controller
     }
     /****@EndResponsesUserCredentials  api and action  *** */
 
-    /****@ResponsesUserProfileSingle  api and action  *** */
-    public function responseUserProfileSingle(Request $request, $user_id): UserProfileSingle
-    {
-        return new UserProfileSingle($user_id);
-    }
-    /****@EndResponsesUserProfileSingle  api and action  *** */
-
     /****@ResponsesDashboardData  api and action  *** */
 
     public function responseDashboardData(Request $request): DashboardResponse

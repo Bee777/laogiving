@@ -30,6 +30,14 @@
                                 <span>Dashboard</span>
                             </router-link>
                         </li>
+                        <li v-if="($route.query.search !== 'yes')">
+                            <a class="cursor" @click="GoToSearchPage()">
+                                <i class="sidebar-icon-md material-icons">
+                                    search
+                                </i>
+                                <span>Search</span>
+                            </a>
+                        </li>
                         <li :class="isRoute('news')">
                             <a class="cursor" @click="goToPage('/posts/news')">
                                 <i class="sidebar-icon-md material-icons">
@@ -39,7 +47,7 @@
                             </a>
                         </li>
                         <li :class="isRoute('activities')">
-                            <a class="cursor" @click="goToPage('/posts/activities')">
+                            <a class="cursor" @click="goToPage('/posts/activities?type=volunteer')">
                                 <i class="sidebar-icon-md material-icons">
                                     list_alt
                                 </i>
@@ -134,7 +142,10 @@
             goToPage(href) {
                 this.$utils.Location(href);
                 this.maskClick();
-            }
+            },
+            GoToSearchPage() {
+                this.$utils.Location(`/posts/activities?q=&search=yes`);
+            },
         },
     }
 </script>
