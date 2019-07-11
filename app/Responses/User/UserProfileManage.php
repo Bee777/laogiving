@@ -94,7 +94,6 @@ class UserProfileManage implements Responsable
                         }
                         $userProfile->phone_number = $request->get('phone_number');
                     }
-
                     //@Save User Profile
                     if (!$hasProfile) {
                         $user->saveUserProfile($type, $userProfile);

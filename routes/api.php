@@ -117,6 +117,9 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
      */
     /******************** @UserSection ****************** */
     Route::group(['prefix' => '/users', 'middleware' => []], function () {
+        /****@FetchSignUpVolunteeringSuccess */
+        Route::get('/fetch-signup-volunteering-success/{activity_id}' , 'UserController@responseFetchSignUpVolunteeringSuccess')->name('api.get.fetchVolunteeringSignUpSuccess');
+        /****@FetchSignUpVolunteeringSuccess */
         /****@SaveSignUpVolunteering */
         Route::post('/save-signup-volunteering', 'UserController@responsePostSaveSignUpVolunteering')->name('api.post.saveVolunteering');
         /****@SaveSignUpVolunteering */

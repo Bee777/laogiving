@@ -294,7 +294,7 @@ export const createActions = (utils) => {
                             c.dispatch('HandleError', err.response);
                             if (err.response && err.response.data && err.response.data.errors) {
                                 let resErr = err.response.data.errors;
-                                if(resErr['sign_up_not_valid']){
+                                if (resErr['sign_up_not_valid']) {
                                     resErr = utils.fetchErrors(resErr);
                                     c.dispatch('showErrorToast', {msg: resErr['sign_up_not_valid'], dt: 3500});
                                 }
@@ -309,5 +309,21 @@ export const createActions = (utils) => {
             });
         },
         /***@SignUpVolunteering */
+        /***@fetchSignUpVolunteeringSuccess */
+        fetchVolunteeringSignUpSuccess(c, data) {
+            return new Promise((r, n) => {
+                c.commit('setValidated', {errors: {loading_fetch_volunteering_sign_up_success: true}});
+                client.get(`${apiUrl}/users/fetch-signup-volunteering-success/${data}`, ajaxConfig)
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data);
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err.response);
+                    });
+            })
+        },
+        /***@fetchSignUpVolunteeringSuccess */
     }
 };

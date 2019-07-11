@@ -227,7 +227,7 @@ class PostsResponse implements Responsable
             #map data
             $organizations->map(function ($d) {
                 $d->image = "/assets/images/user_profiles/{$d->image}";
-                $d->volunteering = VolunteeringActivity::where('user_id', $d->id)->where('status', 'live')->get()->count();
+                $d->volunteering = VolunteeringActivity::where('user_id', $d->id)->whereIn('status', ['live', 'closed'])->get()->count();
                 return $d;
             });
         }
@@ -246,7 +246,7 @@ class PostsResponse implements Responsable
             $data->whereIn('volunteering_activities.id', $dataFilter['positions_vacancies']);
         }
 
-        #filter by date
+        #filter by date all date tomorrow
         $date = $request->date;
         if ($date === 'tomorrow') {
             $data->where('volunteering_activities.start_date', '=', DB::raw('CURDATE() + INTERVAL 1 DAY'));

@@ -15,9 +15,14 @@ use Image, File;
 
 class Helpers
 {
+    public static function getAge($date)
+    {
+        return (int)date('Y', time() - strtotime($date)) - 1970;
+    }
+
     public static function diffInHours($date1, $date2)
     {
-        return round((strtotime($date1) - strtotime($date2))/3600, 1);
+        return round((strtotime($date1) - strtotime($date2)) / 3600, 1);
     }
 
     public static function isValidJson($strJson): bool
@@ -65,9 +70,14 @@ class Helpers
         $post_fix = (string)self::removeSpaces($post_fix);
         if ($includeName) {
             $imgOriginalName = self::subFileName($file->getClientOriginalName()) . md5('^');
-            $img_filename = $imgOriginalName . self::fileNameHash($post_fix) . $post_fix . '.' . $fileExt;
+            $img_filename = $imgOriginalName . self::fileNameHash($post_fix) . $post_fix;
         } else {
-            $img_filename = self::fileNameHash($post_fix) . $post_fix . '.' . $fileExt;
+            $img_filename = self::fileNameHash($post_fix) . $post_fix;
+        }
+        if (mb_strlen($img_filename, 'UTF-8') > 140) {
+            $img_filename = mb_substr($img_filename, 0, 140, 'UTF-8') . '.' . $fileExt;
+        } else {
+            $img_filename = $img_filename . '.' . $fileExt;
         }
         if ($fileExt === 'gif' || $fileExt === 'svg') {
             $location = public_path($uploadPath);

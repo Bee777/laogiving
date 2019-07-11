@@ -58,7 +58,7 @@
                                             class="bold">Min. age:</span> {{item.minimum_age}} </span>
                                         <div class=" mt-16 body-txt" v-html="item.key_responsibilities"></div>
                                         <div class="mt-32"
-                                        ><a :disabled="!singlePostsData.activities.data.can_sign_up"
+                                        ><a :disabled="!canSeeSignUp(item.id)"
                                             @click="signUpVolunteering(item.id, singlePostsData.activities.data)"
                                             class="button-ctn cWhite button--small">VOLUNTEER FOR THIS</a>
                                             <span class="bold ml-8 ml-8">{{item.vacancies}} openings</span></div>
@@ -193,7 +193,7 @@
                                 </div>
                                 <p class="body-txt--small font-mid-grey bold text-center">Sign up before {{
                                     singlePostsData.activities.data.deadline_sign_ups_date_formatted }}</p>
-                                <button :disabled="!singlePostsData.activities.data.can_sign_up"
+                                <button :disabled="!canSeeSignUp('all')"
                                         @click="signUpVolunteering('all', singlePostsData.activities.data)"
                                         class="button-ctn button--large button--full">VOLUNTEER NOW
                                 </button>
@@ -282,45 +282,78 @@
                         <!--abuse</a>-->
                         <!--</div>-->
                         <ReportAbuse :data="{ activity_id: singleId , type: 'volunteering'}"
-                                     :email="$store.state.authUserInfo.profile.public_email || $store.state.authUserInfo.email || ''"/>
+                                     :email="(authUserInfo.profile && authUserInfo.profile.public_email) || authUserInfo.email || ''"/>
                     </section>
                     <section class="volunteer-event__footer order-4 mb-40">
 
-                        <section class="accordion-card accordion-card--borderless mt--1">
-                            <div class="accordion-card__head">
+                        <AccordionCard containerClasses="accordion-card--borderless mt--1">
+                            <template slot="header-title">
                                 <h3 class="h3">Volunteers</h3>
-                                <i class="material-icons accordion-card__chevron">keyboard_arrow_up</i>
-                                <div class="accordion-card__hitarea"></div>
-                            </div>
-                            <div class="accordion-card__body">
+                            </template>
+                            <template slot="body-content">
                                 <div class="dbl-stats mt-16">
                                     <div class="dbl-stats__item">
-                                        <div class="dbl-stats__stats">4
+                                        <div class="dbl-stats__stats">{{getVolunteersStatus().confirm}}
                                         </div>
                                         <div class="dbl-stats__desc">confirmed</div>
                                     </div>
                                     <div class="dbl-stats__item">
-                                        <div class="dbl-stats__stats">0</div>
+                                        <div class="dbl-stats__stats">{{getVolunteersStatus().pending}}</div>
                                         <div class="dbl-stats__desc">pending</div>
                                     </div>
                                 </div>
                                 <div class="profile-list mt-16" data-role="js-show-more-element">
-
-                                    <img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""
+                                    <img :key="idx" v-for="(item, idx) in getVolunteersStatus().confirm_users"
+                                         :src="`${baseUrl}${item.full_image_path}`" :alt="item.user_name"
                                          class="profile-pic">
+                                    <!--<img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""-->
+                                    <!--class="profile-pic">-->
 
-                                    <img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""
-                                         class="profile-pic">
+                                    <!--<img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""-->
+                                    <!--class="profile-pic">-->
 
-                                    <img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""
-                                         class="profile-pic">
-
-                                    <img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""
-                                         class="profile-pic">
+                                    <!--<img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""-->
+                                    <!--class="profile-pic">-->
 
                                 </div>
-                            </div>
-                        </section>
+                            </template>
+                        </AccordionCard>
+
+                        <!--<section class="accordion-card accordion-card&#45;&#45;borderless mt&#45;&#45;1">-->
+                        <!--<div class="accordion-card__head">-->
+                        <!--<h3 class="h3">Volunteers</h3>-->
+                        <!--<i class="material-icons accordion-card__chevron">keyboard_arrow_up</i>-->
+                        <!--<div class="accordion-card__hitarea"></div>-->
+                        <!--</div>-->
+                        <!--<div class="accordion-card__body">-->
+                        <!--<div class="dbl-stats mt-16">-->
+                        <!--<div class="dbl-stats__item">-->
+                        <!--<div class="dbl-stats__stats">4-->
+                        <!--</div>-->
+                        <!--<div class="dbl-stats__desc">confirmed</div>-->
+                        <!--</div>-->
+                        <!--<div class="dbl-stats__item">-->
+                        <!--<div class="dbl-stats__stats">0</div>-->
+                        <!--<div class="dbl-stats__desc">pending</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="profile-list mt-16" data-role="js-show-more-element">-->
+
+                        <!--<img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""-->
+                        <!--class="profile-pic">-->
+
+                        <!--<img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""-->
+                        <!--class="profile-pic">-->
+
+                        <!--<img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""-->
+                        <!--class="profile-pic">-->
+
+                        <!--<img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg" alt=""-->
+                        <!--class="profile-pic">-->
+
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</section>-->
 
                         <h3 class="h3">More Opportunities</h3>
 
@@ -586,7 +619,10 @@
                         post_id: data.id,
                         type: 'activity',
                         checked: this.bookmarkVolunteering
-                    }).then(() => {
+                    }).then((res) => {
+                        if (!res.success) {
+                            this.bookmarkVolunteering = false;
+                        }
                     }).catch(() => {
                         this.bookmarkVolunteering = false;
                     });
@@ -649,44 +685,28 @@
                 if (moreCarousel) {
                     moreCarousel.initCarousel();
                 }
-                // new Swiper('.swiper-container--images', {
-                //     loop: true,
-                //     // Navigation arrows
-                //     navigation: {
-                //         nextEl: '.swiper-button-next',
-                //         prevEl: '.swiper-button-prev',
-                //     },
-                //     spaceBetween: 10,
-                // });
-
-                // new Swiper('#swiper-container-opportunities', {
-                //     // Navigation arrows
-                //     navigation: {
-                //         nextEl: '.swiper-button-next.op',
-                //         prevEl: '.swiper-button-prev.op',
-                //     },
-                //     spaceBetween: 0,
-                //     slidesPerView: 3,
-                //     breakpoints: {
-                //         // when window width is <= 480px
-                //         899: {
-                //             slidesPerView: 1,
-                //             spaceBetween: 0
-                //         },
-                //         // when window width is <= 640px
-                //         1200: {
-                //             slidesPerView: 2,
-                //             spaceBetween: 0
-                //         }
-                //     },
-                //     freeMode: false
-                // })
+            },
+            canSeeSignUp(position) {
+                let positions = this.getVolunteersStatus();
+                let total_vacancies_left = positions.total_vacancies - positions.confirm;
+                let defaultCond = this.singlePostsData.activities.data.can_sign_up
+                    || this.singlePostsData.activities.data.already_sign_up
+                    || this.singlePostsData.activities.data.view_by_owner
+                    || this.singlePostsData.activities.data.view_by_admin
+                    || total_vacancies_left > 0;
+                //need to check if position vacancies if full or not
+                if (position !== 'all') {
+                    let selected_position = positions.positions.filter(item => {
+                        return item.id === position;
+                    }).shift() || {};
+                    return defaultCond && selected_position.total_vacancies_left > 0;
+                }
+                return defaultCond;
             },
             signUpVolunteering(position, activity) {
-                if (!activity.can_sign_up) {
+                if (!this.canSeeSignUp(position)) {
                     return;
                 }
-
                 if (this.LoggedIn()) {
                     this.$modal.show('volunteer-signup', {
                         position,
@@ -694,7 +714,7 @@
                         loading: false,
                         datePicker: null,
                         model: {
-                            volunteer_contact_phone_number: this.authUserInfo.profile.phone_number,
+                            volunteer_contact_phone_number: (this.authUserInfo.profile ? this.authUserInfo.profile.phone_number : ''),
                             volunteer_position: ''
                         }
                     });
@@ -706,6 +726,31 @@
                 if (!this.LoggedIn()) {
                     this.toaster('You do not have permission to favourite')
                 }
+            },
+            onSignUpSuccess(data) {
+                console.log(data);
+                this.fetchSinglePostsData({type: this.type, id: this.singleId});
+            },
+            getVolunteersStatus() {
+                let data = this.singlePostsData.activities.data;
+                let confirm = 0;
+                let pending = 0;
+                let confirm_users = [];
+                let total_vacancies = 0;
+                let positionsData = data && data.positions || [];
+                positionsData.map(pos => {
+                    total_vacancies += pos.vacancies;
+                    confirm += pos.active_opportunity || 0;
+                    pending += pos.total_pending || 0;
+                    confirm_users = [...confirm_users, ...pos.confirm_users];
+                });
+                return {
+                    confirm: confirm,
+                    pending: pending,
+                    confirm_users: confirm_users,
+                    total_vacancies: total_vacancies,
+                    positions: positionsData,
+                };
             }
         },
         mounted() {
@@ -718,6 +763,10 @@
             this.singleId = this.$route.params.id;
             this.fetchSinglePostsData({type: this.type, id: this.singleId});
             this.saveMyBookmark = this.debounce(this.saveMyBookmark, 250);
+            //on register success
+            this.Event.listen('on_sign_up_success', (d) => {
+                this.onSignUpSuccess(d)
+            })
         }
     });
 </script>

@@ -471,6 +471,9 @@ export default {
         var re = /^[0-9]+(\.[0-9]+)?$/;
         return re.test(n);
     },
+    isObject(obj) {
+        return Object.prototype.toString.call(obj) === '[object Object]';
+    },
     isArray(obj) {
         return Object.prototype.toString.call(obj) === '[object Array]';
     },
@@ -891,13 +894,33 @@ export default {
         if (dd < 10) {
             dd = '0' + dd;
         }
+
+        var mm_number = mm + 1;
+        if (mm_number < 10) {
+            mm_number = '0' + mm_number;
+        }
+
         var monthNames = [
             "January", "February", "March",
             "April", "May", "June", "July",
             "August", "September", "October",
             "November", "December"
         ];
-        return {hours: hrs, minutes: mns, seconds: secs, days: dd, months: monthNames[mm], years: yyyy};
+        //am pm
+        var ampm = hrs >= 12 ? 'PM' : 'AM';
+        var hours = hrs % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+
+        return {
+            hours: hrs,
+            minutes: mns,
+            seconds: secs,
+            days: dd,
+            months: monthNames[mm],
+            years: yyyy,
+            months_number: mm_number,
+            ampm: hours + ':' + mns + ' ' + ampm
+        };
     },
     formatTimestmp(timestmp, needTime = true) {
         var mDate = new Date(timestmp);

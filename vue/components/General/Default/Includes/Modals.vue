@@ -75,138 +75,168 @@
                     <div class="height-auto">
                         <div class="form">
                             <div class="modal-header-ctn">
-                                <img :src="`${baseUrl}${authUserInfo.thumb_image}`"
-                                     class="profile-pic profile-pic--small mr-16">
-                                <h4 class="h2">Hello, {{authUserInfo.name}}</h4>
-                                <p class="body-txt body-txt--small mb-16">You are signing up as <b>{{$utils.firstUpper(authUserInfo.decodedType)}}</b>.
-                                </p>
-                                <div class="centered"><span class="bold"> You are attempting to sign up for an activity that conflicts with another activity you've already signed up for. </span>
-                                </div>
+                                <template v-if="getVolunteering().already_sign_up">
+                                    <h4 class="h2">Sorry</h4>
+                                </template>
+                                <template v-else>
+                                    <img :src="`${baseUrl}${authUserInfo.thumb_image}`"
+                                         class="profile-pic profile-pic--small mr-16">
+                                    <h4 class="h2">Hello, {{authUserInfo.name}}</h4>
+                                    <p class="body-txt body-txt--small mb-16">You are signing up as <b>{{$utils.firstUpper(authUserInfo.decodedType.split('_').join(' '))}}</b>.
+                                    </p>
+                                    <div v-if="getVolunteering().conflicts_with_another" class="centered"><span class="bold"> You are attempting to sign up for an activity that conflicts with another activity you've already signed up for. </span>
+                                    </div>
+                                </template>
                             </div>
                             <!--Start FORM-->
-                            <div
-                                style="max-width: 100%;margin-left: 5px;margin-right: 5px;"
-                                class="rounded-card rounded-card--no-pad rounded-card--light-shadow rounded-card--height-auto">
+                            <template v-if="getVolunteering().already_sign_up">
                                 <div
-                                    ref="volunteer-form"
-                                    class="rounded-card__body rounded-card__body--responsive">
-                                    <form class="activity" v-on:submit.prevent method="post">
-                                        <div class="input-ctrl volunteer-activity-info">
-                                            <h3 class="h3 font-dark-grey">Yes, I want to sign up as a</h3>
-                                            <template
-                                                v-if="isMultiplePositions()">
-                                                <select
-                                                    @change="checkingVolunteeringPosition()"
-                                                    v-model="modalData[modalNames.signUpVolunteer].model.volunteer_position"
-                                                    class="select-ctn select--full valid"
-                                                    name="volunteersignup_positionId">
-                                                    <option value="" disabled selected>Please select position</option>
-                                                    <!--data-require-min-age="true"-->
-                                                    <!--data-min-age="17"-->
-                                                    <!--data-position-left="10"-->
-                                                    <option v-for="(item, idx) in getVolunteering().positions"
-                                                            :key="idx" :value="item.id">{{item.position_title}}
-                                                    </option>
-                                                </select>
-                                                <label style="display: block;" class="error-msg">{{
-                                                    validated().volunteer_position }}</label>
-                                            </template>
-                                            <template v-else>
-                                                <h3 class="h3 mt-16 font-dark-grey">
-                                                    {{getVolunteeringSelectedPosition().position_title}}</h3>
-                                            </template>
+                                    style="max-width: 100%;margin-left: 5px;margin-right: 5px;"
+                                    class="rounded-card rounded-card--no-pad rounded-card--light-shadow rounded-card--height-auto">
+                                    <div
+                                        ref="volunteer-form"
+                                        class="rounded-card__body rounded-card__body--responsive">
+                                        <h3 class="h3 font-dark-grey"> You have already signed-up for this
+                                            activity. </h3>
+                                        <a v-if="validated().loading_fetch_volunteering_sign_up_success"
+                                           href="javascript:;" class="m-top0">Loading...</a>
+                                        <a v-else
+                                           @click="showVolunteerSignUpSuccess()" href="javascript:;" class="m-top0">Check
+                                            my sign up detail</a>
 
-
-                                            <h3 class="h3 mt-16 font-dark-grey" style="font-weight:normal;">for</h3>
-                                            <h3 class="h3 mt-16 font-dark-grey">{{ getVolunteering().name }}</h3>
-                                            <h3 class="h3 mt-16 mb-16 font-dark-grey" style="font-weight:normal;">
-                                                on</h3>
-                                            <h3 class="h3 mb-16 font-dark-grey">
-                                                {{ getVolunteering().start_date_formatted_number
-                                                }} - {{ getVolunteering().end_date_formatted_number }}</h3>
-                                            <p class="body-txt mb-16"><span><b>{{ getFrequency()[getVolunteering().frequency]}} on {{ getDaysOfWeek(getVolunteering().days_of_week || [])}}</b></span>
-                                                <br> <br>at {{getVolunteering().block_street}}
-                                                <template v-if="getVolunteering().building_name">
-                                                    <br>
-                                                    {{getVolunteering().building_name}}
-                                                    {{getVolunteering().building_unit_number ? ' - ' +
-                                                    getVolunteering().building_unit_number : '' }}
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div
+                                    style="max-width: 100%;margin-left: 5px;margin-right: 5px;"
+                                    class="rounded-card rounded-card--no-pad rounded-card--light-shadow rounded-card--height-auto">
+                                    <div
+                                        ref="volunteer-form"
+                                        class="rounded-card__body rounded-card__body--responsive">
+                                        <form class="activity" v-on:submit.prevent method="post">
+                                            <div class="input-ctrl volunteer-activity-info">
+                                                <h3 class="h3 font-dark-grey">Yes, I want to sign up as a</h3>
+                                                <template
+                                                    v-if="isMultiplePositions()">
+                                                    <select
+                                                        @change="checkingVolunteeringPosition()"
+                                                        v-model="modalData[modalNames.signUpVolunteer].model.volunteer_position"
+                                                        class="select-ctn select--full valid"
+                                                        name="volunteersignup_positionId">
+                                                        <option value="" disabled selected>Please select position
+                                                        </option>
+                                                        <!--data-require-min-age="true"-->
+                                                        <!--data-min-age="17"-->
+                                                        <!--data-position-left="10"-->
+                                                        <option v-if="item.total_vacancies_left > 0" v-for="(item, idx) in getVolunteering().positions"
+                                                                :key="idx" :value="item.id">{{item.position_title}}
+                                                        </option>
+                                                    </select>
+                                                    <label style="display: block;" class="error-msg">{{
+                                                        validated().volunteer_position }}</label>
                                                 </template>
-                                            </p>
-                                        </div>
-                                        <hr class="hr">
-                                        <div
-                                            class="rounded-card rounded-card--plain rounded-card--reset-margin rounded-card--mt-16">
-                                            <div class="rounded-card__head rounded-card__head--white">
-                                                <h3 class="h3 font-dark-grey">Points To Note</h3>
+                                                <template v-else>
+                                                    <h3 class="h3 mt-16 font-dark-grey">
+                                                        {{getVolunteeringSelectedPosition().position_title}}</h3>
+                                                </template>
+
+
+                                                <h3 class="h3 mt-16 font-dark-grey" style="font-weight:normal;">for</h3>
+                                                <h3 class="h3 mt-16 font-dark-grey">{{ getVolunteering().name }}</h3>
+                                                <h3 class="h3 mt-16 mb-16 font-dark-grey" style="font-weight:normal;">
+                                                    on</h3>
+                                                <h3 class="h3 mb-16 font-dark-grey">
+                                                    {{ getVolunteering().start_date_formatted_number
+                                                    }} - {{ getVolunteering().end_date_formatted_number }}</h3>
+                                                <p class="body-txt mb-16"><span><b>{{ getFrequency()[getVolunteering().frequency]}} on {{ getDaysOfWeek(getVolunteering().days_of_week || [])}}</b></span>
+                                                    <br> <br>at {{getVolunteering().block_street}}
+                                                    <template v-if="getVolunteering().building_name">
+                                                        <br>
+                                                        {{getVolunteering().building_name}}
+                                                        {{getVolunteering().building_unit_number ? ' - ' +
+                                                        getVolunteering().building_unit_number : '' }}
+                                                    </template>
+                                                </p>
                                             </div>
-                                            <div class="rounded-card__body font-dark-grey">
-                                                <p v-html="getVolunteering().points_to_note"></p>
-                                                <div class="mt-16"><span class="bold">Your request will go through an approval process by our Volunteer Manager or Volunteer Leader</span>
+                                            <hr class="hr">
+                                            <div
+                                                class="rounded-card rounded-card--plain rounded-card--reset-margin rounded-card--mt-16">
+                                                <div class="rounded-card__head rounded-card__head--white">
+                                                    <h3 class="h3 font-dark-grey">Points To Note</h3>
+                                                </div>
+                                                <div class="rounded-card__body font-dark-grey">
+                                                    <p v-html="getVolunteering().points_to_note"></p>
+                                                    <div class="mt-16"><span class="bold">Your request will go through an approval process by our Volunteer Manager or Volunteer Leader</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <hr class="hr">
-                                        <div class="input-ctrl">
-                                            <label class="lbl">
-                                                <h3
-                                                    class="h3 font-dark-grey font-16-tablet-portrait-down">Personal
-                                                    details</h3>
-                                                <p class="body-txt body-txt--small mb-16">We need the following
-                                                    details from you to sign up! </p></label>
-                                        </div>
-                                        <div class="input-ctrl"
-                                             v-if="modalData[modalNames.signUpVolunteer].need_date_of_birth">
-                                            <label class="lbl">Date of Birth
-                                            </label>
-                                            <input id="volunteer-date-picker" name="date_of_birth"
-                                                   placeholder="DD M, YYYY" maxlength="10" type="text"
-                                                   :data-value="''"
-                                                   class="input-ctn" readonly="" aria-haspopup="true"
-                                                   aria-expanded="false" aria-readonly="false"
-                                                   aria-owns="date_of_birth">
-                                            <label style="display: block"
-                                                   class="error-msg">{{ validated().your_date_of_birth ||
-                                                validated().your_minimum_age }}</label>
-                                        </div>
-                                        <div class="input-ctrl"
-                                             v-if="getVolunteering().volunteer_contact_phone_number==='yes'">
-                                            <label class="lbl">Contact Number
-                                            </label>
-                                            <input
-                                                v-model="modalData[modalNames.signUpVolunteer].model.volunteer_contact_phone_number"
-                                                type="text" class="input-ctn" placeholder="Phone Number"
-                                                name="contactNumber">
-                                            <label style="display: block"
-                                                   class="error-msg">{{ validated().volunteer_contact_phone_number
-                                                }}</label>
-                                        </div>
+                                            <hr class="hr">
+                                            <div class="input-ctrl">
+                                                <label class="lbl">
+                                                    <h3
+                                                        class="h3 font-dark-grey font-16-tablet-portrait-down">Personal
+                                                        details</h3>
+                                                    <p class="body-txt body-txt--small mb-16">We need the following
+                                                        details from you to sign up! </p></label>
+                                            </div>
+                                            <div class="input-ctrl"
+                                                 v-if="modalData[modalNames.signUpVolunteer].need_date_of_birth">
+                                                <label class="lbl">Date of Birth</label>
+                                                <!--19-07-1996-->
+                                                <input id="volunteer-date-picker" name="date_of_birth"
+                                                       placeholder="DD M, YYYY" maxlength="10" type="text"
+                                                       :data-value="date_of_birth"
+                                                       class="input-ctn" readonly="" aria-haspopup="true"
+                                                       aria-expanded="false" aria-readonly="false"
+                                                       aria-owns="date_of_birth">
+                                                <label style="display: block"
+                                                       class="error-msg">{{ validated().your_date_of_birth ||
+                                                    validated().your_minimum_age }}</label>
+                                            </div>
+                                            <div class="input-ctrl"
+                                                 v-if="getVolunteering().volunteer_contact_phone_number==='yes'">
+                                                <label class="lbl">Contact Number
+                                                </label>
+                                                <input
+                                                    v-model="modalData[modalNames.signUpVolunteer].model.volunteer_contact_phone_number"
+                                                    type="text" class="input-ctn" placeholder="Phone Number"
+                                                    name="contactNumber">
+                                                <label style="display: block"
+                                                       class="error-msg">{{ validated().volunteer_contact_phone_number
+                                                    }}</label>
+                                            </div>
 
-                                        <div class=" input-ctrl"
-                                             v-if="!$utils.isEmptyVar(getVolunteering().other_response_required)"><h3
-                                            class="h3 font-dark-grey font-16-tablet-portrait-down">Other
-                                            Information</h3>
-                                            <p class="body-txt body-txt--small mb-16">
-                                                {{getVolunteering().other_response_required}}</p>
-                                            <TextareaLimit ref="questionResponse-textarea-limit"
-                                                           :height="70" classes="m-0" max="500" rows="3"
-                                                           placeholder="Is there anything else you'd like the organiser to know about you?"
-                                                           v-model="modalData[modalNames.signUpVolunteer].model.other_response_answer"/>
-                                            <label style="display: block;" class="error-msg">{{
-                                                validated().other_response_answer }}</label></div>
-                                    </form>
+                                            <div class=" input-ctrl"
+                                                 v-if="!$utils.isEmptyVar(getVolunteering().other_response_required)">
+                                                <h3
+                                                    class="h3 font-dark-grey font-16-tablet-portrait-down">Other
+                                                    Information</h3>
+                                                <p class="body-txt body-txt--small mb-16">
+                                                    {{getVolunteering().other_response_required}}</p>
+                                                <TextareaLimit ref="questionResponse-textarea-limit"
+                                                               :height="70" classes="m-0" max="500" rows="3"
+                                                               placeholder="Is there anything else you'd like the organiser to know about you?"
+                                                               v-model="modalData[modalNames.signUpVolunteer].model.other_response_answer"/>
+                                                <label style="display: block;" class="error-msg">{{
+                                                    validated().other_response_answer }}</label></div>
+                                        </form>
+                                    </div>
+                                    <!--END FORM-->
+                                    <div class="create-volunteer-act__footer"
+                                         style="margin-top: 80px!important; text-align:center;">
+                                        <button v-if="!modalData[modalNames.signUpVolunteer].loading"
+                                                @click="SignUpVolunteer()"
+                                                class="button-ctn button--135 button--large join-volunteer-button">JOIN
+                                        </button>
+                                        <button v-else
+                                                class="button-ctn button--135 button--large join-volunteer-button">
+                                            SIGNING...
+                                        </button>
+                                    </div>
                                 </div>
-                                <!--END FORM-->
-                                <div class="create-volunteer-act__footer"
-                                     style="margin-top: 80px!important; text-align:center;">
-                                    <button v-if="!modalData[modalNames.signUpVolunteer].loading" @click="SignUpVolunteer()"
-                                            class="button-ctn button--135 button--large join-volunteer-button">JOIN
-                                    </button>
-                                    <button v-else
-                                            class="button-ctn button--135 button--large join-volunteer-button">SIGNING...
-                                    </button>
-                                </div>
-                            </div>
+
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -231,9 +261,12 @@
                     <div class="height-auto">
                         <div class="form">
                             <div class="modal-header-ctn">
-                                <img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg"
+                                <img :src="`${baseUrl}${authUserInfo.thumb_image}`"
                                      class="profile-pic profile-pic--small mr-16">
-                                <h4 class="h2">Thank you, Bee Organization</h4>
+                                <h4 class="h2">Thank you, {{authUserInfo.name}}</h4>
+                                <!--<img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg"-->
+                                <!--class="profile-pic profile-pic&#45;&#45;small mr-16">-->
+                                <!--<h4 class="h2">Thank you, Bee Organization</h4>-->
                                 <p class="body-txt body-txt--small mb-16">for signing up for this activity!</p>
                             </div>
 
@@ -250,19 +283,39 @@
                                             class="h3 font-dark-grey">SIGNUP INFO</h3></div>
                                         <div class="rounded-card__body font-dark-grey"><h3
                                             class="h3 font-dark-grey font-16-tablet-portrait-down">Signup Date</h3>
-                                            <p class="body-txt body-txt--small mb-16">08 May 2019</p>
+                                            <p class="body-txt body-txt--small mb-16">
+                                                {{getDateTimeSignUpSuccess('date')}}</p>
                                             <h3 class="h3 font-dark-grey font-16-tablet-portrait-down">Signup Time</h3>
-                                            <p class="body-txt body-txt--small mb-16">01:25 PM</p>
-                                            <h3 class="h3 font-dark-grey font-16-tablet-portrait-down">Contact
-                                                Number</h3>
-                                            <p class="body-txt body-txt--small mb-16">030984832</p>
-                                            <h3 class="h3 font-dark-grey font-16-tablet-portrait-down">Gender</h3>
-                                            <p class="body-txt body-txt--small mb-16">MALE</p>
+                                            <p class="body-txt body-txt--small mb-16">
+                                                {{getDateTimeSignUpSuccess('time')}}</p>
+                                            <template
+                                                v-if="!$utils.isEmptyVar(getVolunteeringSignUpSuccess().sign_up.volunteer_contact_phone_number)">
+                                                <h3 class="h3 font-dark-grey font-16-tablet-portrait-down">Contact
+                                                    Number</h3>
+                                                <p class="body-txt body-txt--small mb-16">
+                                                    {{getVolunteeringSignUpSuccess().sign_up.volunteer_contact_phone_number}}</p>
+                                            </template>
+
+                                            <template
+                                                v-if="!$utils.isEmptyVar(getVolunteeringSignUpSuccess().sign_up.gender)">
+                                                <h3 class="h3 font-dark-grey font-16-tablet-portrait-down">Gender</h3>
+                                                <p class="body-txt body-txt--small mb-16">
+                                                    {{(getVolunteeringSignUpSuccess().sign_up.gender ||
+                                                    '').toUpperCase()}}</p>
+                                            </template>
+
                                             <h3 class="h3 font-dark-grey font-16-tablet-portrait-down ">Status</h3>
-                                            <p class="body-txt body-txt--small mb-16 font-orange">PENDING APPROVAL</p>
+                                            <template v-if="getVolunteeringSignUpSuccess().sign_up.status==='pending'">
+                                                <p class="body-txt body-txt--small mb-16 font-orange">PENDING
+                                                    APPROVAL</p>
+                                            </template>
+                                            <template v-else>
+                                                <p class="body-txt body-txt--small mb-16 font-orange">CONFIRMED</p>
+                                            </template>
                                             <h3 class="h3 font-dark-grey font-16-tablet-portrait-down ">Signup
                                                 Slot(s)</h3>
-                                            <p class="body-txt body-txt--small mb-16">1</p></div>
+                                            <p class="body-txt body-txt--small mb-16">
+                                                {{getVolunteeringSignUpSuccess().sign_up.slot}}</p></div>
                                     </div>
 
                                     <div
@@ -272,26 +325,37 @@
                                             <h3 class="h3 font-dark-grey">
                                                 ACTIVITY</h3></div>
                                         <div class="rounded-card__body font-dark-grey"><h2
-                                            class="h2 volunteer-event__title">FOH Volunteers for
-                                            TheatreWorks' Production 2</h2>
+                                            class="h2 volunteer-event__title">
+                                            {{getVolunteeringSignUpSuccess().activity.name}}</h2>
                                             <div class="volunteer-event__venue">
                                                 <div class="flag-obj volunteer-event__venue-item">
                                                     <div class="flag-obj__item"><i class="ico material-icons">event</i>
                                                     </div>
                                                     <div
                                                         class="flag-obj__item flag-obj__item--top flag-obj__item--narrow flag-obj__item--text">
-                                                        08 May 2019 - 10
-                                                        May 2019
+                                                        {{
+                                                        getVolunteeringSignUpSuccess().activity.start_date_formatted_number}}
+                                                        -
+                                                        {{
+                                                        getVolunteeringSignUpSuccess().activity.end_date_formatted_number
+                                                        }}
                                                     </div>
                                                 </div>
+
                                                 <div class="flag-obj volunteer-event__venue-item">
                                                     <div class="flag-obj__item"><i
                                                         class="ico material-icons">query_builder</i></div>
                                                     <div
                                                         class="flag-obj__item flag-obj__item--top flag-obj__item--narrow flag-obj__item--text">
-                                                        Fortnightly on
-                                                        weekday
-                                                        <div class="font-mid-grey body-txt--small">10 hours per
+                                                        {{
+                                                        getFrequency()[getVolunteeringSignUpSuccess().activity.frequency]}}
+                                                        on
+                                                        {{
+                                                        getDaysOfWeek(getVolunteeringSignUpSuccess().activity.days_of_week
+                                                        || [])}}
+                                                        <div class="font-mid-grey body-txt--small">{{
+                                                            getVolunteeringSignUpSuccess().activity.duration }} hours
+                                                            per
                                                             session
                                                         </div>
                                                     </div>
@@ -301,17 +365,29 @@
                                                     </div>
                                                     <div
                                                         class="flag-obj__item flag-obj__item--top flag-obj__item--narrow flag-obj__item--text">
-                                                        <!-- Kallang -->
-                                                        <div class="font-mid-grey body-txt--small"> 88 GEYLANG BAHRU
+                                                        {{ getVolunteeringSignUpSuccess().activity.town }}
+                                                        <div class="font-mid-grey body-txt--small">
+                                                            {{getVolunteeringSignUpSuccess().activity.block_street }}
                                                         </div>
+                                                        <template
+                                                            v-if="getVolunteeringSignUpSuccess().activity.building_name">
+                                                            <div class="font-mid-grey body-txt--small">
+                                                                {{getVolunteeringSignUpSuccess().activity.building_name}}
+                                                                {{getVolunteeringSignUpSuccess().activity.building_unit_number
+                                                                ? ' - ' +
+                                                                getVolunteeringSignUpSuccess().activity.building_unit_number
+                                                                : '' }}
+                                                            </div>
+                                                        </template>
                                                     </div>
                                                 </div>
-                                                <div class="flag-obj volunteer-event__venue-item">
+                                                <div class="flag-obj volunteer-event__venue-item"
+                                                     v-if="getVolunteeringSignUpSuccess().sign_up.position">
                                                     <div class="flag-obj__item"><i class="ico material-icons">group</i>
                                                     </div>
                                                     <div
                                                         class="flag-obj__item flag-obj__item--mid flag-obj__item--narrow flag-obj__item--text">
-                                                        Front of House
+                                                        {{ getVolunteeringSignUpSuccess().sign_up.position.title}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -321,7 +397,8 @@
                                     <div
                                         class="rounded-card rounded-card--plain rounded-card--reset-margin rounded-card--mt-16">
                                         <div class="rounded-card__body font-dark-grey"><p>We've sent an acknowledgement
-                                            of your request to<br> <b>beeostin@gmail.com</b>
+                                            of your request to<br> <b>{{(authUserInfo.profile && authUserInfo.profile.public_email) ||
+                                                authUserInfo.email}}</b>
                                         </p>
                                         </div>
                                     </div>
@@ -333,20 +410,23 @@
                                             CONTACT INFO</h3></div>
                                         <div class="rounded-card__body font-dark-grey">
                                             <div class="volunteer-event__by font-mid-grey"><img
-                                                src="https://www.giving.sg/image/organization_logo?img_id=9128818"
-                                                class="profile-pic profile-pic--small mr-16"> <span class="bold">Bee Organisation</span>
+                                                :src="`${baseUrl}${getVolunteeringSignUpSuccess().activity.organize_image}`"
+                                                class="profile-pic profile-pic--small mr-16"> <span class="bold">{{getVolunteeringSignUpSuccess().activity.organize_name}}</span>
                                             </div>
-                                            <h4 class="mt-16">Mr Front of
-                                                House, Front of House</h4>
+                                            <h4 class="mt-16">{{
+                                                $utils.firstUpper(getVolunteeringSignUpSuccess().activity.contact_title)}}
+                                                {{getVolunteeringSignUpSuccess().activity.contact_name}},
+                                                {{getVolunteeringSignUpSuccess().activity.contact_designation}}</h4>
                                             <div class="mb-16 mt-16">
                                                 <i class="ico material-icons gray mr-6">call</i>
-                                                <a href="tel:68017449"
+                                                <a :href="`tel:${getVolunteeringSignUpSuccess().activity.contact_phone_number}`"
                                                    class="text-link text-link--dark-grey"
-                                                >029483893</a>
+                                                >{{ getVolunteeringSignUpSuccess().activity.contact_phone_number }}</a>
                                             </div>
                                             <div class="mb-16"><i class="ico material-icons gray mr-6">email</i><a
-                                                class="text-link text-link--dark-grey" href="mailto:bee@gmail.com"
-                                            >bee@gmail.com</a></div>
+                                                class="text-link text-link--dark-grey"
+                                                :href="`mailto:${getVolunteeringSignUpSuccess().activity.contact_email}`"
+                                            >{{ getVolunteeringSignUpSuccess().activity.contact_email }}</a></div>
                                         </div>
                                     </div>
 
@@ -358,14 +438,16 @@
                                             <p class="non-printable" style="color: #666666; font-weight: normal;">Make
                                                 giving a part of who
                                                 we are</p></div>
-                                        <div class="rounded-card__body font-dark-grey share-box"><a
-                                            class="cursor" href="javascript: void(0);"
+                                        <div class="rounded-card__body font-dark-grey share-box"><a target="_blank"
+                                            class="cursor" :href="sharer('fb', 'Website', getVolunteeringSignUpSuccess().activity, link)"
                                             title="Facebook"><i
-                                            class="fab fa-facebook-square"></i></a> <a
-                                            class="cursor" href="javascript: void(0);"
+                                            class="fab fa-facebook-square"></i></a> <a target="_blank"
+                                            class="cursor"
+                                            :href="sharer('twitter', 'Website', getVolunteeringSignUpSuccess().activity, link)"
                                             title="Tweet"><i
                                             class="fab fa-twitter-square"></i></a> <a
-                                            class="cursor" href="javascript: void(0);"
+                                            class="cursor"
+                                            :href="sharer('linkedin', 'Website', getVolunteeringSignUpSuccess().activity, link)"
                                             title="LinkedIn" target="_blank"><i class="fab fa-linkedin"></i></a>
                                         </div>
                                     </div>
@@ -400,10 +482,18 @@
             modalWidth: MODAL_WIDTH,
             user: {},
             excludeOutSideClose: {'volunteer-signup': true},
-            modalData: {'volunteer-signup': {datePicker: null, model: {}}},
+            modalData: {
+                'volunteer-signup': {datePicker: null, model: {}},
+                'volunteer-signup-success': {sign_up: {}, activity: {}}
+            },
+            link: '',
         }),
         computed: {
             ...mapState(['authUserInfo']),
+            date_of_birth: function () {
+                let date_format = this.getDateFormat();
+                return `${date_format.days}-${date_format.months_number}-${date_format.years}`;
+            }
         },
         watch: {
             '$route.path': function (n, o) {
@@ -416,7 +506,7 @@
         },
         methods: {
             ...mapMutations(['setClearValidate']),
-            ...mapActions(['Login', 'postSignUpVolunteering']),
+            ...mapActions(['Login', 'postSignUpVolunteering', 'fetchVolunteeringSignUpSuccess']),
             beforeOpen(e) {
                 this.jq("html").addClass("hidden sidebar");
                 this.jq("body").addClass("hidden sidebar");
@@ -434,8 +524,13 @@
                     return;
                 }
                 this.setClearValidate(this.modalData[e.name]);
-                this.setClearValidate(this.modalData[e.name].model);
-                this.modalData[e.name] = {};
+                if (this.modalData[e.name]) {
+                    this.setClearValidate(this.modalData[e.name].model);
+                }
+                Object.keys(this.modalData[e.name]).forEach((k) => {
+                    let old = this.modalData[e.name][k];
+                    this.modalData[e.name][k] = this.$utils.isObject(old) ? {} : (this.$utils.isArray(old) ? {} : null);
+                });
                 this.jq("body").removeClass("hidden sidebar");
                 this.jq("html").removeClass("hidden sidebar");
             },
@@ -450,7 +545,7 @@
             },
             //volunteering activity
             volunteerForm() {
-                this.setDatePicker(new Date().toLocaleDateString())
+                this.setDatePicker()
             },
             setDatePicker(date) {
                 let data = this.modalData[this.modalNames.signUpVolunteer];
@@ -509,10 +604,16 @@
                 //submit form
                 data.loading = true;
                 this.postSignUpVolunteering(data).then(res => {
-                    data.loading = false;
                     console.log(res);
-                    this.hide(this.modalNames.signUpVolunteer, {close: true});
-                    this.show(this.modalNames.signUpVolunteerSuccess);
+                    data.loading = false;
+                    if (res.success) {
+                        this.hide(this.modalNames.signUpVolunteer, {close: true});
+                        this.show(this.modalNames.signUpVolunteerSuccess, {
+                            sign_up: res.data.sign_up,
+                            activity: this.getVolunteering()
+                        });
+                        this.Event.fire('on_sign_up_success', res.data);
+                    }
                 }).catch(err => {
                     data.loading = false;
                 });
@@ -526,11 +627,23 @@
             checkingVolunteeringPosition() {
                 let data = this.modalData[this.modalNames.signUpVolunteer];
                 this.setVolunteeringPosition(data.model.volunteer_position);
+                this.setDateOfBirth();
                 //wait view render
-                data.model.your_date_of_birth = null;
                 this.$nextTick(() => {
                     this.setDatePicker();
                 });
+            },
+            setDateOfBirth() {
+                //set default date of birth
+                let data = this.modalData[this.modalNames.signUpVolunteer];
+                if (this.$utils.isEmptyVar(this.authUserInfo.profile)) {
+                    return;
+                }
+                if (this.authUserInfo.decodedType === 'organize') {
+                    data.model.your_date_of_birth = this.authUserInfo.profile.registration_date;
+                } else {
+                    data.model.your_date_of_birth = this.authUserInfo.profile.date_of_birth;
+                }
             },
             setVolunteeringPosition(compare) {
                 let data = this.modalData[this.modalNames.signUpVolunteer];
@@ -571,6 +684,61 @@
                     'FLEXIBLE': 'Flexible',
                     'FULL_TIME': 'Full Time'
                 }
+            },
+            getDateFormat() {
+                if (this.$utils.isEmptyVar(this.authUserInfo.profile)) {
+                    return {};
+                }
+                this.setDateOfBirth();
+                if (this.authUserInfo.decodedType === 'organize') {
+                    return this.$utils.getDateTime(this.authUserInfo.profile.registration_date)
+                }
+                return this.$utils.getDateTime(this.authUserInfo.profile.date_of_birth)
+            },
+            showVolunteerSignUpSuccess() {
+                this.link = this.baseUrl;
+                let activity = this.$utils.clonePure(this.getVolunteering());
+                this.fetchVolunteeringSignUpSuccess(activity.id).then(res => {
+                    if (res.success && res.data.sign_up) {
+                        let data = res.data.sign_up;
+                        this.hide(this.modalNames.signUpVolunteer, {close: true});
+                        this.show(this.modalNames.signUpVolunteerSuccess, {
+                            sign_up: data,
+                            activity: activity
+                        });
+                    } else {
+                        alert('Failed to retrieve the data.');
+                    }
+                }).catch(err => {
+                })
+            },
+            getVolunteeringSignUpSuccess() {
+                return this.modalData[this.modalNames.signUpVolunteerSuccess];
+            },
+            getDateTimeSignUpSuccess(t) {
+                let data = this.$utils.getDateTime(this.getVolunteeringSignUpSuccess().sign_up.sign_up_date);
+                if (t === 'date') {
+                    return `${data.days} ${data.months} ${data.years}`;
+                }
+                return data.ampm;
+            },
+            sharer(w, type, data, link) {
+                let res = this.baseUrl;
+                switch (w) {
+                    case 'fb': {
+                        res = `https://www.facebook.com/sharer/sharer.php?u=${link}`;
+                        break;
+                    }
+                    case 'twitter': {
+                        res = `https://twitter.com/share?url=${link}&amp;text=${this.$utils.sub(this.$utils.strip(data.name), 120)}, ${type} - ${this.s['site_name']}&amp;hashtags=${this.s['site_name']}`;
+                        break;
+                    }
+                    case 'linkedin': {
+                        res = `http://www.linkedin.com/shareArticle?mini=true&amp;url=${link}&amp;title=${this.$utils.sub(this.$utils.strip(data.name), 120)}`;
+                        break;
+                    }
+                }
+                return res;
             },
             //volunteering activity
         },

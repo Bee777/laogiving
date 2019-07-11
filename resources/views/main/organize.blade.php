@@ -74,6 +74,6 @@
     </script>
     {{-- @GeneratedResourcesBottom--}}
     <script type="text/javascript"
-            src="{{url('/bundles/generated')}}/organize/organize.29954f05b78a38dad18e.bundle.js"></script>
+            src="{{url('/bundles/generated/organize')}}/organize.c76fa17a4ffc81b9bd67.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection

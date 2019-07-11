@@ -14,6 +14,7 @@ use App\Models\Media;
 use App\Models\Posts;
 use App\Models\UserSaved;
 use App\Models\VolunteeringActivity;
+use App\Models\VolunteerSignUpActivity;
 use App\Traits\DefaultData;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\DB;
@@ -45,15 +46,35 @@ class SinglePostsResponse implements Responsable
         $post = Posts::where('type', $type)->whereIn('status', ['open', 'close'])->where('id', $this->id)->first();
         $post_type_name = ucfirst($this->type);
         $user = $request->user('api');
+        $view_by_owner = false;
+        $view_by_admin = false;
+        $already_sign_up = false;
         //@for checking volunteering
         if ($type === 'activity') {
+            #check if an organize viewing
+            $withUserStatus = 'approved';
+            $withUserActivityStatus = [];
+            if (isset($user)) {
+                #check if organize
+                $self_post_user = VolunteeringActivity::where('id', $this->id)->where('user_id', $user->id)->exists();
+                if ($self_post_user && $user->isUser('organize')) {
+                    $withUserStatus = $user->status;
+                    $withUserActivityStatus = ['draft', 'closed', 'cancelled'];
+                    $view_by_owner = true;
+                }
+                #check if volunteer
+                $already_sign_up = VolunteerSignUpActivity::where('volunteering_activity_id', $this->id)->where('user_id', $user->id)->exists();
+                if ($already_sign_up && $user->isUser('volunteer')) {
+                    $withUserActivityStatus = ['closed', 'cancelled'];
+                }
+            }
             $post = VolunteeringActivity::select('volunteering_activities.*', 'users.name as organize_name', 'users.image as organize_image', 'organize_profiles.visibility')
                 ->join('users', 'users.id', 'volunteering_activities.user_id')
                 ->join('user_types', 'user_types.user_id', 'users.id')
                 ->join('organize_profiles', 'organize_profiles.user_id', 'users.id')
                 ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
-                ->where('volunteering_activities.status', 'live')
-                ->where('users.status', 'approved')
+                ->whereIn('volunteering_activities.status', array_merge(['live'], $withUserActivityStatus))
+                ->where('users.status', $withUserStatus)
                 ->where('volunteering_activities.id', $this->id)->first();
         }
         //@end for checking volunteering
@@ -63,124 +84,10 @@ class SinglePostsResponse implements Responsable
             }
             //@for volunteering
             if ($type === 'activity') {
-                #user saved bookmark
-                if (isset($user)) {
-                    $saved_bookmark = UserSaved::where('post_id', $post->id)->where('user_id', $user->id)
-                        ->where('type', 'activity')->first();
-                    $post->saved_bookmark = isset($saved_bookmark);
-                }
-                #user image
-                $post->organize_image = "/assets/images/user_profiles/{$post->organize_image}";
-                #format date
-                $post->start_date_formatted = Helpers::toFormatDateString($post->start_date, 'D, d M Y');
-                $post->end_date_formatted = Helpers::toFormatDateString($post->end_date, 'D, d M Y');
-                $post->deadline_sign_ups_date_formatted = Helpers::toFormatDateString($post->deadline_sign_ups_date, 'd M Y, H:i A');
-                $post->start_date_formatted_number = Helpers::toFormatDateString($post->start_date, 'd M Y');
-                $post->end_date_formatted_number = Helpers::toFormatDateString($post->end_date, 'd M Y');
-                #check can sign up
-                if (isset($post->deadline_sign_ups_date)) {
-                    $hourDiff = Helpers::diffInHours($post->deadline_sign_ups_date, now());
-                    $post->can_sign_up = $hourDiff > 0;
-                }
-                #causes
-                $post->activity_causes = CauseDetail::list('activity', $post->id)->pluck('cause_id');
-                $activity_causes = CauseDetail::list('activity', $post->id);
-                $activity_causes->map(function ($item) {
-                    $item->cause_data = $item->cause;
-                    return $item;
-                });
-                $post->activity_causes_display = $activity_causes->pluck('cause_data');
-                $activityMediaVideo = Media::single('activity', 'youtube', $post->id);
-                $post->video_media = $activityMediaVideo ?? ['validated' => '', 'url' => ''];
-                $activityMediaImages = Media::list('activity', 'image', $post->id);
-                if (count($activityMediaImages) > 0) {
-                    $post->images_media = $activityMediaImages;
-                } else {
-                    $post->images_media = [
-                        [
-                            'image_base64' => '',
-                            'image' => null,
-                            'validated' => '',
-                            'removable' => false
-                        ]
-                    ];
-                }
-                $days_of_week = [];
-                if ($post->weekday === 'yes') {
-                    $days_of_week[] = 'WEEKDAY';
-                }
-                if ($post->weekend === 'yes') {
-                    $days_of_week[] = 'WEEKEND';
-                }
-                $post->days_of_week = $days_of_week;
-                $post->positions = $post->positionsMap();
-
-                #others volunteering
-                $fields = [
-                    'users.name as organize',
-                    'volunteering_activities.name',
-                    'volunteering_activities.description',
-                    'volunteering_activities.duration',
-                    'volunteering_activities.start_date',
-                    'volunteering_activities.end_date',
-                    'volunteering_activities.deadline_sign_ups_date',
-                    'volunteering_activities.town',
-                    'volunteering_activities.block_street',
-                    'volunteering_activities.building_name',
-                    'volunteering_activities.building_unit_number',
-                    'volunteering_activities.created_at',
-                    'volunteering_activities.updated_at'];
-
-                $data = VolunteeringActivity::select(array_merge($fields, [
-                    'volunteering_activities.id',
-                    'volunteering_activities.frequency',
-                    'volunteering_activities.weekday',
-                    'volunteering_activities.weekend',
-                    'volunteering_activities.status',
-                ]))->join('users', 'users.id', 'volunteering_activities.user_id')
-                    ->join('user_types', 'user_types.user_id', 'users.id')
-                    ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
-                    ->where('volunteering_activities.status', 'live')
-                    ->where('users.status', 'approved')
-                    ->where('volunteering_activities.id', '!=', $this->id);
-                #set others data
-                $data = $data->orderBy('id', 'desc')->limit(6)->inRandomOrder()->get();
-                #map others data
-                $data->map(function ($activity) {
-                    $activityMediaVideo = Media::single('activity', 'youtube', $activity->id);
-                    $activity->video_media = $activityMediaVideo ?? ['validated' => '', 'url' => ''];
-                    $activityMediaImages = Media::list('activity', 'image', $activity->id);
-                    if (count($activityMediaImages) > 0) {
-                        #set step 1
-                        $activity->step = 1;
-                        $activity->images_media = $activityMediaImages;
-                    } else {
-                        $activity->images_media = [
-                            [
-                                'image_base64' => '',
-                                'image' => null,
-                                'validated' => '',
-                                'removable' => false
-                            ]
-                        ];
-                    }
-                    $days_of_week = [];
-                    if ($activity->weekday === 'yes') {
-                        $days_of_week[] = 'WEEKDAY';
-                    }
-                    if ($activity->weekend === 'yes') {
-                        $days_of_week[] = 'WEEKEND';
-                    }
-                    $activity->days_of_week = $days_of_week;
-                    $activity->positions = $activity->positionsMap();
-                    #date map
-                    $activity->start_date_formatted = Helpers::toFormatDateString($activity->start_date, 'd/m/Y');
-                    $activity->end_date_formatted = Helpers::toFormatDateString($activity->end_date, 'd/m/Y');
-                    $activity->deadline_sign_ups_date_formatted = Helpers::toFormatDateString($activity->deadline_sign_ups_date, 'd/m/Y');
-                });
-                return ['data' => $post, 'others' => $data];
+                return $this->getVolunteering($post, $user, $view_by_owner);
             }
             //@for volunteering
+
             //@other posts
             Posts::IncreaseViews($post->id);
             return $this->postsPaginator($request);
@@ -194,6 +101,139 @@ class SinglePostsResponse implements Responsable
         Posts::IncreaseViews($post->id);
         return view("{$this->options['rootView']}.single.single-posts",
             array_merge(['post_type_name' => $post_type_name, 'type' => $this->type, 'post' => $post], $this->getDefaultData($request)));
+    }
+
+    public function getVolunteering($post, $user, $view_by_owner)
+    {
+        //@for volunteering
+        #user saved bookmark
+        if (isset($user)) {
+            $post->saved_bookmark = UserSaved::where('post_id', $post->id)->where('user_id', $user->id)
+                ->where('type', 'activity')->exists();
+            $post->already_sign_up = VolunteerSignUpActivity::where('volunteering_activity_id', $post->id)->where('user_id', $user->id)->exists();
+            $post->view_by_owner = $view_by_owner;
+            $post->view_by_admin = ($user->isUser('admin') || $user->isUser('super_admin'));
+            #cehck if conflicts with another
+            if (!$post->already_sign_up) {
+                $post->conflicts_with_another = VolunteerSignUpActivity::isConflictsSignUpActivity($post, $user->id);
+            } else {
+                $post->conflicts_with_another = false;
+            }
+        }
+        #user image
+        $post->organize_image = "/assets/images/user_profiles/{$post->organize_image}";
+        #format date
+        $post->start_date_formatted = Helpers::toFormatDateString($post->start_date, 'D, d M Y');
+        $post->end_date_formatted = Helpers::toFormatDateString($post->end_date, 'D, d M Y');
+        $post->deadline_sign_ups_date_formatted = Helpers::toFormatDateString($post->deadline_sign_ups_date, 'd M Y, H:i A');
+        $post->start_date_formatted_number = Helpers::toFormatDateString($post->start_date, 'd M Y');
+        $post->end_date_formatted_number = Helpers::toFormatDateString($post->end_date, 'd M Y');
+        #check can sign up
+        if (isset($post->deadline_sign_ups_date)) {
+            $hourDiff = Helpers::diffInHours($post->deadline_sign_ups_date, now());
+            $post->can_sign_up = $hourDiff > 0;
+        }
+        #causes
+        $post->activity_causes = CauseDetail::list('activity', $post->id)->pluck('cause_id');
+        $activity_causes = CauseDetail::list('activity', $post->id);
+        $activity_causes->map(function ($item) {
+            $item->cause_data = $item->cause;
+            return $item;
+        });
+        $post->activity_causes_display = $activity_causes->pluck('cause_data');
+        $activityMediaVideo = Media::single('activity', 'youtube', $post->id);
+        $post->video_media = $activityMediaVideo ?? ['validated' => '', 'url' => ''];
+        $activityMediaImages = Media::list('activity', 'image', $post->id);
+        if (count($activityMediaImages) > 0) {
+            $post->images_media = $activityMediaImages;
+        } else {
+            $post->images_media = [
+                [
+                    'image_base64' => '',
+                    'image' => null,
+                    'validated' => '',
+                    'removable' => false
+                ]
+            ];
+        }
+        $days_of_week = [];
+        if ($post->weekday === 'yes') {
+            $days_of_week[] = 'WEEKDAY';
+        }
+        if ($post->weekend === 'yes') {
+            $days_of_week[] = 'WEEKEND';
+        }
+        $post->days_of_week = $days_of_week;
+        $post->positions = $post->positionsMap();
+        #volunteering status
+        $post->volunteers_confirm = 0;
+        $post->volunteers_pending = 0;
+
+        #others volunteering
+        $fields = [
+            'users.name as organize',
+            'volunteering_activities.name',
+            'volunteering_activities.description',
+            'volunteering_activities.duration',
+            'volunteering_activities.start_date',
+            'volunteering_activities.end_date',
+            'volunteering_activities.deadline_sign_ups_date',
+            'volunteering_activities.town',
+            'volunteering_activities.block_street',
+            'volunteering_activities.building_name',
+            'volunteering_activities.building_unit_number',
+            'volunteering_activities.created_at',
+            'volunteering_activities.updated_at'];
+        #others
+        $data = VolunteeringActivity::select(array_merge($fields, [
+            'volunteering_activities.id',
+            'volunteering_activities.frequency',
+            'volunteering_activities.weekday',
+            'volunteering_activities.weekend',
+            'volunteering_activities.status',
+        ]))->join('users', 'users.id', 'volunteering_activities.user_id')
+            ->join('user_types', 'user_types.user_id', 'users.id')
+            ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
+            ->where('volunteering_activities.status', 'live')
+            ->where('users.status', 'approved')
+            ->where('volunteering_activities.id', '!=', $this->id);
+        #set others data
+        $data = $data->orderBy('id', 'desc')->limit(6)->inRandomOrder()->get();
+        #map others data
+        $data->map(function ($activity) {
+            $activityMediaVideo = Media::single('activity', 'youtube', $activity->id);
+            $activity->video_media = $activityMediaVideo ?? ['validated' => '', 'url' => ''];
+            $activityMediaImages = Media::list('activity', 'image', $activity->id);
+            if (count($activityMediaImages) > 0) {
+                #set step 1
+                $activity->step = 1;
+                $activity->images_media = $activityMediaImages;
+            } else {
+                $activity->images_media = [
+                    [
+                        'image_base64' => '',
+                        'image' => null,
+                        'validated' => '',
+                        'removable' => false
+                    ]
+                ];
+            }
+            $days_of_week = [];
+            if ($activity->weekday === 'yes') {
+                $days_of_week[] = 'WEEKDAY';
+            }
+            if ($activity->weekend === 'yes') {
+                $days_of_week[] = 'WEEKEND';
+            }
+            $activity->days_of_week = $days_of_week;
+            $activity->positions = $activity->positionsMap();
+            #date map
+            $activity->start_date_formatted = Helpers::toFormatDateString($activity->start_date, 'd/m/Y');
+            $activity->end_date_formatted = Helpers::toFormatDateString($activity->end_date, 'd/m/Y');
+            $activity->deadline_sign_ups_date_formatted = Helpers::toFormatDateString($activity->deadline_sign_ups_date, 'd/m/Y');
+        });
+        return ['data' => $post, 'others' => $data];
+        //@for volunteering
     }
 
     public function postsPaginator($request): array

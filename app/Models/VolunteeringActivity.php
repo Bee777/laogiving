@@ -95,6 +95,9 @@ class VolunteeringActivity extends Model
                 'position_suitables' => [],
                 'key_responsibilities' => '',
                 'active_opportunity' => 0,
+                'total_vacancies_left' => 0,
+                'total_pending' => 0,
+                'confirm_users' => [],
                 'validated' => json_decode(json_encode([], JSON_FORCE_OBJECT)),
             ]
         ];
@@ -103,6 +106,7 @@ class VolunteeringActivity extends Model
             $mPositions = [];
         }
         foreach ($positions as $position) {
+            $active_vacancies = self::getPositionVacanciesActive($position->volunteering_activity_id, $position->id);
             $mPositions[] = [
                 'collapsed' => false,
                 'id' => $position->id,
@@ -112,11 +116,19 @@ class VolunteeringActivity extends Model
                 'position_skills' => $position->skills->pluck('skill_id'),
                 'position_suitables' => $position->suitables->pluck('suitable_id'),
                 'key_responsibilities' => $position->key_responsibilities_impact,
-                'active_opportunity' => 0,
+                'active_opportunity' => $active_vacancies,
+                'total_vacancies_left' => $position->vacancies - $active_vacancies,
+                'total_pending' => VolunteerSignUpActivity::getSignUpPositionPendingCount($position->volunteering_activity_id, $position->id),
+                'confirm_users' => VolunteerSignUpActivity::getSignUpPositionUsers($position->volunteering_activity_id, $position->id),
                 'validated' => json_decode(json_encode([], JSON_FORCE_OBJECT)),
             ];
         }
         unset($this->positions);
         return $mPositions;
+    }
+
+    public static function getPositionVacanciesActive($activity_id, $position_id)
+    {
+        return VolunteerSignUpActivity::getSignUpPositionCount($activity_id, $position_id);
     }
 }

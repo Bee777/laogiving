@@ -10,7 +10,6 @@ namespace App\Responses\User;
 
 use App\Http\Controllers\Helpers\Helpers;
 use App\Jobs\SendNewVolunteeringCreated;
-use App\Models\Cause;
 use App\Models\CauseDetail;
 use App\Models\Media;
 use App\Models\Skill;
@@ -19,7 +18,6 @@ use App\Models\VolunteeringActivity;
 use App\Models\VolunteeringActivityPosition;
 use App\Models\VolunteeringActivityPositionSkill;
 use App\Models\VolunteeringActivityPositionSuitable;
-use App\User;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\Validator;
 use File;

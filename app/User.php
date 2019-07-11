@@ -157,7 +157,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserType::class);
     }
-
+    //ony web guard
     public function getTypeOfUserAttribute()
     {
         $user = self::find(Auth::user()->id)->userType;

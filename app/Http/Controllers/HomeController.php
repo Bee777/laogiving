@@ -192,8 +192,8 @@ class HomeController extends Controller
         $checked = $request->checked;
         $success = false;
         if ($type === 'activity') {
-            $activity = VolunteeringActivity::find($request->post_id);
-            if (isset($activity, $user)) {
+            $activity = VolunteeringActivity::where('id', $request->post_id)->whereIn('status', ['closed', 'live'])->first();
+            if (isset($activity, $user) && !($user->isUser('admin') || $user->isUser('super_admin'))) {
                 $success = true;
                 $bookmark = UserSaved::where('post_id', $activity->id)->where('user_id', $user->id)
                     ->where('type', 'activity')->withTrashed()->first();

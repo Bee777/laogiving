@@ -75,7 +75,7 @@ class SendReportAbuse implements ShouldQueue
                 ->join('users', 'users.id', 'volunteering_activities.user_id')
                 ->join('user_types', 'user_types.user_id', 'users.id')
                 ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
-                ->where('volunteering_activities.status', 'live')
+                ->whereIn('volunteering_activities.status', ['live', 'closed'])
                 ->where('users.status', 'approved')
                 ->where('volunteering_activities.id', $activity_id)->first();
 
