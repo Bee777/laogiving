@@ -71,6 +71,6 @@
         window.$ = jQuery;
     </script>
     {{-- @GeneratedResourcesBottom--}}
-    <script type="text/javascript" src="{{url('/bundles/generated/volunteer')}}/volunteer.bb6d43acfaf5dc37c8d9.bundle.js"></script>
+    <script type="text/javascript" src="{{url('/bundles/generated/volunteer')}}/volunteer.b8eb6edbad68a044971b.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection

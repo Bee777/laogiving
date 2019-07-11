@@ -2,7 +2,7 @@
     <div class="nav-bar-fixed-container" ref="main-nav-bar">
         <div class="nav-bar metabar"
              :class="[{'metabar--affixed': isFixedNav, 'is-transitioning': isTransitionFixedNav}]"
-             :style="`-webkit-transform: translateY(-${ isFixedNav? fixedNavBarToHeight: 0}px);transform: translateY(-${isFixedNav? fixedNavBarToHeight: 0}px);`">
+             :style="`-webkit-transform: translateY(-${ isFixedNav? fixedNavBarTopHeight: 0}px);transform: translateY(-${isFixedNav? fixedNavBarTopHeight: 0}px);`">
             <!--TopNav-->
             <div ref="nav-bar-top" class="header_meta header_meta_one flex flex-scale-auto">
                 <div class="full-width-percent bg-smoke">
@@ -40,7 +40,7 @@
                     <div v-show="!navInputSearch.active" class="flex flex-scale-auto">
                         <div class="site-branding flex-start">
                             <a @click="Route({name: 'home'})">
-                                <img alt="educationpress"
+                                <img ref="logo-image" alt="laogiving"
                                      class="brand"
                                      :src="`${baseUrl}/assets/images/${s.website_logo}${s.fresh_version}`"/></a>
                         </div>
@@ -123,7 +123,7 @@
                 el: null,
                 lastScrollTop: 0,
                 navbarHeight: 127,
-                fixedNavBarToHeight: 48,
+                fixedNavBarTopHeight: 48,
                 fixedNavBarHeight: 79,
                 isFixedNav: false,
                 transitionFixedNav: 200,
@@ -159,14 +159,29 @@
                 }
             },
             setNavHeight() {
-                let navTopHeight = (this.$refs['nav-bar-top'] || {}).clientHeight;
-                let navHeight = (this.$refs['nav-bar'] || {}).clientHeight;
-                this.navbarHeight = navTopHeight + navHeight;
-
-                this.fixedNavBarToHeight = navTopHeight;
-                this.fixedNavBarHeight = navHeight;
-
-                this.$emit('onNavbarFixed', {state: true, height: this.navbarHeight});
+                //set data
+                let that = this;
+                setNavHeight();
+                //set data
+                //image loading
+                function setNavHeight() {
+                    let navTopHeight = (that.$refs['nav-bar-top'] || {}).clientHeight;
+                    let navHeight = (that.$refs['nav-bar'] || {}).clientHeight;
+                    that.navbarHeight = navTopHeight + navHeight;
+                    that.fixedNavBarTopHeight = navTopHeight;
+                    that.fixedNavBarHeight = navHeight;
+                    that.$emit('onNavbarFixed', {state: true, height: that.navbarHeight});
+                }
+                let logoImage = this.$refs['logo-image'];
+                if (logoImage) {
+                    if (logoImage.complete) {
+                        setNavHeight();
+                    } else {
+                        logoImage.addEventListener('load', setNavHeight);
+                        logoImage.addEventListener('error', setNavHeight)
+                    }
+                }
+                //image loading
             },
             scrollNavHandler() {
                 //set scroll info
@@ -175,8 +190,8 @@
                         this.setNavHeight();
                     }, 300);
                 });
-                let nScroll = this.fixedNavBarToHeight,
-                    Scroll = this.fixedNavBarToHeight, st = 0;
+                let nScroll = this.fixedNavBarTopHeight,
+                    Scroll = this.fixedNavBarTopHeight, st = 0;
                 this.el = this.jq(window);
                 //set scroll info
 

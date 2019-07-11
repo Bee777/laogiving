@@ -31,7 +31,7 @@ trait DefaultData
             'banners' => json_encode(Banner::getBanners(3)),
             'latest_news' => json_encode(Posts::getPosts('news', 3)),
             'news' => json_encode((new PostsResponse([], 'news'))->postsPaginator($request)),
-            'activities' => json_encode([]),
+            'activities' => json_encode((new PostsResponse([], 'activities'))->postsPaginator($request)),
             'all_causes' => json_encode(Cause::getCauses('all')),
             'all_suitables' => json_encode(Skill::getSkills('all')),
             'all_skills' => json_encode(Suitable::getSuitables('all')),

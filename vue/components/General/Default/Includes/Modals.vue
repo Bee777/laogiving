@@ -524,13 +524,19 @@
                     return;
                 }
                 this.setClearValidate(this.modalData[e.name]);
+                //clear sign in form
+                if (e.name === this.modalNames.login) {
+                    this.setClearValidate({email: '', password: '', auth_failed: ''});
+                }
+                //clear sign in form
                 if (this.modalData[e.name]) {
                     this.setClearValidate(this.modalData[e.name].model);
+                    Object.keys(this.modalData[e.name]).forEach((k) => {
+                        let old = this.modalData[e.name][k];
+                        this.modalData[e.name][k] = this.$utils.isObject(old) ? {} : (this.$utils.isArray(old) ? {} : null);
+                    });
                 }
-                Object.keys(this.modalData[e.name]).forEach((k) => {
-                    let old = this.modalData[e.name][k];
-                    this.modalData[e.name][k] = this.$utils.isObject(old) ? {} : (this.$utils.isArray(old) ? {} : null);
-                });
+
                 this.jq("body").removeClass("hidden sidebar");
                 this.jq("html").removeClass("hidden sidebar");
             },

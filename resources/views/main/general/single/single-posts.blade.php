@@ -139,7 +139,7 @@
     </script>
     {{-- @GeneratedResourcesBottom--}}
     <script type="text/javascript"
-            src="{{url('/bundles/generated/general')}}/general.a6316df0399ab698fd58.bundle.js"></script>
+            src="{{url('/bundles/generated/general')}}/general.f36bc12b9c67eb1b52d9.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection
 

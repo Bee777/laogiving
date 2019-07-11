@@ -40,7 +40,7 @@
                     <div v-show="!navInputSearch.active" class="flex flex-scale-auto">
                         <div class="site-branding flex-start">
                             <a @click="$utils.Location('/')">
-                                <img alt="educationpress"
+                                <img ref="logo-image" alt="laogiving"
                                      class="brand"
                                      :src="`${baseUrl}/assets/images/${s.website_logo}${s.fresh_version}`"/></a>
                         </div>
@@ -129,14 +129,29 @@
                 }
             },
             setNavHeight() {
-                let navTopHeight = (this.$refs['nav-bar-top'] || {}).clientHeight;
-                let navHeight = (this.$refs['nav-bar'] || {}).clientHeight;
-                this.navbarHeight = navTopHeight + navHeight;
-
-                this.fixedNavBarToHeight = navTopHeight;
-                this.fixedNavBarHeight = navHeight;
-
-                this.$emit('onNavbarFixed', {state: true, height: this.navbarHeight});
+                //set data
+                let that = this;
+                setNavHeight();
+                //set data
+                //image loading
+                function setNavHeight() {
+                    let navTopHeight = (that.$refs['nav-bar-top'] || {}).clientHeight;
+                    let navHeight = (that.$refs['nav-bar'] || {}).clientHeight;
+                    that.navbarHeight = navTopHeight + navHeight;
+                    that.fixedNavBarTopHeight = navTopHeight;
+                    that.fixedNavBarHeight = navHeight;
+                    that.$emit('onNavbarFixed', {state: true, height: that.navbarHeight});
+                }
+                let logoImage = this.$refs['logo-image'];
+                if (logoImage) {
+                    if (logoImage.complete) {
+                        setNavHeight();
+                    } else {
+                        logoImage.addEventListener('load', setNavHeight);
+                        logoImage.addEventListener('error', setNavHeight)
+                    }
+                }
+                //image loading
             },
             scrollNavHandler() {
                 //set scroll info
