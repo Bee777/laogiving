@@ -176,6 +176,9 @@ class PostsResponse implements Responsable
         $openings = array_filter(explode(',', $request->openings));
         $skills = array_filter(explode(',', $request->skills));
         $suitables = array_filter(explode(',', $request->suitables));
+        $weekday_or_weekend = array_filter(explode(',', $request->weekday_or_weekend));
+        $commitment_duration = array_filter(explode(',', $request->commitment_duration));
+        $frequency = array_filter(explode(',', $request->frequency));
         $organizations = null;
         $total_count_organization = 0;
         #organizations
@@ -228,7 +231,7 @@ class PostsResponse implements Responsable
                 return $d;
             });
         }
-
+        #end organizations
         #filter by openings
         if (count($openings) > 0) {
             foreach ($openings as $opening) {
@@ -302,6 +305,38 @@ class PostsResponse implements Responsable
                 }
             }
         });
+
+        #filter by weekday or weekend
+        if (count($weekday_or_weekend) > 0) {
+            $days_of_week = ['weekday', 'weekend'];
+            $data->where(function ($query) use ($days_of_week, $weekday_or_weekend) {
+                foreach ($weekday_or_weekend as $day_of_week) {
+                    $low = strtolower($day_of_week);
+                    if (in_array($low, $days_of_week, true)) {
+                        $query->orWhere('volunteering_activities.' . $low, 'yes');
+                    }
+                }
+            });
+        }
+        #filter by commitment_duration
+        if (count($commitment_duration) > 0) {
+            $data->where(function ($query) use ($commitment_duration) {
+                foreach ($commitment_duration as $date_duration) {
+                    $btw = explode('-', $date_duration);
+                    $query->orWhereBetween(DB::raw('TIMESTAMPDIFF(MONTH, start_date, end_date)'), $btw);
+                }
+            });
+        }
+        #filter by  frequency
+        if (count($frequency) > 0) {
+            $data->where(function ($query) use ($frequency) {
+                foreach ($frequency as $fr) {
+                    $query->orWhere('volunteering_activities.frequency', $fr);
+                }
+            });
+        }
+        #grouping
+        $data = $data->groupBy('volunteering_activities.id');
         #all count
         $total_data = clone $data;
         $total_count = $total_data->get()->count();

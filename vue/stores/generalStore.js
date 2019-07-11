@@ -40,6 +40,9 @@ export default new Vuex.Store({
                 {name: 'All Dates', id: 'all_date'},
                 {name: 'Tomorrow', id: 'tomorrow'},
             ],
+            frequency: [],
+            weekday_or_weekend: [],
+            commitment_duration: [],
         },
         postsData: {
             news: news,//{posts: {}, mostViews: [], comingEvents: []},

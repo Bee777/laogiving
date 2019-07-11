@@ -3189,8 +3189,7 @@ main, menu, summary {
 }
 
 .activity a:hover, .laogiving a:focus {
-    color: #0077b3;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .body-txt--smaller, .nav-acdr__stats, .nav-acdr__grp-title, p.body-txt--smaller {
@@ -4112,6 +4111,7 @@ card__body > div > *, .activity .card__body > div > * {
 .swiper-button-prev.rotage {
     -webkit-transform: rotate(-180deg) translateY(50%);
     transform: rotate(-180deg) translateY(50%);
+    left: 0;
 }
 
 .activity .order-2 {

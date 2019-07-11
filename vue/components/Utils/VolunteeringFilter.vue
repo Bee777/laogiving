@@ -75,6 +75,17 @@
                             <FilterItem ref="suitables-filter" v-model="filters.suitables" name="SUITABILITY"
                                         :items="options.all_suitables"/>
 
+                            <FilterItem ref="weekday_or_weekend-filter" v-model="filters.weekday_or_weekend"
+                                        name="WEEKDAY OR WEEKEND"
+                                        :items="options.weekday_or_weekend"/>
+
+                            <FilterItem ref="commitment_duration-filter" v-model="filters.commitment_duration"
+                                        name="COMMITMENT DURATION"
+                                        :items="options.commitment_duration"/>
+
+                            <FilterItem ref="frequency-filter" v-model="filters.frequency" name="FREQUENCY"
+                                        :items="options.frequency"/>
+
                             <FilterItem ref="skills-filter" v-model="filters.skills" name="SKILLS"
                                         :items="options.all_skills"/>
 
@@ -357,7 +368,16 @@
             },
             filters: {
                 default: function () {
-                    return {causes: [], openings: [], skills: [], suitables: [], date: ''};
+                    return {
+                        causes: [],
+                        openings: [],
+                        skills: [],
+                        suitables: [],
+                        date: '',
+                        weekday_or_weekend: [],
+                        commitment_duration: [],
+                        frequency: []
+                    };
                 }
             },
             paginate: {
@@ -417,10 +437,12 @@
                 this.$refs['causes-filter'].setValue([]);
 
                 if (this.displayType !== 'organize') {
-
                     this.$refs['date-filter'].setValue('all_date');
                     this.$refs['openings-filter'].setValue([]);
                     this.$refs['suitables-filter'].setValue([]);
+                    this.$refs['weekday_or_weekend-filter'].setValue([]);
+                    this.$refs['commitment_duration-filter'].setValue([]);
+                    this.$refs['frequency-filter'].setValue([]);
                     this.$refs['skills-filter'].setValue([]);
                 }
 

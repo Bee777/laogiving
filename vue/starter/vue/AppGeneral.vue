@@ -16,6 +16,7 @@
         <!--Loader-->
         <div class="laogiving">
             <Modals/>
+            <UtilsModals/>
         </div>
         <Navbar v-if="!$route.meta.hideNavFooter"/>
         <div id="general-main-container"
@@ -28,6 +29,7 @@
         <!--Tooltip-->
         <!--<ToolTip :id="'identifierShowPassword'"/>-->
         <!--Tooltip-->
+        <div class="toast" style="display: none;"></div>
     </div>
 </template>
 <script>
@@ -37,13 +39,16 @@
     import Footer from '@com/General/Partial/Footer.vue';
 
     const Modals = () => import('@com/General/Default/Includes/Modals.vue')
+    const UtilsModals = () => import('@com/Utils/Modals.vue')
+
     export default {
         name: 'app-general',
         components: {
             Footer,
             Navbar,
             Sidebar,
-            Modals
+            Modals,
+            UtilsModals
         },
 
         data() {

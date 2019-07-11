@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Posts;
 use App\Models\VolunteeringActivity;
+use App\Models\VolunteerSignUpActivity;
 use App\Responses\Admin\DashboardResponse;
 use App\Responses\IndexUserResponse;
 use App\Responses\User\UserCredentials;
 use App\Responses\User\UserNewsResponse;
 use App\Responses\User\UserProfileManage;
 use App\Responses\User\UserProfileOptions;
-use App\Responses\User\UserProfileSingle;
 use App\Models\Site;
+use App\Responses\User\UserSignUpVolunteeringActivity;
 use App\Responses\User\UserVolunteeringActivityManage;
 use App\Responses\User\UserVolunteeringActivityOptions;
 use App\Rules\VolunteerPosition;
+use App\Traits\UserRoleTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Helpers\Helpers;
 use Illuminate\Http\JsonResponse;
@@ -27,6 +29,8 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    use UserRoleTrait;
+
     protected $rootView = 'main.user';
 
     protected $maxCauses = 4;
@@ -422,6 +426,52 @@ class UserController extends Controller
         return response()->json(['success' => false, 'msg' => 'Failed to change the post status!']);
     }
     /*** @postManagePostsStatus * */
+
+    /*** @postSaveSignUpVolunteering * */
+    public function responsePostSaveSignUpVolunteering(Request $request)
+    {
+        $user = $request->user('api');
+        if ($user->status !== 'approved' || !$user->isUser('volunteer')) {
+            return response()->json(['errors' => ['sign_up_not_valid' => ['You dont have permission to signup the volunteer activity.']]], 422);
+        }
+        $activity = VolunteeringActivity::select('volunteering_activities.*')->join('users', 'users.id', 'volunteering_activities.user_id')
+            ->join('user_types', 'user_types.user_id', 'users.id')
+            ->join('organize_profiles', 'organize_profiles.user_id', 'users.id')
+            ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
+            ->where('volunteering_activities.status', 'live')
+            ->where('users.status', 'approved')
+            ->where('volunteering_activities.id', $request->activity_id)->first();
+        if (isset($activity)) {
+            $hourDiff = Helpers::diffInHours($activity->deadline_sign_ups_date, now());
+            #If the activity has reached the deadline date.
+            if ($hourDiff < 0) {
+                return response()->json(['errors' => ['sign_up_not_valid' => ['You dont have permission to signup the volunteer activity.']]], 422);
+            }
+            # If already signed-up for the  activity.
+            $sign_up_exists = VolunteerSignUpActivity::where('volunteering_activity_id', $activity->id)->where('user_id', $user->id)->exists();
+            if($sign_up_exists){
+                return response()->json(['errors' => ['sign_up_not_valid' => ['You have already signed-up for this activity.']]], 422);
+            }
+            # If the amount of selected confirmed position vacancies already full
+
+            # Validate with all default form and selected position required
+            # - Validate minimum age of the selected position if minimum age not empty.
+            # - Validate contact phone number if it set to yes for required to fill.
+            # - Validate other response if it set to yes for required to fill.
+            # - Checking if it need to get the volunteer gender that signup the activity if it is required.
+            # - Checking if it need to confirm the volunteer that signup the activity if it is required.
+
+            $this->validate($request, [
+                'volunteer_position' => 'required',
+            ]);
+
+            dd($request->all());
+            return new UserSignUpVolunteeringActivity();
+        }
+
+        return response()->json(['errors' => ['sign_up_not_valid' => ['The volunteer activity does not exists.']]], 422);
+    }
+    /*** @postSaveSignUpVolunteering * */
     /**
      * @Responses api only
      */

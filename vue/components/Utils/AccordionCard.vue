@@ -1,6 +1,6 @@
 <template>
     <div class="accordion-card" :class="[containerClasses]">
-        <div class="accordion-card__head" @click="toggleBody()" :class="[{'is-collapsed': !expand}]">
+        <div class="accordion-card__head" @click="toggleBody()" :class="[{'is-collapsed': !expand}, headClasses]">
             <slot name="header-title"></slot>
             <i class="material-icons accordion-card__chevron">{{ expand ? 'keyboard_arrow_up': 'keyboard_arrow_down'}}</i>
             <div class="accordion-card__hitarea"></div>
@@ -18,9 +18,12 @@
             containerClasses: {
                 default: ''
             },
+            headClasses: {
+                default: ''
+            },
             bodyClasses: {
                 default: ''
-            }
+            },
         },
         data: () => ({
             expand: true,

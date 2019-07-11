@@ -137,6 +137,51 @@ export const createActions = (utils) => {
                     c.dispatch('HandleError', err.response);
                 });
         },
+        postReportAbuse(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data, {
+                    'email': ['required', 'email', {max: 191}],
+                    'reason': ['required', {max: 800}],
+                }).then(v => {
+                    client.post(`${apiUrl}/home/send-report-abuse`, data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data);
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err);
+                        });
+
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
+        postSaveBookMark(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data, {
+                    'post_id': ['required', {max: 191}],
+                    'checked': ['required', {max: 191}],
+                    'type': ['required', {max: 191}]
+                }).then(v => {
+                    client.post(`${apiUrl}/users/save-post-bookmark`, data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data);
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err);
+                        });
+
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
         /*** @PostsData **/
         /*** @PostsData **/
         fetchSinglePostsData(c, i) {
@@ -204,5 +249,65 @@ export const createActions = (utils) => {
             })
         },
         /***@SaveNewsLetter */
+        /***@SignUpVolunteering */
+        postSignUpVolunteering(c, data) {
+            return new Promise((r, n) => {
+                let rule = {};
+                // validate volunteer_contact_phone_number
+                if (data.activity.volunteer_contact_phone_number === 'yes') {
+                    rule.volunteer_contact_phone_number = ['required', 'phone number'];
+                }
+                // validate other_response_required
+                if (!utils.isEmptyVar(data.activity.other_response_required)) {
+                    rule.other_response_answer = ['required', {max: 500}];
+                }
+                // validate your_minimum_age
+                if (data.need_date_of_birth) {
+                    let minimum_age = 13;
+                    let position = data.activity.positions.filter(f => {
+                        return f.id === data.model.volunteer_position;
+                    }).shift() || {};
+                    if (!utils.isEmptyObject(position)) {
+                        minimum_age = position.minimum_age;
+                    }
+                    data.model.current_date = new Date().toLocaleDateString();
+                    rule.your_date_of_birth = ['required', {
+                        lessThan: 'current_date',
+                        type: 'date'
+                    }];
+                    data.model.your_minimum_age = (data.model.your_date_of_birth ? utils.calculateAge(new Date(data.model.your_date_of_birth)) : 0);
+                    rule.your_minimum_age = [{min: minimum_age, type: 'number'}];
+                }
+                //validate all data form
+                utils.Validate(data.model, {
+                    'volunteer_position': ['required'],
+                    ...rule
+                }).then((v) => {
+                    data.model.activity_id = data.activity.id;
+                    c.commit('setValidated', {errors: {loading_signup_volunteering: true}});
+                    client.post(`${apiUrl}/users/save-signup-volunteering`, data.model, ajaxConfig)
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data);
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            if (err.response && err.response.data && err.response.data.errors) {
+                                let resErr = err.response.data.errors;
+                                if(resErr['sign_up_not_valid']){
+                                    resErr = utils.fetchErrors(resErr);
+                                    c.dispatch('showErrorToast', {msg: resErr['sign_up_not_valid'], dt: 3500});
+                                }
+                            }
+                            n(err.response);
+                        });
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    c.dispatch('showErrorToast', {msg: 'Please check your form again!', dt: 3500});
+                    n(e);
+                });
+            });
+        },
+        /***@SignUpVolunteering */
     }
 };

@@ -186,13 +186,15 @@ class User extends Authenticatable
 
     public function transformUser(): array
     {
+        $type = $this->userType->typeUser->name;
         return [
             'id' => $this->id,
             'name' => $this->name,
             'thumb_image' => $this->userInfo['imagePath'] . $this->userInfo['preThumb'] . $this->image,
             'image' => $this->userInfo['imagePath'] . $this->image,
             'email' => $this->email,
-            'type' => base64_encode($this->userType->typeUser->name),
+            'type' => base64_encode($type),
+            'profile' => $this->userProfile($type),
         ];
     }
 

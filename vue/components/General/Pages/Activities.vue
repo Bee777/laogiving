@@ -81,6 +81,9 @@
                 openings: [],
                 skills: [],
                 suitables: [],
+                weekday_or_weekend: [],
+                commitment_duration: [],
+                frequency: [],
                 date: 'all_date',
                 type: '',
                 is_filtering: false
@@ -149,6 +152,10 @@
                 //openings
                 q.openings = this.filters.openings.join(',');
                 //date
+                q.weekday_or_weekend = this.filters.weekday_or_weekend.join(',');
+                q.commitment_duration = this.filters.commitment_duration.join(',');
+                q.frequency = this.filters.frequency.join(',');
+
                 q.date = this.filters.date;
                 //set query
                 this.$router.replace({path: this.$route.path, query: q});
@@ -176,6 +183,9 @@
                 this.filters.suitables = q.suitables ? q.suitables.split(',') : [];
                 //openings
                 this.filters.openings = q.openings ? q.openings.split(',') : [];
+                this.filters.weekday_or_weekend = q.weekday_or_weekend ? q.weekday_or_weekend.split(',') : [];
+                this.filters.commitment_duration = q.commitment_duration ? q.commitment_duration.split(',') : [];
+                this.filters.frequency = q.frequency ? q.frequency.split(',') : [];
                 //date
                 this.filters.date = q.date || 'all_date';
                 //set filters
@@ -190,6 +200,9 @@
                     openings: [],
                     skills: [],
                     suitables: [],
+                    weekday_or_weekend: [],
+                    commitment_duration: [],
+                    frequency: [],
                     date: 'all_date',
                     type: this.filters.type,
                     is_filtering: false

@@ -18,7 +18,7 @@ export default Vue.extend({
         }
     },
     computed: {
-        ...mapState(['isMobile', 'validate_errors', 'postsData', 'singlePostsData', 'homeData', 'searchQuery']),
+        ...mapState(['isMobile', 'authUserInfo', 'validate_errors', 'postsData', 'singlePostsData', 'homeData', 'searchQuery']),
     },
     watch: {
         query: function (n, o) {
@@ -30,7 +30,7 @@ export default Vue.extend({
     },
     methods: {
         ...mapMutations([]),
-        ...mapActions(['setPageTitle', 'fetchHomeData', 'fetchPostsData', 'fetchSinglePostsData']),
+        ...mapActions(['setPageTitle', 'fetchHomeData', 'fetchPostsData', 'fetchSinglePostsData', 'postSaveBookMark']),
         /***@Posts */
         getDetail(type, data) {
             this.Route({name: `${type}-single`, params: {id: data.id}});
@@ -109,6 +109,9 @@ export default Vue.extend({
             return this.validated().loading_single_posts && !this.singlePostsData[type].data.id
                 || this.validated().loading_single_posts && this.singlePostsData[type].data.id !== this.$utils.toInt(this.singleId)
         },
+        shouldShowSingle(type) {
+            return !this.$utils.isEmptyObject(this.singlePostsData[type].data);
+        },
         sharer(w, type, data, link) {
             let res = this.baseUrl;
             switch (w) {
@@ -123,6 +126,68 @@ export default Vue.extend({
             }
             return res;
         },
+        getDaysOfWeek(days_of_week) {
+            return days_of_week.map(i => {
+                return i.toLowerCase()
+            }).join(' or ');
+        },
+        getFrequency() {
+            return {
+                '1_DAY_PER_WEEK': 'One day per week',
+                '2_3_DAYS_PER_WEEK': '2-3 days per week',
+                'FORTNIGHTLY': 'Fortnightly',
+                'MONTHLY': 'Monthly',
+                'QUARTERLY': 'Quarterly',
+                'FLEXIBLE': 'Flexible',
+                'FULL_TIME': 'Full Time'
+            }
+        },
+        getMonthsTextRange(item) {
+            let months = this.getDiffMonths(item.start_date, item.end_date, 1);
+            if (months <= 1) {
+                return `1 Month`;
+            } else {
+                return `1 - ${months} Months`;
+            }
+        },
+        getDiffMonths(date1, date2, includes = 0) {
+            let months;
+            date1 = new Date(date1);
+            date2 = new Date(date2);
+            months = (date2.getFullYear() - date1.getFullYear()) * 12 + (date2.getMonth() - date1.getMonth()) + includes;
+            return months <= 0 ? 0 : months;
+        },
+        getTotalVacancies(item) {
+            let total_vacancies = 0;
+            let suitablesTexts = [];
+            item.positions.map(i => {
+                total_vacancies += parseInt(i.vacancies) || 0;
+                i.position_suitables.map(suitable => {
+                    let mSuitable = this.homeData.all_suitables.filter((filter) => {
+                        return filter.id === suitable;
+                    }).map(i => i.name).join('');
+                    if (suitablesTexts.indexOf(mSuitable) === -1) {
+                        suitablesTexts.push(mSuitable);
+                    }
+                });
+            });
+            item.suitablesTexts = suitablesTexts.join(', ');
+            return total_vacancies;
+        },
+        //Toaster
+        toaster(msg, delay = 3500) {
+            let toaster = this.jq('.toast');
+            if (!toaster.length) {
+                return;
+            }
+            toaster.get(0).innerHTML = msg;
+            toaster.css('display', 'block');
+            setTimeout(() => {
+                toaster.get(0).innerHTML = '';
+                toaster.css('display', 'none');
+            }, delay)
+        }
+        //Toaster
         /***@SinglePost*/
     },
     created() {

@@ -75,10 +75,13 @@
                     <div class="height-auto">
                         <div class="form">
                             <div class="modal-header-ctn">
-                                <img src="https://www.giving.sg/givingsg-theme/images/mt/ph-pink.jpg"
+                                <img :src="`${baseUrl}${authUserInfo.thumb_image}`"
                                      class="profile-pic profile-pic--small mr-16">
-                                <h4 class="h2">Hello, Bee Organization</h4>
-                                <p class="body-txt body-txt--small mb-16">You are signing up as <b>Individual</b>.</p>
+                                <h4 class="h2">Hello, {{authUserInfo.name}}</h4>
+                                <p class="body-txt body-txt--small mb-16">You are signing up as <b>{{$utils.firstUpper(authUserInfo.decodedType)}}</b>.
+                                </p>
+                                <div class="centered"><span class="bold"> You are attempting to sign up for an activity that conflicts with another activity you've already signed up for. </span>
+                                </div>
                             </div>
                             <!--Start FORM-->
                             <div
@@ -90,15 +93,46 @@
                                     <form class="activity" v-on:submit.prevent method="post">
                                         <div class="input-ctrl volunteer-activity-info">
                                             <h3 class="h3 font-dark-grey">Yes, I want to sign up as a</h3>
-                                            <h3 class="h3 mt-16 font-dark-grey">Front of House</h3>
+                                            <template
+                                                v-if="isMultiplePositions()">
+                                                <select
+                                                    @change="checkingVolunteeringPosition()"
+                                                    v-model="modalData[modalNames.signUpVolunteer].model.volunteer_position"
+                                                    class="select-ctn select--full valid"
+                                                    name="volunteersignup_positionId">
+                                                    <option value="" disabled selected>Please select position</option>
+                                                    <!--data-require-min-age="true"-->
+                                                    <!--data-min-age="17"-->
+                                                    <!--data-position-left="10"-->
+                                                    <option v-for="(item, idx) in getVolunteering().positions"
+                                                            :key="idx" :value="item.id">{{item.position_title}}
+                                                    </option>
+                                                </select>
+                                                <label style="display: block;" class="error-msg">{{
+                                                    validated().volunteer_position }}</label>
+                                            </template>
+                                            <template v-else>
+                                                <h3 class="h3 mt-16 font-dark-grey">
+                                                    {{getVolunteeringSelectedPosition().position_title}}</h3>
+                                            </template>
+
+
                                             <h3 class="h3 mt-16 font-dark-grey" style="font-weight:normal;">for</h3>
-                                            <h3 class="h3 mt-16 font-dark-grey">FOH Volunteers for TheatreWorks'
-                                                Production</h3>
+                                            <h3 class="h3 mt-16 font-dark-grey">{{ getVolunteering().name }}</h3>
                                             <h3 class="h3 mt-16 mb-16 font-dark-grey" style="font-weight:normal;">
                                                 on</h3>
-                                            <h3 class="h3 mb-16 font-dark-grey">21 May 2019 - 30 May 2019</h3>
-                                            <p class="body-txt mb-16"><span><b>12:00 AM to 12:00 AM</b></span> <br> <br>at
-                                                88 GEYLANG BAHRU </p>
+                                            <h3 class="h3 mb-16 font-dark-grey">
+                                                {{ getVolunteering().start_date_formatted_number
+                                                }} - {{ getVolunteering().end_date_formatted_number }}</h3>
+                                            <p class="body-txt mb-16"><span><b>{{ getFrequency()[getVolunteering().frequency]}} on {{ getDaysOfWeek(getVolunteering().days_of_week || [])}}</b></span>
+                                                <br> <br>at {{getVolunteering().block_street}}
+                                                <template v-if="getVolunteering().building_name">
+                                                    <br>
+                                                    {{getVolunteering().building_name}}
+                                                    {{getVolunteering().building_unit_number ? ' - ' +
+                                                    getVolunteering().building_unit_number : '' }}
+                                                </template>
+                                            </p>
                                         </div>
                                         <hr class="hr">
                                         <div
@@ -107,10 +141,7 @@
                                                 <h3 class="h3 font-dark-grey">Points To Note</h3>
                                             </div>
                                             <div class="rounded-card__body font-dark-grey">
-                                                <p>We are looking for volunteers to help out with FOH duties such as
-                                                    sale of programmes, answering enquires, and ushering. Volunteers
-                                                    will also assist in carrying out other duties such as headphones
-                                                    distributions, drinks services and managing sale of accessories.</p>
+                                                <p v-html="getVolunteering().points_to_note"></p>
                                                 <div class="mt-16"><span class="bold">Your request will go through an approval process by our Volunteer Manager or Volunteer Leader</span>
                                                 </div>
                                             </div>
@@ -124,29 +155,55 @@
                                                 <p class="body-txt body-txt--small mb-16">We need the following
                                                     details from you to sign up! </p></label>
                                         </div>
-                                        <div class="input-ctrl">
+                                        <div class="input-ctrl"
+                                             v-if="modalData[modalNames.signUpVolunteer].need_date_of_birth">
                                             <label class="lbl">Date of Birth
                                             </label>
                                             <input id="volunteer-date-picker" name="date_of_birth"
-                                                   :data-value="`${new Date().getFullYear()}/01/01`"
                                                    placeholder="DD M, YYYY" maxlength="10" type="text"
+                                                   :data-value="''"
                                                    class="input-ctn" readonly="" aria-haspopup="true"
                                                    aria-expanded="false" aria-readonly="false"
                                                    aria-owns="date_of_birth">
+                                            <label style="display: block"
+                                                   class="error-msg">{{ validated().your_date_of_birth ||
+                                                validated().your_minimum_age }}</label>
                                         </div>
-                                        <div class="input-ctrl">
+                                        <div class="input-ctrl"
+                                             v-if="getVolunteering().volunteer_contact_phone_number==='yes'">
                                             <label class="lbl">Contact Number
                                             </label>
-                                            <input type="text" class="input-ctn" placeholder="" name="contactNumber"
-                                                   value="030984832">
+                                            <input
+                                                v-model="modalData[modalNames.signUpVolunteer].model.volunteer_contact_phone_number"
+                                                type="text" class="input-ctn" placeholder="Phone Number"
+                                                name="contactNumber">
+                                            <label style="display: block"
+                                                   class="error-msg">{{ validated().volunteer_contact_phone_number
+                                                }}</label>
                                         </div>
+
+                                        <div class=" input-ctrl"
+                                             v-if="!$utils.isEmptyVar(getVolunteering().other_response_required)"><h3
+                                            class="h3 font-dark-grey font-16-tablet-portrait-down">Other
+                                            Information</h3>
+                                            <p class="body-txt body-txt--small mb-16">
+                                                {{getVolunteering().other_response_required}}</p>
+                                            <TextareaLimit ref="questionResponse-textarea-limit"
+                                                           :height="70" classes="m-0" max="500" rows="3"
+                                                           placeholder="Is there anything else you'd like the organiser to know about you?"
+                                                           v-model="modalData[modalNames.signUpVolunteer].model.other_response_answer"/>
+                                            <label style="display: block;" class="error-msg">{{
+                                                validated().other_response_answer }}</label></div>
                                     </form>
                                 </div>
                                 <!--END FORM-->
                                 <div class="create-volunteer-act__footer"
                                      style="margin-top: 80px!important; text-align:center;">
-                                    <button @click="SignUpVolunteer({})"
+                                    <button v-if="!modalData[modalNames.signUpVolunteer].loading" @click="SignUpVolunteer()"
                                             class="button-ctn button--135 button--large join-volunteer-button">JOIN
+                                    </button>
+                                    <button v-else
+                                            class="button-ctn button--135 button--large join-volunteer-button">SIGNING...
                                     </button>
                                 </div>
                             </div>
@@ -325,12 +382,16 @@
 
 <script>
     const MODAL_WIDTH = 858, SCROLL_WIDTH = 32;
-    import {mapActions, mapGetters} from 'vuex'
+    import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
+    import TextareaLimit from '@com/Utils/TextAreaLimiter.vue'
 
     export default {
         name: "Modals",
+        components: {
+            TextareaLimit
+        },
         data: () => ({
-            ...mapGetters(['validated']),
+            ...mapGetters(['validated', 'succeeded']),
             modalNames: {
                 login: 'signin',
                 signUpVolunteer: 'volunteer-signup',
@@ -338,7 +399,12 @@
             },
             modalWidth: MODAL_WIDTH,
             user: {},
+            excludeOutSideClose: {'volunteer-signup': true},
+            modalData: {'volunteer-signup': {datePicker: null, model: {}}},
         }),
+        computed: {
+            ...mapState(['authUserInfo']),
+        },
         watch: {
             '$route.path': function (n, o) {
                 for (let m in this.modalNames) {
@@ -349,10 +415,12 @@
             }
         },
         methods: {
-            ...mapActions(['Login']),
+            ...mapMutations(['setClearValidate']),
+            ...mapActions(['Login', 'postSignUpVolunteering']),
             beforeOpen(e) {
                 this.jq("html").addClass("hidden sidebar");
                 this.jq("body").addClass("hidden sidebar");
+                this.modalData[e.name] = e.params;
             },
             LoginUser(credentials) {
                 this.Login(credentials);
@@ -361,10 +429,13 @@
                 /*
                 Stopping close event execution
                 */
-                if (e.name === "volunteer-signup" && !(e.params && e.params.close)) {
+                if (this.excludeOutSideClose[e.name] && !(e.params && e.params.close)) {
                     e.stop();
                     return;
                 }
+                this.setClearValidate(this.modalData[e.name]);
+                this.setClearValidate(this.modalData[e.name].model);
+                this.modalData[e.name] = {};
                 this.jq("body").removeClass("hidden sidebar");
                 this.jq("html").removeClass("hidden sidebar");
             },
@@ -377,39 +448,131 @@
             loginForm() {
                 this.jq('[data-toggle="tooltip"]').tooltip();
             },
+            //volunteering activity
             volunteerForm() {
+                this.setDatePicker(new Date().toLocaleDateString())
+            },
+            setDatePicker(date) {
+                let data = this.modalData[this.modalNames.signUpVolunteer];
+                let dateOfBirthPickerEl = this.jq('#volunteer-date-picker');
                 const volunteerForm = this.$refs['volunteer-form'],
                     formHeight = volunteerForm.clientHeight;
-                setTimeout(() => {
-                    let pickerEl = this.jq('#volunteer-date-picker');
-                    pickerEl.on('mousedown', function (e) {
-                        e.preventDefault();
-                    });
-                    pickerEl.pickadate({
+                dateOfBirthPickerEl.on('mousedown', function (e) {
+                    e.preventDefault();
+                });
+                if (!dateOfBirthPickerEl.length) {
+                    data.datePicker = null;
+                    return;
+                }
+                this.$nextTick(() => {
+                    if (data.datePicker) {
+                        let picker = dateOfBirthPickerEl.pickadate('picker');
+                        if (date) {
+                            picker.set('select', new Date(date));
+                        } else {
+                            picker.clear();
+                        }
+                        return;
+                    }
+                    data.datePicker = dateOfBirthPickerEl.pickadate({
                         selectMonths: true,
                         selectYears: 80,
-                        formatSubmit: 'yyyy-mm-dd',
+                        formatSubmit: 'dd/mm/yyyy',
+                        today: false,
                         max: new Date(),
                         onOpen: () => {
                             setTimeout(() => {
-                                const pickerHeight = this.jq('.picker__holder').height(),
-                                    percent = pickerHeight - (pickerHeight * 26 / 100);
-                                volunteerForm.style.height = `${formHeight + percent}px`;
+                                // const pickerHeight = this.jq('.picker__holder').height(),
+                                //     percent = pickerHeight - (pickerHeight * 30 / 100);
+                                volunteerForm.style.height = `${formHeight + 30}px`;
                             }, 100);
                         },
-                        onClose: function () {
-                            console.log(this.get('select', 'yyyy-mm-dd'))
+                        onSet: function () {
+                            data.model.your_date_of_birth = this.get('select', 'yyyy-mm-dd');
+                            //console.log(this.get('select', 'yyyy-mm-dd'))
                         }
                     });
-                }, 300)
+                })
             },
-            SignUpVolunteer(data) {
-                setTimeout(() => {
+            SignUpVolunteer() {
+                let data = this.modalData[this.modalNames.signUpVolunteer];
+                let which = this.getVolunteeringWhichPosition();
+                data.model.other_response_answer = data.model.other_response_answer;
+                if (which !== 'all') {
+                    data.model.volunteer_position = which;
+                } else if (!this.isMultiplePositions()) {
+                    data.model.volunteer_position = this.getVolunteeringSelectedPosition().id;
+                }
+                if (data.need_date_of_birth) {
+                    data.model.your_date_of_birth = data.model.your_date_of_birth;
+                }
+                //submit form
+                data.loading = true;
+                this.postSignUpVolunteering(data).then(res => {
+                    data.loading = false;
+                    console.log(res);
                     this.hide(this.modalNames.signUpVolunteer, {close: true});
                     this.show(this.modalNames.signUpVolunteerSuccess);
-                }, 1000)
-            }
-
+                }).catch(err => {
+                    data.loading = false;
+                });
+            },
+            getVolunteeringWhichPosition() {
+                return this.modalData[this.modalNames.signUpVolunteer].position
+            },
+            getVolunteering() {
+                return this.modalData[this.modalNames.signUpVolunteer].activity || {}
+            },
+            checkingVolunteeringPosition() {
+                let data = this.modalData[this.modalNames.signUpVolunteer];
+                this.setVolunteeringPosition(data.model.volunteer_position);
+                //wait view render
+                data.model.your_date_of_birth = null;
+                this.$nextTick(() => {
+                    this.setDatePicker();
+                });
+            },
+            setVolunteeringPosition(compare) {
+                let data = this.modalData[this.modalNames.signUpVolunteer];
+                let position = this.getVolunteering().positions.filter(p => {
+                    return p.id === compare;
+                }).shift();
+                data.need_date_of_birth = position.minimum_age && parseInt(position.minimum_age) > 12;
+                return position
+            },
+            getVolunteeringSelectedPosition() {
+                let which = this.getVolunteeringWhichPosition();
+                if (!this.$utils.isEmptyVar(which)) {
+                    if (which !== 'all') {
+                        return this.setVolunteeringPosition(which);
+                    } else if (!this.isMultiplePositions()) {
+                        which = (this.getVolunteering().positions[0] || {}).id;
+                        return this.setVolunteeringPosition(which);
+                    }
+                }
+                return {};
+            },
+            isMultiplePositions() {
+                let data = this.modalData[this.modalNames.signUpVolunteer];
+                return data.position === 'all' && data.activity.positions.length > 1;
+            },
+            getDaysOfWeek(days_of_week) {
+                return days_of_week.map(i => {
+                    return i.toLowerCase()
+                }).join(' or ');
+            },
+            getFrequency() {
+                return {
+                    '1_DAY_PER_WEEK': 'One day per week',
+                    '2_3_DAYS_PER_WEEK': '2-3 days per week',
+                    'FORTNIGHTLY': 'Fortnightly',
+                    'MONTHLY': 'Monthly',
+                    'QUARTERLY': 'Quarterly',
+                    'FLEXIBLE': 'Flexible',
+                    'FULL_TIME': 'Full Time'
+                }
+            },
+            //volunteering activity
         },
         created() {
             let wWidth = this.jq(document).width();

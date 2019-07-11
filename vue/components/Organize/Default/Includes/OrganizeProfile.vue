@@ -82,7 +82,7 @@
                                 <h3 class="h3">About Us</h3>
                             </template>
                             <template slot="body-content">
-                                <div class="body-txt break-word">{{userProfile.about}}</div>
+                                <div class="body-txt break-word" v-html="userProfile.about"></div>
                             </template>
                         </AccordionCard>
 
@@ -91,7 +91,7 @@
                                 <h3 class="h3">Our Programmes</h3>
                             </template>
                             <template slot="body-content">
-                                <div class="body-txt break-word">{{userProfile.our_programmes}}</div>
+                                <div class="body-txt break-word" v-html="userProfile.our_programmes"></div>
                             </template>
                         </AccordionCard>
 

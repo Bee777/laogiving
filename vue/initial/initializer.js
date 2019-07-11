@@ -145,6 +145,7 @@ export const defaultStates = {
         thumb_image: `/assets/images/user_profiles/96x96-logo.svg${settings.fresh_version}`,
         type: '',
         decodedType: '',
+        profile: {},
     },
     allowedRedirectTo: {'users-forum': true},
 };

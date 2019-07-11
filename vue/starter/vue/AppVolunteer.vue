@@ -25,6 +25,8 @@
         <Footer v-if="!$route.meta.hideNavFooter"/>
 
         <Sidebar/>
+
+        <div class="toast" style="display: none;"></div>
     </div>
 </template>
 <script>

@@ -1,9 +1,32 @@
 @extends('layouts.app')
 @php
     $url = route('get.home.posts.single', [$type, $post->id]);
-    $image_url = url('/') . \App\Models\Posts::$uploadPath . $post->image;
-    $title = $post->title .' - ' . $post_type_name . ' | ' . $s['site_name'];
-    $description = $post->title . ' - ' . strip_tags(htmlspecialchars_decode($post->description))  . ' - ' . $post_type_name . ' on ' . $s['site_name'] . ', Latest ' . $post_type_name . ' on ' . $s['site_name'] . ' | ' .  $s['site_name'];
+    if($type==='activities'){
+        $post_type_name = 'Activity Volunteering';
+        $activityMediaImages = \App\Models\Media::list('activity', 'image', $post->id);
+            if (count($activityMediaImages) > 0) {
+                $post->images_media = $activityMediaImages;
+            } else {
+                $post->images_media = [
+                    [
+                        'image_base64' => '',
+                        'image' => null,
+                        'validated' => '',
+                        'removable' => false
+                    ]
+                ];
+            }
+        $post->user = new \stdClass();
+        $post->user->name = $post->organize_name;
+        $post->title = $post->name;
+        $image_url = $post->images_media[0]['image_base64'];
+        $title = $post->name .' - Activity Volunteering | ' . $s['site_name'];
+        $description = $post->name . ' - ' . strip_tags(htmlspecialchars_decode($post->description))  . ' - Activity Volunteering on ' . $s['site_name'] . ', Latest Activity Volunteering on ' . $s['site_name'] . ' | ' .  $s['site_name'];
+    }else{
+        $image_url = url('/') . \App\Models\Posts::$uploadPath . $post->image;
+        $title = $post->title .' - ' . $post_type_name . ' | ' . $s['site_name'];
+        $description = $post->title . ' - ' . strip_tags(htmlspecialchars_decode($post->description))  . ' - ' . $post_type_name . ' on ' . $s['site_name'] . ', Latest ' . $post_type_name . ' on ' . $s['site_name'] . ' | ' .  $s['site_name'];
+    }
 @endphp
 
 @section('g_description'){!! $description  !!}
@@ -48,9 +71,12 @@
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/vendor/owlcarousel/owl.carousel.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/swiper.min.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/vendor/fancybox/css/fancybox.css">
-    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.css" id="theme_base">
-    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.date.css" id="theme_date">
-    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.time.css" id="theme_time">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.css"
+          id="theme_base">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.date.css"
+          id="theme_date">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.time.css"
+          id="theme_time">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/global.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/style.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/laogiving.css{{$s['fresh_version']}}">

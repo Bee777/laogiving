@@ -26,9 +26,7 @@
 
         <Sidebar/>
 
-        <div class="toast" style="display: none;">Activity status is LIVE, you are not allowed to make any
-            changes on the attendance.
-        </div>
+        <div class="toast" style="display: none;"></div>
 
     </div>
 </template>

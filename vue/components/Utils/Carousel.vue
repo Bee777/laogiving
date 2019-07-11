@@ -1,6 +1,7 @@
 <template>
 
-    <div :id="`carousel-${_uid}`" class="swiper-container--images swiper-container" :class="[containerClasses]">
+    <div :id="`carousel-${_uid}`" class="swiper-container"
+         :class="[{'swiper-container--images' : type==='image'}, containerClasses]">
 
         <div class="swiper-wrapper " :class="[wrapperClasses]">
             <slot name="slide-item"></slot>
@@ -19,6 +20,9 @@
     export default {
         name: "Carousel",
         props: {
+            type: {
+              default: 'image'
+            },
             hasVideos: {
                 default: false,
             },

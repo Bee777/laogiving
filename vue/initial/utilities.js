@@ -1356,5 +1356,16 @@ export default {
             }
         }
         return regex.test(url);
+    },
+    isValidDate(d) {
+        return d instanceof Date && !isNaN(d);
+    },
+    calculateAge(birthday) { // birthday is a date
+        if (this.isValidDate(birthday)) {
+            let ageDifMs = Date.now() - birthday.getTime();
+            let ageDate = new Date(ageDifMs); // milliseconds from epoch
+            return Math.abs(ageDate.getUTCFullYear() - 1970);
+        }
+        return null;
     }
 }

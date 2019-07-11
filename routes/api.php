@@ -22,7 +22,7 @@ Route::group(['prefix' => '/guest', 'middleware' => ['cors']], function () {
 /******************** @GuestUserSection ****************** */
 
 /******************** @HomeSection ****************** */
-Route::group(['prefix' => '/home', 'middleware' => ['cors', 'parseToken:guest-bearer'] ], function () {
+Route::group(['prefix' => '/home', 'middleware' => ['cors', 'parseToken:guest-bearer']], function () {
     Route::get('/index', 'HomeController@index')->name('api.get.home.index');
     /*********@Posts */
     Route::get('/posts/{type}', 'HomeController@responsePosts')->name('get.home.posts');
@@ -117,6 +117,12 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
      */
     /******************** @UserSection ****************** */
     Route::group(['prefix' => '/users', 'middleware' => []], function () {
+        /****@SaveSignUpVolunteering */
+        Route::post('/save-signup-volunteering', 'UserController@responsePostSaveSignUpVolunteering')->name('api.post.saveVolunteering');
+        /****@SaveSignUpVolunteering */
+        /****@SaveBookmark */
+        Route::post('/save-post-bookmark', 'HomeController@responsePostSaveBookmark')->name('api.post.saveBookmark');
+        /****@SaveBookmark */
         Route::post('me', 'UserController@me')->name('api.user.post.me');
         /*** @Searches ** */
         Route::get('/searches/{type}', 'UserController@responseSearches')->name('api.user.get.searches');
@@ -131,9 +137,9 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
         /*** @DashboardData Make it can accessible for admin and user * */
         Route::get('/dashboard-data', 'UserController@responseDashboardData')->name('api.user.get.dashboardData');
         /*** @DashboardData Make it can accessible for admin and user * */
-        /***@AutoUserLogin*/
+        /***@AutoUserLogin */
         Route::post('auto-login', 'UserController@responseActionUserAutoLogin')->name('api.users.post.UserAutoLogin');
-        /***@AutoUserLogin*/
+        /***@AutoUserLogin */
         /*** @UserVolunteeringActivity ** */
         Route::get('/volunteering-activity-options', 'UserController@responseVolunteeringActivityOptions')->name('api.user.get.volunteeringActivity');
         Route::post('/volunteering-activity-create', 'UserController@responseVolunteeringActivityCreate')->name('api.user.create.volunteeringActivity');

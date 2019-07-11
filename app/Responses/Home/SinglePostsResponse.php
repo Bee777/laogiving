@@ -12,6 +12,7 @@ use App\Http\Controllers\Helpers\Helpers;
 use App\Models\CauseDetail;
 use App\Models\Media;
 use App\Models\Posts;
+use App\Models\UserSaved;
 use App\Models\VolunteeringActivity;
 use App\Traits\DefaultData;
 use Illuminate\Contracts\Support\Responsable;
@@ -43,9 +44,17 @@ class SinglePostsResponse implements Responsable
         $type = $this->getPostsType($this->type);
         $post = Posts::where('type', $type)->whereIn('status', ['open', 'close'])->where('id', $this->id)->first();
         $post_type_name = ucfirst($this->type);
+        $user = $request->user('api');
         //@for checking volunteering
         if ($type === 'activity') {
-            $post = VolunteeringActivity::find($this->id);
+            $post = VolunteeringActivity::select('volunteering_activities.*', 'users.name as organize_name', 'users.image as organize_image', 'organize_profiles.visibility')
+                ->join('users', 'users.id', 'volunteering_activities.user_id')
+                ->join('user_types', 'user_types.user_id', 'users.id')
+                ->join('organize_profiles', 'organize_profiles.user_id', 'users.id')
+                ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
+                ->where('volunteering_activities.status', 'live')
+                ->where('users.status', 'approved')
+                ->where('volunteering_activities.id', $this->id)->first();
         }
         //@end for checking volunteering
         if (Helpers::isAjax($request)) {
@@ -54,6 +63,26 @@ class SinglePostsResponse implements Responsable
             }
             //@for volunteering
             if ($type === 'activity') {
+                #user saved bookmark
+                if (isset($user)) {
+                    $saved_bookmark = UserSaved::where('post_id', $post->id)->where('user_id', $user->id)
+                        ->where('type', 'activity')->first();
+                    $post->saved_bookmark = isset($saved_bookmark);
+                }
+                #user image
+                $post->organize_image = "/assets/images/user_profiles/{$post->organize_image}";
+                #format date
+                $post->start_date_formatted = Helpers::toFormatDateString($post->start_date, 'D, d M Y');
+                $post->end_date_formatted = Helpers::toFormatDateString($post->end_date, 'D, d M Y');
+                $post->deadline_sign_ups_date_formatted = Helpers::toFormatDateString($post->deadline_sign_ups_date, 'd M Y, H:i A');
+                $post->start_date_formatted_number = Helpers::toFormatDateString($post->start_date, 'd M Y');
+                $post->end_date_formatted_number = Helpers::toFormatDateString($post->end_date, 'd M Y');
+                #check can sign up
+                if (isset($post->deadline_sign_ups_date)) {
+                    $hourDiff = Helpers::diffInHours($post->deadline_sign_ups_date, now());
+                    $post->can_sign_up = $hourDiff > 0;
+                }
+                #causes
                 $post->activity_causes = CauseDetail::list('activity', $post->id)->pluck('cause_id');
                 $activity_causes = CauseDetail::list('activity', $post->id);
                 $activity_causes->map(function ($item) {
@@ -85,6 +114,7 @@ class SinglePostsResponse implements Responsable
                 }
                 $post->days_of_week = $days_of_week;
                 $post->positions = $post->positionsMap();
+
                 #others volunteering
                 $fields = [
                     'users.name as organize',
@@ -113,9 +143,9 @@ class SinglePostsResponse implements Responsable
                     ->where('volunteering_activities.status', 'live')
                     ->where('users.status', 'approved')
                     ->where('volunteering_activities.id', '!=', $this->id);
-                #set data
+                #set others data
                 $data = $data->orderBy('id', 'desc')->limit(6)->inRandomOrder()->get();
-                #map data
+                #map others data
                 $data->map(function ($activity) {
                     $activityMediaVideo = Media::single('activity', 'youtube', $activity->id);
                     $activity->video_media = $activityMediaVideo ?? ['validated' => '', 'url' => ''];
