@@ -18,7 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('image')->nullable()->default('logo.png');
-            $table->enum('status', ['pending', 'approved', 'disabled'])->default('approved');
+            $table->enum('status', ['pending', 'approved', 'disabled'])->default('pending');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

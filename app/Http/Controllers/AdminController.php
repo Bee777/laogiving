@@ -26,8 +26,6 @@ use App\Traits\UserRoleTrait;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
 
 class AdminController extends Controller
 {
@@ -324,7 +322,7 @@ class AdminController extends Controller
             'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
             'description' => 'required|string',
         ]);
-        return new NewsResponse("insert");
+        return new NewsResponse('insert');
     }
 
     public function updateNews(Request $request)
@@ -343,39 +341,6 @@ class AdminController extends Controller
     }
     /**
      * @Responses NewsAction
-     */
-    /**
-     * @Responses ActivityAction
-     */
-
-    public function insertActivity(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'required|max:3000|mimes:jpeg,png,jpg,gif',
-            'activity_date' => 'required',
-            'description' => 'required|string',
-        ]);
-        return new ActivityResponse('insert');
-    }
-
-    public function updateActivity(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|string|max:191',
-            'image' => 'max:3000|mimes:jpeg,png,jpg,gif',
-            'activity_date' => 'required',
-            'description' => 'required|string',
-        ]);
-        return new ActivityResponse('update');
-    }
-
-    public function deleteActivity()
-    {
-        return new ActivityResponse('delete');
-    }
-    /**
-     * @Responses ActivityAction
      */
 
     /**

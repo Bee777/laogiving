@@ -17,7 +17,6 @@ use App\Models\VolunteeringActivity;
 use App\Models\VolunteerSignUpActivity;
 use App\Traits\DefaultData;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Support\Facades\DB;
 
 class SinglePostsResponse implements Responsable
 {
@@ -47,8 +46,6 @@ class SinglePostsResponse implements Responsable
         $post_type_name = ucfirst($this->type);
         $user = $request->user('api');
         $view_by_owner = false;
-        $view_by_admin = false;
-        $already_sign_up = false;
         //@for checking volunteering
         if ($type === 'activity') {
             #check if an organize viewing
@@ -88,7 +85,7 @@ class SinglePostsResponse implements Responsable
             }
             //@for volunteering
 
-            //@other posts
+            //@other posts type
             Posts::IncreaseViews($post->id);
             return $this->postsPaginator($request);
         }
@@ -120,6 +117,11 @@ class SinglePostsResponse implements Responsable
                 $post->conflicts_with_another = false;
             }
         }
+        #check can sign up
+        if (isset($post->deadline_sign_ups_date)) {
+            $hourDiff = Helpers::diffInHours($post->deadline_sign_ups_date, now());
+            $post->can_sign_up = $hourDiff > 0;
+        }
         #user image
         $post->organize_image = "/assets/images/user_profiles/{$post->organize_image}";
         #format date
@@ -128,11 +130,6 @@ class SinglePostsResponse implements Responsable
         $post->deadline_sign_ups_date_formatted = Helpers::toFormatDateString($post->deadline_sign_ups_date, 'd M Y, H:i A');
         $post->start_date_formatted_number = Helpers::toFormatDateString($post->start_date, 'd M Y');
         $post->end_date_formatted_number = Helpers::toFormatDateString($post->end_date, 'd M Y');
-        #check can sign up
-        if (isset($post->deadline_sign_ups_date)) {
-            $hourDiff = Helpers::diffInHours($post->deadline_sign_ups_date, now());
-            $post->can_sign_up = $hourDiff > 0;
-        }
         #causes
         $post->activity_causes = CauseDetail::list('activity', $post->id)->pluck('cause_id');
         $activity_causes = CauseDetail::list('activity', $post->id);

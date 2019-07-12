@@ -16,7 +16,7 @@ use Illuminate\Contracts\Support\Responsable;
 class ContactInfoResponse implements Responsable
 {
 
-    protected $actionType = "get";
+    protected $actionType = 'get';
 
     public function __construct($actionType)
     {

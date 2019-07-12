@@ -609,14 +609,14 @@
                 }
                 //submit form
                 data.loading = true;
+                let activity = this.$utils.clonePure(this.getVolunteering());
                 this.postSignUpVolunteering(data).then(res => {
-                    console.log(res);
                     data.loading = false;
                     if (res.success) {
                         this.hide(this.modalNames.signUpVolunteer, {close: true});
                         this.show(this.modalNames.signUpVolunteerSuccess, {
                             sign_up: res.data.sign_up,
-                            activity: this.getVolunteering()
+                            activity: activity
                         });
                         this.Event.fire('on_sign_up_success', res.data);
                     }

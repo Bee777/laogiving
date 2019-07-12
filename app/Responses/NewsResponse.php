@@ -9,6 +9,7 @@
 namespace App\Responses;
 
 use App\Http\Controllers\Helpers\Helpers;
+use App\Jobs\SendNewPostsCreated;
 use Illuminate\Contracts\Support\Responsable;
 use App\Models\Posts;
 use Image;
@@ -66,6 +67,7 @@ class NewsResponse implements Responsable
         $data = [];
         if (Helpers::isAjax($request)) {
             if ($this->actionType === 'insert') {
+
                 $file = $request->file('image');
                 $fileExt = strtolower($file->getClientOriginalExtension());
                 $imgOriginalName = Helpers::subFileName($file->getClientOriginalName()) . md5('^');
@@ -87,6 +89,8 @@ class NewsResponse implements Responsable
                 $info->user_id = $request->user()->id;
                 $info->save();
                 $data = $info;
+                //@send an email to letterers
+                dispatch(new SendNewPostsCreated($data, true));
             } else if ($this->actionType === 'update') {
                 $info = Posts::find($request->id);
                 $img_filename = null;

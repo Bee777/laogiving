@@ -11,7 +11,7 @@ namespace App\Responses\User;
 
 use App\Http\Controllers\Helpers\Helpers;
 use App\Jobs\SendNewPostsCreated;
-use App\Posts;
+use App\Models\Posts;
 use Illuminate\Contracts\Support\Responsable;
 use Image;
 

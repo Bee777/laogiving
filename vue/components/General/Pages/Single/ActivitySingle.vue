@@ -689,19 +689,31 @@
             canSeeSignUp(position) {
                 let positions = this.getVolunteersStatus();
                 let total_vacancies_left = positions.total_vacancies - positions.confirm;
-                let defaultCond = this.singlePostsData.activities.data.can_sign_up
-                    || this.singlePostsData.activities.data.already_sign_up
+                let defaultCond = this.singlePostsData.activities.data.already_sign_up
                     || this.singlePostsData.activities.data.view_by_owner
-                    || this.singlePostsData.activities.data.view_by_admin
-                    || total_vacancies_left > 0;
+                    || this.singlePostsData.activities.data.view_by_admin;
                 //need to check if position vacancies if full or not
                 if (position !== 'all') {
                     let selected_position = positions.positions.filter(item => {
                         return item.id === position;
                     }).shift() || {};
-                    return defaultCond && selected_position.total_vacancies_left > 0;
+                    //general user
+                    if (defaultCond) {
+                        return true;
+                    }
+                    if (this.singlePostsData.activities.data.can_sign_up) {
+                        return selected_position.total_vacancies_left > 0;
+                    }
+                    return false;
                 }
-                return defaultCond;
+                //general user
+                if (defaultCond) {
+                    return true;
+                }
+                if (this.singlePostsData.activities.data.can_sign_up) {
+                    return total_vacancies_left > 0;
+                }
+                return false;
             },
             signUpVolunteering(position, activity) {
                 if (!this.canSeeSignUp(position)) {
@@ -727,8 +739,7 @@
                     this.toaster('You do not have permission to favourite')
                 }
             },
-            onSignUpSuccess(data) {
-                console.log(data);
+            onSignUpSuccess() {
                 this.fetchSinglePostsData({type: this.type, id: this.singleId});
             },
             getVolunteersStatus() {

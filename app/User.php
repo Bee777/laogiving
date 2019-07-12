@@ -82,11 +82,11 @@ class User extends Authenticatable
      */
     public function destroyInfo(): bool
     {
-        if ($this->image === 'logo.png') {
-            return true;
+        if ($this->image !== 'logo.png') {
+            $deleted = Helpers::removeFile($this->userInfo['imagePath'] . $this->userInfo['preThumb'] . $this->image);
+            return $deleted && Helpers::removeFile($this->userInfo['imagePath'] . $this->image);
         }
-        $deleted = Helpers::removeFile($this->userInfo['imagePath'] . $this->userInfo['preThumb'] . $this->image);
-        return $deleted && Helpers::removeFile($this->userInfo['imagePath'] . $this->image);
+        return true;
     }
 
     /**
@@ -157,6 +157,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserType::class);
     }
+
     //ony web guard
     public function getTypeOfUserAttribute()
     {
