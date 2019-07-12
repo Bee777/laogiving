@@ -76,7 +76,7 @@
                                                                 </div>
                                                                 <div class="value-delta">
                                                                     <div class="value">
-                                                                        <span class="value-container">{{dashboardData.volunteering_hours}} Hours</span>
+                                                                        <span class="value-container">{{$utils.numSpace(dashboardData.volunteering_hours)}} Hours</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -125,7 +125,7 @@
                                                      icon="verified_user"/>
                                         <CounterCard :isLoading="validated().loading_dashboard_data"
                                                      @onCardClick="goTo('volunteering')"
-                                                     title="Opening"
+                                                     title="Opening(Active)"
                                                      :count="{text: 'Activities', value: dashboardData.activities_count.active }"
                                                      icon="description"/>
                                     </div>

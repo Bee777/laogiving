@@ -12,6 +12,7 @@ use App\Models\Media;
 use App\Models\Posts;
 use App\Models\Skill;
 use App\Models\Suitable;
+use App\Models\VolunteeringActivity;
 use App\Responses\User\CausesResponse;
 use App\Responses\IndexAdminResponse;
 use App\Responses\ContactInfoResponse;
@@ -22,10 +23,13 @@ use App\Responses\BannerResponse;
 use App\Models\Site;
 use App\Responses\User\SkillsResponse;
 use App\Responses\User\SuitablesResponse;
+use App\Responses\User\UserVolunteeringActivityManage;
+use App\Responses\User\VolunteerActivityResponse;
 use App\Traits\UserRoleTrait;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+
 
 class AdminController extends Controller
 {
@@ -554,6 +558,8 @@ class AdminController extends Controller
             $data = (new SkillsResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
         } else if ($type === 'suitables') {
             $data = (new SuitablesResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
+        } else if ($type === 'volunteer_activities') {
+            $data = (new VolunteerActivityResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
         }
         if (count($data) > 0) {
             $data->appends(['limit' => $request->exists('limit'), 'q' => $request->get('q')]);
@@ -596,7 +602,55 @@ class AdminController extends Controller
         }
         return response()->json(['success' => false, 'msg' => 'Failed to change the post status!']);
     }
+
     /*** @postManagePostsStatus * */
+
+    public function responseActionChangeVolunteeringStatus(Request $request, $id)
+    {
+        $data = $this->validate($request, [
+            'status' => 'required|max:191',
+        ]);
+        $volunteerActivity = VolunteeringActivity::find($id);
+        if (isset($volunteerActivity)) {
+            if (($volunteerActivity->status === 'closed' || $volunteerActivity->status === 'cancelled')
+                && $data['status'] === 'live') {
+                $volunteerActivity->status = 'live';
+            } else if ($volunteerActivity->status === 'live') {
+                if ($data['status'] === 'close') {
+                    $volunteerActivity->status = 'closed';
+                } else if ($data['status'] === 'cancel') {
+                    $volunteerActivity->status = 'cancelled';
+                }
+            }
+            $volunteerActivity->save();
+            return response()->json(['success' => true, 'msg' => 'The activity status was successfully changed!']);
+        }
+        return response()->json(['success' => false, 'msg' => 'Failed to change the activity status!']);
+    }
+
+    public function responseActionDeleteVolunteering(Request $request, $id)
+    {
+        $volunteering = VolunteeringActivity::find($id);
+        if (isset($volunteering)) {
+            #1-causes
+            CauseDetail::saveActivity($volunteering, []);
+            #1-youtube
+            $activityMediaVideoModel = Media::single('activity', 'youtube', $volunteering->id);
+            if (isset($activityMediaVideoModel)) {
+                $activityMediaVideoModel->delete();
+            }
+            #1-images
+            $mediasModel = Media::list('activity', 'image', $volunteering->id, 0, false);
+            foreach ($mediasModel as $mediaModel) {
+                Helpers::removeFile(Media::$uploadPath . $mediaModel->url);
+                $mediaModel->delete();
+            }
+            $volunteering->delete();
+            return response()->json(['success' => true, 'msg' => 'The activity was successfully deleted!']);
+        }
+        return response()->json(['success' => false, 'msg' => 'Failed to delete the activity!']);
+    }
+
     /**
      * @Responses api only
      */

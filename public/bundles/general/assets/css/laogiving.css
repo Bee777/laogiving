@@ -3844,6 +3844,11 @@ button.button-ctn:hover, button.button-ctn:active {
 .break-word {
     word-break: break-word;
 }
+.pre-wrap {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 
 .truncate {
     display: -webkit-box;
@@ -6412,6 +6417,9 @@ hr.grey {
 
 .ico-upload {
     background-image: url(../svg/ic-upload.svg);
+}
+.ico-facebook-gray {
+    background-image: url(../svg/ic-facebook-gray.svg);
 }
 
 .laogiving .button--icon.button--small, .laogiving .button--icon.select-btn__lbl-btn, .button--icon.button--small, .button--icon.select-btn__lbl-btn, a.button--icon.button--small, a.button--icon.select-btn__lbl-btn, .laogiving a.button--icon.button--small, .laogiving a.button--icon.select-btn__lbl-btn {

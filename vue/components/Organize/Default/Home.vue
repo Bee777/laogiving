@@ -11,7 +11,7 @@
                         <div
                             class="font-dark-grey mt-16 body-txt--small flex flex-ctn--dir-col-tablet-landscape-up-row">
                             <div class="mr-0-tablet-landscape-up-24">
-                                <span class="company-profile__views">6 views </span>
+                                <span class="company-profile__views">{{userProfile.view_count || 0}} views </span>
 
                                 <div class="social-list mt-8">
                                     <a v-if="userProfile.website_in_our_site"
@@ -233,7 +233,7 @@
             <!--EndDashboard-->
             <!--Volunteering-->
             <!---->
-            <Volunteering v-show="tab===1" :visible="tab===1" />
+            <Volunteering v-show="tab===1" :visible="tab===1"/>
             <!--EndVolunteering-->
             <!--Members-->
             <Members v-show="tab===2"/>
@@ -484,7 +484,8 @@
             <!--Saved EndActivities-->
             <!--OrganizeProfile-->
             <div v-show="tab===4">
-                <OrganizeProfile :visible="tab===4" @editProfileClicked="()=> { setRouteProfile('true') }" v-if="!isEditProfile"/>
+                <OrganizeProfile :visible="tab===4" @editProfileClicked="()=> { setRouteProfile('true') }"
+                                 v-if="!isEditProfile"/>
                 <EditOrganizeProfile @cancelEditProfile="()=> {setRouteProfile(''); $utils.scrollToY('html,body', 2); }"
                                      v-if="isEditProfile"/>
             </div>

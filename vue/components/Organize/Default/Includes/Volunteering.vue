@@ -141,9 +141,9 @@
                                         <div class="flag-obj mb-8 mt-8">
                                             <div class="flag-obj__item flag-obj__item--top dark-grey"><i
                                                 class="material-icons">event</i></div>
-                                            <div class="flag-obj__item"><p class="pb-8">{{item.active_opportunity}}
-                                                active
-                                                opportunity</p>
+                                            <div class="flag-obj__item"><p class="pb-8">
+                                                {{getTotalOpportunityVacancies(item.positions, 'active_opportunity')}}
+                                                active opportunity</p>
                                             </div>
                                         </div>
 
@@ -152,8 +152,9 @@
                                                 class="material-icons">group</i></div>
                                             <div class="flag-obj__item">
                                                 <p v-if="item.volunteer_signups_confirm==='yes'"
-                                                   class="font-orange pb-8">{{item.signup_pending_confirmation}} signup
-                                                    pending confirmation</p>
+                                                   class="font-orange pb-8">
+                                                    {{ getTotalOpportunityVacancies(item.positions, 'total_pending') }}
+                                                    signup pending confirmation</p>
                                                 <p v-else
                                                    class="pb-8">This activity does not require confirmation</p></div>
                                         </div>
@@ -363,7 +364,7 @@
                 {text: 'Drafts', value: 'DRAFT', count: 0},
                 {text: 'Cancelled', value: 'CANCELLED', count: 0},
             ],
-            paginate: {per_page: 2, data: [], current_page: 1, last_page: 0, total: 0},
+            paginate: {per_page: 6, data: [], current_page: 1, last_page: 0, total: 0},
             filters: {volunteering: 'LIVE', sort: 'name'},
             isSearch: false,
             isNavigator: false,
@@ -492,6 +493,14 @@
                             console.log(err);
                         })
                 }
+            },
+            getTotalOpportunityVacancies(positions, key) {
+                let total = 0;
+                positions.map(pos => {
+                    total += pos[key] || 0;
+                    return pos;
+                });
+                return total;
             },
             toaster(msg, delay = 3500) {
                 let toaster = this.jq('.toast');

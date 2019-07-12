@@ -21,7 +21,7 @@
         name: "Carousel",
         props: {
             type: {
-              default: 'image'
+                default: 'image'
             },
             hasVideos: {
                 default: false,
@@ -77,9 +77,12 @@
                 //init swiper
             },
             addVideoIframes(swiper) {
-                let Video = swiper.slides[swiper.activeIndex].querySelector('.video-container');
-                if (Video && !Video.querySelector('iframe')) {
-                    this.setVideoYoutube(Video);
+                let Video = swiper.slides[swiper.activeIndex];
+                if (Video) {
+                    Video = swiper.slides[swiper.activeIndex].querySelector('.video-container');
+                    if (Video && !Video.querySelector('iframe')) {
+                        this.setVideoYoutube(Video);
+                    }
                 }
             },
             removeVideoIframes(swiper) {

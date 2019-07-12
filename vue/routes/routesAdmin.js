@@ -5,6 +5,7 @@ import SiteSetting from '../components/Admin/Default/SiteSetting.vue'
 import ContactInfo from '@com/Admin/Posts/ContactInfo.vue'
 import AboutSite from '@com/Admin/Posts/AboutSite.vue'
 import News from '@com/Admin/Posts/News.vue'
+import Volunteering from '@com/Admin/Posts/VolunteerActivity.vue'
 import Causes from '@com/Admin/Activity/Cause.vue'
 import Skill from '@com/Admin/Activity/Skill.vue'
 import Suitable from '@com/Admin/Activity/Suitable.vue'
@@ -56,6 +57,12 @@ export default [{
         path: `${prefix}/about`,
         name: 'about',
         component: AboutSite,
+        meta: metas.authMeta,
+    },
+    {
+        path: `${prefix}/volunteer-activities`,
+        name: 'activities',
+        component: Volunteering,
         meta: metas.authMeta,
     },
     {

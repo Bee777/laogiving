@@ -32,6 +32,7 @@ class UserVolunteeringActivityManage implements Responsable
         $this->options = $options;
         $this->actionType = $actionType;
     }
+
 //    GET
     public function get($request)
     {
@@ -149,6 +150,7 @@ class UserVolunteeringActivityManage implements Responsable
         return $data;
     }
 // END   GET
+
     /**
      * Create an HTTP response that represents the object.
      *
@@ -207,13 +209,17 @@ class UserVolunteeringActivityManage implements Responsable
                     #1-media
                     #1-Cause Details
                     $causes = $request->causes;
-                    CauseDetail::saveActivity($volunteering, $causes);
+                    $causes_count = is_array($causes) ? count($causes) : 0;
+                    if (is_array($causes) && $causes_count <= 4 && $causes_count > 0) {
+                        CauseDetail::saveActivity($volunteering, $causes);
+                    }
                     #1-media video and images
                     #1-youtube
                     $activity_media_video_url = $request->get('media_video_url');
                     Media::saveActivity($volunteering->id, 'youtube', (string)$activity_media_video_url);
                     #1-images
                     $media_images = $request->file('media_images');
+                    $media_images_count = is_array($media_images) ? count($media_images) : 0;
                     #duplicate images and video
                     $duplicate_id = $request->get('duplicate');
                     $duplicateModel = VolunteeringActivity::find($duplicate_id);
@@ -238,12 +244,12 @@ class UserVolunteeringActivityManage implements Responsable
                             $mediaModel->save();
                         }
                         #set step 1
-                    } else {
+                    } else if ($media_images_count <= 5) {
                         Media::saveMultiData($volunteering->id, 'activity', 'image', $media_images);
                     }
                     #step 3 re save
                     $positions = $request->positions;
-                    if (is_array($positions)) {
+                    if (is_array($positions) && count($positions) <= 3) {
                         foreach ($positions as $position) {
                             $position = json_decode($position);
                             $positionModel = new VolunteeringActivityPosition();
@@ -254,21 +260,25 @@ class UserVolunteeringActivityManage implements Responsable
                             $positionModel->volunteering_activity_id = $volunteering->id;
                             $positionModel->save();
                             $skills = $position->position_skills;
-                            foreach ($skills as $skill) {
-                                $existSkill = Skill::find($skill);
-                                if (isset($existSkill)) {
-                                    $skillModel = new VolunteeringActivityPositionSkill();
-                                    $skillModel->skill_id = $skill;
-                                    $positionModel->skills()->save($skillModel);
+                            if (count($skills) <= 10) {
+                                foreach ($skills as $skill) {
+                                    $existSkill = Skill::find($skill);
+                                    if (isset($existSkill)) {
+                                        $skillModel = new VolunteeringActivityPositionSkill();
+                                        $skillModel->skill_id = $skill;
+                                        $positionModel->skills()->save($skillModel);
+                                    }
                                 }
                             }
                             $suitables = $position->position_suitables;
-                            foreach ($suitables as $suitable) {
-                                $existSuitable = Suitable::find($suitable);
-                                if (isset($existSuitable)) {
-                                    $suitableModel = new VolunteeringActivityPositionSuitable();
-                                    $suitableModel->suitable_id = $suitable;
-                                    $positionModel->suitables()->save($suitableModel);
+                            if (count($suitables) <= 10) {
+                                foreach ($suitables as $suitable) {
+                                    $existSuitable = Suitable::find($suitable);
+                                    if (isset($existSuitable)) {
+                                        $suitableModel = new VolunteeringActivityPositionSuitable();
+                                        $suitableModel->suitable_id = $suitable;
+                                        $positionModel->suitables()->save($suitableModel);
+                                    }
                                 }
                             }
                         }
@@ -294,7 +304,10 @@ class UserVolunteeringActivityManage implements Responsable
                             #1-media
                             #1-Cause Details
                             $causes = $request->causes;
-                            CauseDetail::saveActivity($volunteering, $causes);
+                            $causes_count = is_array($causes) ? count($causes) : 0;
+                            if (is_array($causes) && $causes_count <= 4 && $causes_count > 0) {
+                                CauseDetail::saveActivity($volunteering, $causes);
+                            }
                             #1-media video and images
                             #1-youtube
                             $activity_media_video_url = $request->get('media_video_url');
@@ -304,7 +317,10 @@ class UserVolunteeringActivityManage implements Responsable
                             }
                             #1-images
                             $media_images = $request->file('media_images');
-                            Media::saveMultiData($volunteering->id, 'activity', 'image', $media_images);
+                            $media_images_count = is_array($media_images) ? count($media_images) : 0;
+                            if ($media_images_count <= 5) {
+                                Media::saveMultiData($volunteering->id, 'activity', 'image', $media_images);
+                            }
                         }
                         #end step 1
                         #step 2
@@ -342,7 +358,7 @@ class UserVolunteeringActivityManage implements Responsable
                             $volunteering->volunteer_signups_confirm = $request->volunteer_signups_confirm === 'true' ? 'yes' : 'no';
                             #step 3 re save
                             $positions = $request->positions;
-                            if (is_array($positions)) {
+                            if (is_array($positions) && count($positions) <= 3) {
                                 VolunteeringActivity::savePositions($volunteering, $positions);
                             }
                         }

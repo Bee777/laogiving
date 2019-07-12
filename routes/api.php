@@ -97,6 +97,10 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
             Route::post('/suitable/update/{id}', 'AdminController@responseActionUpdateSuitable')->name('api.admin.post.volunteering.suitable.update');
             Route::delete('/suitable/delete/{id}', 'AdminController@responseActionDeleteSuitable')->name('api.admin.delete.volunteering.skill.delete');
             /*** @Suitable ** */
+            /*** @VolunteeringManage  ** */
+            Route::post('/change-status/{id}', 'AdminController@responseActionChangeVolunteeringStatus')->name('api.admin.post.volunteering.change.status');
+            Route::delete('/delete/{id}', 'AdminController@responseActionDeleteVolunteering')->name('api.admin.post.volunteering.delete');
+            /*** @VolunteeringManage ** */
 
         });
         /***@Volunteering ** */
@@ -118,7 +122,7 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
     /******************** @UserSection ****************** */
     Route::group(['prefix' => '/users', 'middleware' => []], function () {
         /****@FetchSignUpVolunteeringSuccess */
-        Route::get('/fetch-signup-volunteering-success/{activity_id}' , 'UserController@responseFetchSignUpVolunteeringSuccess')->name('api.get.fetchVolunteeringSignUpSuccess');
+        Route::get('/fetch-signup-volunteering-success/{activity_id}', 'UserController@responseFetchSignUpVolunteeringSuccess')->name('api.get.fetchVolunteeringSignUpSuccess');
         /****@FetchSignUpVolunteeringSuccess */
         /****@SaveSignUpVolunteering */
         Route::post('/save-signup-volunteering', 'UserController@responsePostSaveSignUpVolunteering')->name('api.post.saveVolunteering');

@@ -59,7 +59,7 @@
                                 MISSION</h6>
                         </template>
                         <template slot="body-content">
-                            <p v-text="userProfile.vision_mission"></p>
+                            <p class="break-word pre-wrap" v-text="userProfile.vision_mission"></p>
                         </template>
                     </AccordionCard>
                     <!--<div class="accordion-card">-->
@@ -82,7 +82,7 @@
                                 <h3 class="h3">About Us</h3>
                             </template>
                             <template slot="body-content">
-                                <div class="body-txt break-word" v-html="userProfile.about"></div>
+                                <div class="body-txt break-word pre-wrap" v-html="userProfile.about"></div>
                             </template>
                         </AccordionCard>
 
@@ -91,7 +91,7 @@
                                 <h3 class="h3">Our Programmes</h3>
                             </template>
                             <template slot="body-content">
-                                <div class="body-txt break-word" v-html="userProfile.our_programmes"></div>
+                                <div class="body-txt break-word pre-wrap" v-html="userProfile.our_programmes"></div>
                             </template>
                         </AccordionCard>
 
@@ -152,6 +152,12 @@
                                     :href="$utils.httpOrHttps(userProfile.website, true)"
                                     class="text-link text-link--dark-grey"
                                     target="_blank">{{userProfile.website}}</a></div>
+                            <div>
+                                <i class="ico ico-facebook-gray mr-8"></i>
+                                <a target="_blank"
+                                   class="text-link text-link--dark-grey"
+                                   :href="`https://www.facebook.com/${userProfile.facebook}`">{{userProfile.facebook}}</a>
+                            </div>
                         </template>
                     </AccordionCard>
 

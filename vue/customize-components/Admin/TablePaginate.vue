@@ -218,9 +218,19 @@
                                     ></slot>
                                 </template>
                                 <template v-else>
-                                    <button @click="copyData(td.data)" class="v-md-button v-md-icon-button">
-                                        <i class="material-icons v-icon">content_copy</i>
-                                    </button>
+                                    <template v-if="hasSlot('action-row-context')">
+                                        <slot
+                                            name="action-row-context"
+                                            :fireEvent="events.rowContentItemsClick"
+                                            :position="{row: i, column: j}"
+                                            :data="{row: tb.rowContent, column: td}"
+                                        ></slot>
+                                    </template>
+                                    <template v-else>
+                                        <button @click="copyData(td.data)" class="v-md-button v-md-icon-button">
+                                            <i class="material-icons v-icon">content_copy</i>
+                                        </button>
+                                    </template>
                                     <div class="table-action-menu">
                                         <button
                                             @click="setMenuContext({el: $event, menus: td.contextMenu, offsetX: 101, from: contextId })"

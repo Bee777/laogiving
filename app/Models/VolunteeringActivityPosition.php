@@ -9,6 +9,9 @@ class VolunteeringActivityPosition extends Model
 {
     public static function saveSkills($positionModel, $skills)
     {
+        if (count($skills) > 10) {
+            return;
+        }
         $skillsModel = $positionModel->skills;
         if (count($skillsModel) > 0) {
             $skillsCount = count($skills);
@@ -51,6 +54,9 @@ class VolunteeringActivityPosition extends Model
 
     public static function saveSuitables($positionModel, $suitables)
     {
+        if (count($suitables) > 10) {
+            return;
+        }
         $suitablesModel = $positionModel->suitables;
         if (count($suitablesModel) > 0) {
             $suitablesCount = count($suitables);

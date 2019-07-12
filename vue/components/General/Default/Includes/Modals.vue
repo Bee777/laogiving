@@ -166,7 +166,7 @@
                                                     <h3 class="h3 font-dark-grey">Points To Note</h3>
                                                 </div>
                                                 <div class="rounded-card__body font-dark-grey">
-                                                    <p v-html="getVolunteering().points_to_note"></p>
+                                                    <p class="pre-wrap break-word" v-html="getVolunteering().points_to_note"></p>
                                                     <div class="mt-16"><span class="bold">Your request will go through an approval process by our Volunteer Manager or Volunteer Leader</span>
                                                     </div>
                                                 </div>

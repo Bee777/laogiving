@@ -56,9 +56,10 @@ class UserProfileManage implements Responsable
 
                 #Cause Details
                 $causes = $request->get('user_causes', []);
-                if (is_array($causes) && count($causes) > 0) {
+                $causes_count = is_array($causes) ? count($causes) : 0;
+                if (is_array($causes) && $causes_count <= 4 && $causes_count > 0) {
                     CauseDetail::saveUser($user, $causes);
-                } else {
+                } else if ($causes_count <= 0) {
                     CauseDetail::saveUser($user, []);
                 }
                 #Cause Details
@@ -123,9 +124,10 @@ class UserProfileManage implements Responsable
                         Media::deleteMultiData($user_media_images_cleared);
                     }
                     #manage slide images data
-                    if (is_array($user_media_images) && count($user_media_images) > 0) {
+                    $user_media_images_count = is_array($user_media_images) ? count($user_media_images) : 0;
+                    if (is_array($user_media_images) && $user_media_images_count > 0 && $user_media_images_count <= 5) {
                         Media::saveMultiData($user->id, 'user', 'image', $user_media_images);
-                    } else {
+                    } else if ($user_media_images_count <= 0) {
                         foreach ($userMediaImagesModel as $imageModel) {
                             Helpers::removeFile(Media::$uploadPath . $imageModel->url);
                             $imageModel->delete();

@@ -111,7 +111,8 @@ class UserController extends Controller
                 ->selectRaw("SUM(CASE WHEN status = 'live' THEN 1 ELSE 0 END) AS `LIVE_COUNT`,
                 SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) AS `CLOSED_COUNT`,
                 SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS `DRAFT_COUNT`,
-                SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS `CANCELLED_COUNT`")->first();
+                SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS `CANCELLED_COUNT`")
+                ->where('user_id', auth()->user()->id)->first();
         }
 
         if (count($data) > 0) {

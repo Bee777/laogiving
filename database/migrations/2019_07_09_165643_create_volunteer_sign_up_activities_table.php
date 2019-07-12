@@ -16,7 +16,7 @@ class CreateVolunteerSignUpActivitiesTable extends Migration
         Schema::create('volunteer_sign_up_activities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->enum('leader', ['yes', 'no'])->default('no');
-            $table->unsignedInteger('hour_per_volunteer')->default(0);
+            $table->float('hour_per_volunteer')->default(0);
             $table->unsignedInteger('slot')->default(0);
             $table->unsignedBigInteger('volunteering_activity_position_id');
             $table->dateTime('sign_up_date');

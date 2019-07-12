@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Posts;
+use App\Models\Posts;
+use App\Models\VolunteeringActivity;
 use Illuminate\Console\Command;
 
 class AutoClosePosts extends Command
@@ -47,7 +48,9 @@ class AutoClosePosts extends Command
     {
         $event_posts = Posts::where('type', 'event')->where('status', 'open')->get();
         $scholarships_posts = Posts::where('type', 'scholarship')->where('status', 'open')->get();
-        if (count($event_posts)) {
+        $volunteer_activities = VolunteeringActivity::where('status', 'live')->get();
+        #events
+        if (count($event_posts) > 0) {
             foreach ($event_posts as $post) {
                 if ($this->IsExpired($post->deadline)) {
                     $post->status = 'close';
@@ -56,13 +59,23 @@ class AutoClosePosts extends Command
                 }
             }
         }
-
-        if (count($scholarships_posts)) {
+        #scholarships posts
+        if (count($scholarships_posts) > 0) {
             foreach ($scholarships_posts as $post) {
                 if ($this->IsExpired($post->deadline)) {
                     $post->status = 'close';
                     $post->save();
                     $this->info('The scholarship is expired now, Post Id = ' . $post->id);
+                }
+            }
+        }
+        # volunteer activities posts
+        if (count($volunteer_activities) > 0) {
+            foreach ($volunteer_activities as $post) {
+                if ($this->IsExpired($post->end_date)) {
+                    $post->status = 'closed';
+                    $post->save();
+                    $this->info('The volunteer activity is expired now, Post Id = ' . $post->id);
                 }
             }
         }

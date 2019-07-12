@@ -36,7 +36,7 @@
                                 <h3 class="h3">About the Activity</h3>
                             </template>
                             <template slot="body-content">
-                                <div class="body-txt break-word"
+                                <div class="body-txt break-word pre-wrap"
                                      v-html="singlePostsData.activities.data.description"></div>
                             </template>
                         </AccordionCard>
@@ -56,7 +56,7 @@
                                         <span class="volunteer-event__pt-desc"
                                               v-if="item.minimum_age > 0 && !$utils.isEmptyVar(item.minimum_age)"> <span
                                             class="bold">Min. age:</span> {{item.minimum_age}} </span>
-                                        <div class=" mt-16 body-txt" v-html="item.key_responsibilities"></div>
+                                        <div class=" mt-16 body-txt break-word pre-wrap" v-html="item.key_responsibilities"></div>
                                         <div class="mt-32"
                                         ><a :disabled="!canSeeSignUp(item.id)"
                                             @click="signUpVolunteering(item.id, singlePostsData.activities.data)"
@@ -104,7 +104,7 @@
                                 <h3 class="h3">Point to note</h3>
                             </template>
                             <template slot="body-content">
-                                <div v-html="singlePostsData.activities.data.points_to_note"></div>
+                                <div class="pre-wrap break-word" v-html="singlePostsData.activities.data.points_to_note"></div>
                             </template>
                         </AccordionCard>
 

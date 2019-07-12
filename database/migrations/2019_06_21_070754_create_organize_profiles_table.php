@@ -34,6 +34,8 @@ class CreateOrganizeProfilesTable extends Migration
             $table->longText('our_programmes')->nullable();
             $table->longText('about')->nullable();
 
+            $table->double('view_count')->default(0);
+
             $table->unsignedBigInteger('user_id');
 
             $table->foreign('user_id')

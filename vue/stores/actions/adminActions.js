@@ -671,5 +671,42 @@ export const createActions = (utils) => {
             });
         },
         /*** @postManageCategory**/
+        /*** @postManageVolunteering**/
+        postDeleteVolunteerActivity(c, data){
+            return new Promise((r, n) => {
+                client.delete(`${apiUrl}/admin/volunteering/delete/${data.id}`, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data)
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err)
+                    })
+            });
+        },
+        postChangeStatusVolunteerActivity(c, data){
+            return new Promise((r, n) => {
+                utils.Validate(data.data, {
+                    'status': ['required', {max: 191}],
+                }).then(v => {
+                    client.post(`${apiUrl}/admin/volunteering/change-status/${data.id}`, data.data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data)
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err)
+                        })
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+
+        },
+        /*** @postManageVolunteering**/
+
     }
 };
