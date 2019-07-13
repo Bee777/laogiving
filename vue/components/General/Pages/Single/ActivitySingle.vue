@@ -164,7 +164,7 @@
                                     <div class="flag-obj__item"><i class="material-icons">query_builder</i></div>
                                     <div v-if="shouldShowSingle(type)"
                                          class="flag-obj__item flag-obj__item--top flag-obj__item--narrow flag-obj__item--text">
-                                        <span class="volunteer-preview-frequency volunteer-preview-start-time">{{ getFrequency()[singlePostsData.activities.data.frequency]}} on {{ getDaysOfWeek(singlePostsData.activities.data.days_of_week)}}</span>
+                                        <span class="volunteer-preview-frequency volunteer-preview-start-time">{{ getFrequency()[singlePostsData.activities.data.frequency]}} on {{ getDaysOfWeek(singlePostsData.activities.data.days_of_week || [])}}</span>
                                         <br><span
                                         class="font-mid-grey body-txt--small frequency_duration_view">{{ singlePostsData.activities.data.duration }} hours per session</span>
                                     </div>

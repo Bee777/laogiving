@@ -16,6 +16,7 @@ use App\Responses\User\UserProfileOptions;
 use App\Models\Site;
 use App\Responses\User\UserSignUpVolunteeringActivity;
 use App\Responses\User\UserVolunteeringActivityManage;
+use App\Responses\User\UserVolunteeringActivityManager;
 use App\Responses\User\UserVolunteeringActivityOptions;
 use App\Rules\VolunteerPosition;
 use App\Traits\UserRoleTrait;
@@ -116,7 +117,7 @@ class UserController extends Controller
         }
 
         if (count($data) > 0) {
-            $data->appends(['limit' => $request->exists('limit'), 'q' => $request->get('q'), 'volunteering' => $volunteering]);
+            $data->appends(['limit' => $request->get('limit'), 'q' => $request->get('q'), 'volunteering' => $volunteering]);
         }
         return response()->json(['data' => $data, 'options' => $options]);
     }
@@ -282,6 +283,30 @@ class UserController extends Controller
         return new UserVolunteeringActivityManage('discard');
     }
 
+    /****@responseVolunteeringActivityManager  api and action  *** */
+    public function responseVolunteeringActivityManager(Request $request, $id)
+    {
+        return new UserVolunteeringActivityManager();
+    }
+
+    public function responseVolunteeringActivityManagerChangeStatus(Request $request, $id)
+    {
+        $data = $this->validate($request, [
+            'status' => 'required|max:191',
+        ]);
+        $volunteerActivity = VolunteeringActivity::find($id);
+        if (isset($volunteerActivity) && $volunteerActivity->status === 'live') {
+            if ($data['status'] === 'close') {
+                $volunteerActivity->status = 'closed';
+            } else if ($data['status'] === 'cancel') {
+                $volunteerActivity->status = 'cancelled';
+            }
+            $volunteerActivity->save();
+            return response()->json(['success' => true, 'msg' => 'The activity status was successfully changed!']);
+        }
+        return response()->json(['success' => false, 'msg' => 'Failed to change the activity status!']);
+    }
+    /****@responseVolunteeringActivityManager  api and action  *** */
     /****@ResponsesUserVolunteeringActivity  api and action  *** */
 
     /****@ResponsesUserProfile  api and action  *** */

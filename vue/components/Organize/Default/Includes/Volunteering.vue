@@ -209,7 +209,7 @@
                                                         {{jitem.active_opportunity}}/{{jitem.vacancies}} </p>
                                                     <!--<p class="m-0">Front of House: 1/10</p>-->
                                                     <button v-if="item.status !== 'draft'"
-                                                            @click="Route({name: 'manage-sign-up-volunteers'})"
+                                                            @click="Route({name: 'manage-sign-up-volunteers', query: {volunteering_id: item.id}})"
                                                             class="button-ctn button--ghost button--small manage-signup-button">
                                                         MANAGE
                                                     </button>

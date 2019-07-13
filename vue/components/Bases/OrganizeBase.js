@@ -7,12 +7,12 @@ export default Vue.extend({
         return {
             ...mapGetters(['validated', 'succeeded', 'getSideBarWidthForTabs']),
             type: 'news',
-            paginate: {per_page: 6, data: [], current_page: 1, last_page: 0, total: 0},
+            paginate: {per_page: 8, data: [], current_page: 1, last_page: 0, total: 0},
             isNavigator: false,
             isSearch: false,
             isTyped: false,
             query: '',
-            filters: { volunteering: {} },
+            filters: {},
             singleId: -1,
         }
     },
@@ -133,8 +133,71 @@ export default Vue.extend({
                 toaster.get(0).innerHTML = '';
                 toaster.css('display', 'none');
             }, delay)
-        }
+        },
         //Toaster
+        getDaysOfWeek(days_of_week) {
+            return days_of_week.map(i => {
+                return i.toLowerCase()
+            }).join(' or ');
+        },
+        getFrequency() {
+            return {
+                '1_DAY_PER_WEEK': 'One day per week',
+                '2_3_DAYS_PER_WEEK': '2-3 days per week',
+                'FORTNIGHTLY': 'Fortnightly',
+                'MONTHLY': 'Monthly',
+                'QUARTERLY': 'Quarterly',
+                'FLEXIBLE': 'Flexible',
+                'FULL_TIME': 'Full Time'
+            }
+        },
+        getTotalVacancies(item) {
+            let total_vacancies = 0;
+            (item.positions || []).map(i => {
+                total_vacancies += parseInt(i.vacancies) || 0;
+            });
+            return total_vacancies;
+        },
+        getVolunteersStatus(data) {
+            let confirm = 0, confirm_checkin = 0;
+            let pending = 0, leader = 0, leader_checkin = 0;
+            let confirm_users = [];
+            let total_vacancies = 0;
+            let positionsData = data && data.positions || [];
+            positionsData.map(pos => {
+                total_vacancies += pos.vacancies;
+                confirm += pos.active_opportunity || 0;
+                pending += pos.total_pending || 0;
+                confirm_users = [...confirm_users, ...pos.confirm_users];
+                (pos.confirm_users || []).map((user) => {
+                    if (user.leader === 'yes') {
+                        leader += 1;
+                    }
+                    if (user.status === 'checkin') {
+                        if (user.leader === 'yes') {
+                            leader_checkin += 1;
+                        } else if (user.leader === 'no') {
+                            confirm_checkin += 1;
+                        }
+                    }
+                })
+            });
+            return {
+                leader: leader,
+                leader_checkin: leader_checkin,
+                confirm_checkin: confirm_checkin,
+                confirm: confirm,
+                pending: pending,
+                confirm_users: confirm_users,
+                total_vacancies: total_vacancies,
+                positions: positionsData,
+            };
+        },
+        getVolunteeringSelectedPosition(pos_id, item) {
+            return (item.positions || []).filter(pos => {
+                return pos.id === pos_id;
+            }).shift() || {};
+        }
     },
     created() {
         this.getItems = this.debounce(this.getItems, 150);

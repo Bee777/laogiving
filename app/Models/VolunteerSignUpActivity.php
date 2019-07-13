@@ -11,6 +11,10 @@ class VolunteerSignUpActivity extends Model
 {
     use UserRoleTrait;
 
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
     public static function isConflictsSignUpActivity($sign_up_activity, $user_id, $status = ['confirm', 'checkin', 'pending'])
     {
         $activities = self::select('volunteer_sign_up_activities.*')

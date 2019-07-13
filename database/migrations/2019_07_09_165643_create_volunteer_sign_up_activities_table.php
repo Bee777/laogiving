@@ -26,7 +26,7 @@ class CreateVolunteerSignUpActivitiesTable extends Migration
             $table->string('volunteer_contact_phone_number')->nullable();
             $table->text('other_response_required')->nullable();
             //status
-            $table->enum('status', ['confirm', 'rejected', 'pending', 'checkin'])->default('pending');
+            $table->enum('status', ['confirm', 'rejected', 'pending', 'checkin', 'withdrawn'])->default('pending');
             $table->unsignedBigInteger('volunteering_activity_id');
             $table->unsignedBigInteger('user_id');
 

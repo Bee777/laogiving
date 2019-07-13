@@ -152,6 +152,8 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
         Route::post('/volunteering-activity-create', 'UserController@responseVolunteeringActivityCreate')->name('api.user.create.volunteeringActivity');
         Route::post('/volunteering-activity-update/{id}', 'UserController@responseVolunteeringActivityUpdate')->name('api.user.update.volunteeringActivity');
         Route::delete('/volunteering-activity-discard/{id}', 'UserController@responseVolunteeringActivityDiscard')->name('api.user.discard.volunteeringActivity');
+        Route::get('/volunteering-activity-manager/{id}', 'UserController@responseVolunteeringActivityManager')->name('api.user.manage.volunteeringActivity');
+        Route::post('/volunteering-activity-manager-change-status/{id}', 'UserController@responseVolunteeringActivityManagerChangeStatus')->name('api.user.manage-change-status.volunteeringActivity');
         /*** @UserVolunteeringActivity ** */
     });
     /******************** @UserSection ****************** */

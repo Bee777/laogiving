@@ -301,6 +301,47 @@ export const createActions = (utils) => {
                     });
             });
         },
+        manageVolunteeringActivityData(c, data) {
+            let filters = '';
+            for (let filter in data.filters) {
+                if (data.filters.hasOwnProperty(filter)) {
+                    filters += `&${filter}=${data.filters[filter] || ''}`;
+                }
+            }
+            let request = `&limit=${data.limit || 6 }&page=${data.page || 1}&q=${data.q || ''}${filters}`;
+            c.commit('setValidated', {errors: {loading_volunteering_searches: true}});
+            return new Promise((r, n) => {
+                client.get(`${apiUrl}/users/volunteering-activity-manager/${data.id || 0}?tab=${data.tab}${request}`, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data);
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err);
+                    });
+            });
+        },
+        manageVolunteeringActivityStatusData(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data.data, {
+                    'status': ['required', {max: 191}],
+                }).then(v => {
+                    client.post(`${apiUrl}/users/volunteering-activity-manager-change-status/${data.id}`, data.data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data)
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err)
+                        })
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        }
         /***@VolunteeringActivityData */
     }
 };
