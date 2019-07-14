@@ -15,6 +15,18 @@ use Image, File;
 
 class Helpers
 {
+    public static function getFirstLastDayOfCurrentMonth()
+    {
+        try {
+            $btwDate[] = new Carbon('first day of this month');
+            $btwDate[] = new Carbon('last day of this month');
+            return $btwDate;
+        } catch (Exception $ex) {
+            Log::info("getFirstLastDayOfMonth: {$ex->getMessage()}");
+        }
+        return [];
+    }
+
     public static function getAge($date)
     {
         return (int)date('Y', time() - strtotime($date)) - 1970;

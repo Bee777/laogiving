@@ -56,8 +56,9 @@ export default new Vuex.Store({
         },
         volunteeringDuplicateData: {},
         dashboardData: {
-            activities_count: 0,
-            latest_members_count: 0,
+            volunteer_opportunities: 0,
+            volunteers: 0,
+            updated_at: '',
         },
         searchesData: {
             members: {},

@@ -33,14 +33,17 @@
                         class="flex-ctn flex-ctn--just-spc-btw flex-ctn--tablet-portrait-up-align-center flex-ctn--dir-col-tablet-portrait-up-row">
                         <div class="dbl-stats">
                             <div class="dbl-stats__item">
-                                <div class="dbl-stats__stats">1</div>
+                                <div class="dbl-stats__stats">{{statuses.total_volunteers}}</div>
                                 <div class="dbl-stats__desc">Volunteer Total</div>
                             </div>
                             <div class="dbl-stats__item">
-                                <div class="dbl-stats__stats">0</div>
+                                <div class="dbl-stats__stats">{{statuses.total_leaders}}</div>
                                 <div class="dbl-stats__desc">Leaders</div>
                             </div>
                         </div>
+                        <form class="activity" @submit.prevent>
+                            <button class="button-ctn mt-16-tablet-portrait-down"> Export All</button>
+                        </form>
                     </div>
                     <hr class="hr">
 
@@ -52,25 +55,25 @@
                                        style="display: inline-block;width: auto;">
                                     <span class="select-btn__lbl-lbl mr-8 font-mid-grey body-txt">Sorted By</span>
                                 </label>
-                                <select name="" class="select-ctn select-btn__select select--small">
+                                <select v-model="sortBy" name="" class="select-ctn select-btn__select select--small">
                                     <option data-order="asc" data-path=".volunteer-username" data-type="text"
-                                            value="name">
+                                            value="nameAsc">
                                         Name Asc
                                     </option>
                                     <option data-order="desc" data-path=".volunteer-username" data-type="text"
-                                            value="name">
+                                            value="nameDesc">
                                         Name Desc
                                     </option>
                                     <option data-order="asc" data-path=".volunteer-activities-no" data-type="number"
-                                            value="number">No. Activities Asc
+                                            value="numberAsc">No. Activities Asc
                                     </option>
                                     <option data-order="desc" data-path=".volunteer-activities-no" data-type="number"
-                                            value="number">No. Activities Desc
+                                            value="numberDesc">No. Activities Desc
                                     </option>
                                 </select></div>
                         </div>
                         <div class="input-ctrl mb-0 w-211 ">
-                            <input type="text" class="input-ctn input--h-36 input--icon"
+                            <input v-model="searchName" type="text" class="input-ctn input--h-36 input--icon"
                                    placeholder="Search volunteer name"> <i
                             class="ico material-icons input-ctrl__icon">search</i></div>
                     </div>
@@ -85,48 +88,53 @@
                         </thead>
 
                         <tbody> <!-- Start of for loop -->
-                        <tr class="volunteer-contact-list-item data-list-item" style="display: table-row;">
+                        <tr v-for="(item, idx) in allSignUpVolunteers"
+                            class="volunteer-contact-list-item data-list-item" style="display: table-row;" :key="idx">
                             <th>
                                 <div class="media-obj">
                                     <div>
-                                        <div class="body-txt volunteer-username name">Bee Organization</div>
-                                        <span class="nric-name">Mr Bee Volunteer</span></div>
+                                        <div class="body-txt volunteer-username name">{{item.user_name}}</div>
+                                        <span class="nric-name">{{$utils.firstUpper(item.salutation)}}</span></div>
                                 </div>
                             </th>
                             <td>
                                 <div class="media-obj">
-                                    <div class="body-txt">030984832</div>
+                                    <div class="body-txt">{{item.phone_number}}</div>
                                 </div>
-                                <span class="block"><a href="javascript: void(0);" class="text-link text-link--blue">beeostin@gmail.com</a></span>
+                                <span class="block"><a href="javascript: void(0);" class="text-link text-link--blue">{{item.public_email}}</a></span>
                             </td>
                             <td>
                                 <div><span class="block p-top12"><strong
-                                    class="number-of-activities volunteer-activities-no">1</strong> activity</span>
+                                    class="number-of-activities volunteer-activities-no">{{item.activities_count}}</strong> activity</span>
                                 </div>
                             </td>
                         </tr>
                         </tbody>
 
                     </table>
+                    <div><p class="text-align-left-on-mobile mt-16">{{paginate.current_page}}-{{paginate.last_page}} OF
+                        {{paginate.total}} VOLUNTEER</p>
 
-                    <div><p class="text-align-left-on-mobile mt-16">1-1 OF 1 VOLUNTEER</p>
                         <nav
-                            class="flex-ctn flex-ctn--dir-col-rev-tablet-portrait-up-row mt-16-tablet-portrait-up-40 relative pagination-nav-bar">
+                            class="flex-ctn flex-ctn--dir-col-rev-tablet-portrait-up-row mt-16-tablet-portrait-up-40 relative">
                             <ul class="pagi mt-16-tablet-portrait-up-0">
-                                <li class="pagi__item" data-role="page-prev">
-                                    <a href="#1"><span
-                                    class="ico ico-page-prev"></span></a>
+                                <li class="pagi__item"><a class="cursor" :disabled="paginate.current_page===1"
+                                                          @click="prevPage(paginate.current_page - 1)"><span
+                                    class="ico ico-page-prev"></span></a></li>
+                                <li :key="idx" v-for="(p, idx) in paginate.last_page"
+                                    :class="[{'is-active': p===paginate.current_page}]"
+                                    class="pagi__item"><a href=""
+                                                          @click.prevent="paginateNavigator({pageNo: p})">{{p}}</a>
                                 </li>
-                                <li class="pagi__item is-active" data-role="page-num">
-                                    <a href="#">1</a>
-                                </li>
-                                <li class="pagi__item" data-role="page-next"><a href="#">
-                                    <span
-                                    class="ico ico-page-next"></span></a>
-                                </li>
+                                <li class="pagi__item"><a class="cursor"
+                                                          :disabled="paginate.current_page===paginate.last_page"
+                                                          @click="nextPage(paginate.current_page + 1)"><span
+                                    class="ico ico-page-next"></span></a></li>
                             </ul>
                         </nav>
+
                     </div>
+
                 </div>
             </div>
 
@@ -142,14 +150,105 @@
     import {mapActions} from 'vuex'
 
     export default Base.extend({
-        name: "Home",
-        data: () => ({}),
+        name: "AllVolunteers",
+        data: () => ({
+            sortBy: 'nameAsc',
+            searchName: '',
+            statuses: {
+                total_volunteers: 0,
+                total_leaders: 0,
+            }
+        }),
+        computed: {
+            allSignUpVolunteers() {
+                let data = this.paginate.data || [];
+                let sort = this.sortBy;
+                if (sort === 'nameAsc') {
+                    data.sort((a, b) => {
+                        return b.user_name.localeCompare(a.user_name);
+                    });
+                } else if (sort === 'nameDesc') {
+                    data.sort((a, b) => {
+                        return a.user_name.localeCompare(b.user_name);
+                    });
+
+                } else if (sort === 'numberAsc') {
+                    data.sort((a, b) => {
+                        return a.id - b.id;
+                    });
+                } else if (sort === 'numberDesc') {
+                    data.sort((a, b) => {
+                        return b.id - a.id;
+                    });
+                }
+
+                data = data.filter(filter => {
+                    if (this.searchName !== '') {
+                        return filter.user_name.indexOf(this.searchName) !== -1 ||
+                            (filter.public_email|| '').indexOf(this.searchName) !== -1;
+                    }
+                    return filter;
+                });
+                return data;
+            }
+        },
         watch: {},
-        methods: {},
+        methods: {
+            ...mapActions(['fetchAllVolunteers']),
+            getAllVolunteers(t = '') {
+                if (!this.isTyped && t === 'click') {//check if user never type in search box but got click search button
+                    return;
+                }
+                if (!this.isNavigator) {
+                    this.paginate.current_page = 1;
+                }
+                this.isSearch = false;//set user searching to false
+                //reset scroll bar position
+                if (t !== 'no-loading') {
+                    this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
+                } else {
+                    this.$utils.animateScrollToY('html,body', 10);
+                }
+                this.fetchAllVolunteers({
+                    filters: this.filters,
+                    q: this.query,
+                    limit: this.paginate.per_page, page: this.paginate.current_page
+                }).then(res => {
+                    this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                    if (!res.success) {
+                        this.Route({name: 'home', query: {'active_page': 'our-volunteering'}});
+                    } else {
+                        this.paginate = res.data;
+                        this.statuses = res.statuses;
+                    }
+                }).catch(err => {
+                    this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                });
+            },
+            paginateNavigator(p) {
+                this.isNavigator = true; //set to true to tell the request this is navigator action
+                this.paginate.current_page = p.pageNo; //set current page next or prev page for pagination
+                this.getAllVolunteers();
+            },
+            prevPage(pageNo) {
+                if (this.paginate.current_page === 1) return;
+                if (pageNo < 1) pageNo = 1;
+                if (this.paginate.current_page === pageNo) return;
+                this.paginateNavigator({pageNo, dr: 'prev'});
+            },
+            nextPage(pageNo) {
+                if (this.paginate.current_page === this.paginate.last_page) return;
+                if (pageNo > this.paginate.lastPage) pageNo = this.paginate.lastPage;
+                if (this.paginate.current_page === pageNo) return;
+                this.paginateNavigator({pageNo, dr: 'next'});
+            },
+        },
         mounted() {
         },
         created() {
             this.setPageTitle(`All Volunteers`);
+            this.getAllVolunteers = this.debounce(this.getAllVolunteers, 150);
+            this.getAllVolunteers();
         }
     });
 </script>

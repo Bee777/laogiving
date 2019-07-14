@@ -124,7 +124,7 @@
             <div class="cWidth-1200 mb-40 plr-16neg" v-show="tab===0">
                 <div
                     class="flex flex-ctn--just-spc-btw flex-ctn--align-center flex-ctn--dir-col-custom-1024-up-row mt-40">
-                    <span class="body-txt body-txt--small font-mid-grey body-txt--italic mb-16-custom-1024-up-0">Updated as of 9/5/2019</span>
+                    <span class="body-txt body-txt--small font-mid-grey body-txt--italic mb-16-custom-1024-up-0">Updated as of {{dashboardData.updated_at}}</span>
                     <div class="month-range">
                         <span class="month-range__title">Showing data for</span>
                         <select v-model="volunteering.filter" class="select-ctn select--small"
@@ -138,7 +138,8 @@
                         <div class="month-range__body " :class="[{'is-hidden': volunteering.filter !== 'customMonth'}]">
                             <!-- is-hidden-->
                             <div class="month-range__item">
-                                <select class="month-range__month select-ctn select--small select--font-small">
+                                <select v-model="volunteering.from.monthFilter"
+                                        class="month-range__month select-ctn select--small select--font-small">
                                     <option value="0">Jan</option>
                                     <option value="1">Feb</option>
                                     <option value="2">Mar</option>
@@ -152,17 +153,20 @@
                                     <option value="10">Nov</option>
                                     <option value="11">Dec</option>
                                 </select>
-                                <select class="month-range__year select-ctn select--small select--font-small">
-                                    <option value="2019">2019</option>
-                                    <option value="2018">2018</option>
-                                    <option value="2017">2017</option>
-                                    <option value="2016">2016</option>
-                                    <option value="2015">2015</option>
+                                <select v-model="volunteering.from.yearFilter"
+                                        class="month-range__year select-ctn select--small select--font-small">
+                                    <option :key="idx" :value="i" v-for="(i, idx) in buildYears()">{{i}}</option>
+                                    <!--<option value="2019">2019</option>-->
+                                    <!--<option value="2018">2018</option>-->
+                                    <!--<option value="2017">2017</option>-->
+                                    <!--<option value="2016">2016</option>-->
+                                    <!--<option value="2015">2015</option>-->
                                 </select>
                             </div>
                             <div class="month-range__to">to</div>
                             <div class="month-range__item">
-                                <select class="month-range__month select-ctn select--small select--font-small">
+                                <select v-model="volunteering.to.monthFilter"
+                                        class="month-range__month select-ctn select--small select--font-small">
                                     <option value="0">Jan</option>
                                     <option value="1">Feb</option>
                                     <option value="2">Mar</option>
@@ -176,16 +180,15 @@
                                     <option value="10">Nov</option>
                                     <option value="11">Dec</option>
                                 </select>
-                                <select class="month-range__year select-ctn select--small select--font-small">
-                                    <option value="2019">2019</option>
-                                    <option value="2018">2018</option>
-                                    <option value="2017">2017</option>
-                                    <option value="2016">2016</option>
-                                    <option value="2015">2015</option>
+                                <select v-model="volunteering.to.yearFilter"
+                                        class="month-range__year select-ctn select--small select--font-small">
+                                    <option :key="idx" :value="i" v-for="(i, idx) in buildYears()">{{i}}</option>
                                 </select>
                             </div>
                             <div class="month-range__btns">
-                                <button class="button-ctn mr-16">UPDATE</button>
+                                <button @click="fetchDashboardData({filters: volunteering})" class="button-ctn mr-16">
+                                    {{validated().loading_dashboard_data ? 'UPDATING': 'UPDATE'}}
+                                </button>
                                 <button @click="volunteering.filter='this1Month'"
                                         class="button-ctn button--ghost cancel">CANCEL
                                 </button>
@@ -193,11 +196,15 @@
                         </div>
                     </div>
                 </div>
+                <div v-if="validated().custom_date_range" class="error-msg pt-8 month-range">Oops! You need to select a
+                    valid custom date range.
+                </div>
                 <div class="data-ctn mb-40 mlr-16neg">
                     <div class="data-ctn__card">
                         <div class="data-ctn__title">Volunteer Opportunities</div>
                         <div class="data-ctn__details">
-                            <div class="data-ctn__amount uf_volunteerHours">5</div>
+                            <div class="data-ctn__amount uf_volunteerHours">{{dashboardData.volunteer_opportunities}}
+                            </div>
                             <div class="dark-grey">volunteer opportunities</div>
                             <div class="mt-16 mb-16">Find out how many opportunities have been created and how many
                                 hours will be raised.
@@ -214,7 +221,7 @@
                     <div class="data-ctn__card">
                         <div class="data-ctn__title">My Volunteers</div>
                         <div class="data-ctn__details">
-                            <div class="data-ctn__amount uf_volunteerHours">1</div>
+                            <div class="data-ctn__amount uf_volunteerHours">{{dashboardData.volunteers}}</div>
                             <div class="dark-grey">volunteer(s)</div>
                             <div class="mt-16 mb-16">Find out how active your individual volunteers are.</div>
                             <i class="data-ctn__card-icon ico ico--large ico-volunteering-db"></i>
@@ -236,7 +243,7 @@
             <Volunteering v-show="tab===1" :visible="tab===1"/>
             <!--EndVolunteering-->
             <!--Members-->
-            <Members v-show="tab===2"/>
+            <Members v-show="tab===2" :visible="tab===2"/>
             <!--EndMembers-->
             <!--Saved Activities-->
             <div v-show="tab===3" class="container">
@@ -511,7 +518,7 @@
     import EditOrganizeProfile from '@com/Organize/Default/Includes/EditOrganizeProfile.vue'
     import Account from '@com/Organize/Default/Includes/Account.vue'
 
-    import {mapActions} from 'vuex'
+    import {mapActions, mapState} from 'vuex'
 
     export default Base.extend({
         name: "Home",
@@ -525,17 +532,33 @@
         data: () => ({
             tab: 0,
             tabs: {dashboard: 0, 'our-volunteering': 1, members: 2, saved: 3, profile: 4, account: 5},
-            volunteering: {filter: 'this1Month'},
+            minYear: 2015,
+            volunteering: {
+                filter: 'this1Month',
+                from: {monthFilter: 0, yearFilter: new Date().getFullYear()},
+                to: {monthFilter: 0, yearFilter: new Date().getFullYear()},
+            },
             toggleRadio: false,
             isEditProfile: false,
         }),
+        computed: {
+            ...mapState(['dashboardData']),
+        },
         watch: {
             '$route.query': function (n, o) {
                 this.setTab();
+            },
+            'volunteering.filter': {
+                deep: true,
+                handler(n) {
+                    if (n !== 'customMonth') {
+                        this.fetchDashboardData({filters: this.volunteering});
+                    }
+                }
             }
         },
         methods: {
-            ...mapActions(['copyToClipboard', 'postManageVisibilityUserProfile']),
+            ...mapActions(['copyToClipboard', 'postManageVisibilityUserProfile', 'fetchDashboardData']),
             setTab() {
                 let tab = this.$route.query.active_page;
                 if (tab && typeof this.tabs[tab] !== "undefined") {
@@ -565,12 +588,20 @@
                     .catch(err => {
                         // console.log(err);
                     });
+            },
+            buildYears() {
+                let data = [];
+                for (let i = this.minYear; i <= new Date().getFullYear(); i++) {
+                    data.push(i)
+                }
+                return data;
             }
         },
         mounted() {
         },
         created() {
             this.setPageTitle(`Dashboard`);
+            this.fetchDashboardData({filters: this.volunteering});
             this.setTab();
         }
     });

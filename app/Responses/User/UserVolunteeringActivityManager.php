@@ -56,7 +56,8 @@ class UserVolunteeringActivityManager implements Responsable
                     $data['volunteering_sign_ups']->appends(['limit' => $paginateLimit, 'q' => $text]);
 
                 } else {
-                    $data['volunteering_attendance'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'volunteer_sign_up_activities.hour_per_volunteer as hours', DB::raw('(select count(null)) as checked'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) {
+                    $data['volunteering_attendance'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'volunteer_sign_up_activities.hour_per_volunteer as hours', DB::raw('(select count(null)) as checked, (select count(null)) as old_checked'),
+                        DB::raw('(select count(null)) as validated'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) {
                         $query->select('users.*', 'volunteer_profiles.gender');
                         $query->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
                     }])->whereIn('status', ['confirm', 'checkin'])->orderBy('id', 'desc');

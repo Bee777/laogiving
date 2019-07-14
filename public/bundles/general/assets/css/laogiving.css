@@ -3716,6 +3716,7 @@ button.button-ctn:hover, button.button-ctn:active {
     -ms-flex-order: 1;
     order: 1;
 }
+
 .gallery--flex-fill-empty:before, .gallery--flex-fill-empty:after {
     display: block;
     content: '';
@@ -3844,6 +3845,7 @@ button.button-ctn:hover, button.button-ctn:active {
 .break-word {
     word-break: break-word;
 }
+
 .pre-wrap {
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -6418,6 +6420,7 @@ hr.grey {
 .ico-upload {
     background-image: url(../svg/ic-upload.svg);
 }
+
 .ico-facebook-gray {
     background-image: url(../svg/ic-facebook-gray.svg);
 }
@@ -7492,6 +7495,7 @@ a.sqr-panel-item:focus {
         -ms-flex-preferred-size: 33.3333%;
         flex-basis: 33.3333%;
     }
+
     .card__description, .activity .card__description {
         display: inline-block;
     }
@@ -9339,6 +9343,10 @@ a.sqr-panel-item:focus {
         border-radius: 0;
         max-width: none;
         box-shadow: none;
+    }
+
+    .laogiving .mt-16-tablet-portrait-down {
+        margin-top: 1rem;
     }
 }
 

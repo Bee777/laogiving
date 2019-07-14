@@ -11,10 +11,13 @@ namespace App\Responses\Admin;
 use App\Http\Controllers\Helpers\Helpers;
 use App\Models\Posts;
 use App\Models\VolunteeringActivity;
+use App\Models\VolunteerSignUpActivity;
 use App\Traits\UserRoleTrait;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DashboardResponse implements Responsable
 {
@@ -30,9 +33,94 @@ class DashboardResponse implements Responsable
     {
         if (Helpers::isAjax($request)) {
             $data = [];
-            $data['latest_members_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->whereIn('user_types.type_user_id', User::getNonAdminUserIds())->count();
-            $data['news_count'] = $this->getPostsCount('news')['all'];
             $user = $request->user('api');
+            #organize
+            if ($user->isUser('organize')) {
+                $selectMonths = $request->get('selectMonths');
+                $fromMonths = $request->get('fromMonths');
+                $fromYears = $request->get('fromYears');
+                $toMonths = $request->get('toMonths');
+                $toYears = $request->get('toYears');
+                $format = 'Y-m-d';
+                $minYear = 2015;
+                $btwDate = [];
+                switch ($selectMonths) {
+                    case 'this1Month':
+                        {
+                            $btwDate = Helpers::getFirstLastDayOfCurrentMonth();
+                            $btwDate[0] = $btwDate[0]->format($format);
+                            $btwDate[1] = $btwDate[1]->format($format);
+                            break;
+                        }
+                    case 'past1Month':
+                        {
+                            $btwDate = Helpers::getFirstLastDayOfCurrentMonth();
+                            $btwDate[0] = $btwDate[0]->subMonth()->format($format);
+                            $btwDate[1] = $btwDate[1]->subMonth()->format($format);
+                            break;
+                        }
+                    case 'past3Month':
+                        {
+                            $btwDate = Helpers::getFirstLastDayOfCurrentMonth();
+                            $btwDate[0] = $btwDate[0]->subMonths(3)->format($format);
+                            $btwDate[1] = $btwDate[1]->subMonths(3)->format($format);
+                            break;
+                        }
+                    case 'past6Month':
+                        {
+                            $btwDate = Helpers::getFirstLastDayOfCurrentMonth();
+                            $btwDate[0] = $btwDate[0]->subMonths(6)->format($format);
+                            $btwDate[1] = $btwDate[1]->subMonth(6)->format($format);
+                            break;
+                        }
+                    default:
+                        {
+                            if ($fromYears < $minYear) {
+                                break;
+                            }
+                            if (!($fromYears <= $toYears)) {
+                                break;
+                            }
+                            if ($fromYears === $toYears && !($fromMonths <= $toMonths)) {
+                                break;
+                            }
+                            try {
+                                $dateFormMonth = \DateTime::createFromFormat('!m', $fromMonths + 1)->format('F');
+                                $dateToMonth = \DateTime::createFromFormat('!m', $toMonths + 1)->format('F');
+                                $btwDate[] = new Carbon("first day of $dateFormMonth $fromYears");
+                                $btwDate[] = new Carbon("last day of $dateToMonth $toYears");
+                                $btwDate[0] = $btwDate[0]->format($format);
+                                $btwDate[1] = $btwDate[1]->format($format);
+                            } catch (\Exception $ex) {
+                                Log::info("toFormatDateString: {$ex->getMessage()}");
+                            }
+                            break;
+                        }
+                }
+                #volunteers
+                $all_volunteers = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                    ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                    ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
+                    ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                    ->where('volunteering_activities.user_id', $user->id)
+                    ->groupBy('users.id');
+                if (count($btwDate) > 1) {
+                    $all_volunteers = $all_volunteers->whereBetween('volunteer_sign_up_activities.created_at', $btwDate)->get();
+                } else {
+                    $all_volunteers = $all_volunteers->get();
+                }
+                #volunteering
+                $all_volunteer_opportunities = VolunteeringActivity::where('user_id', auth()->user()->id);
+                if (count($btwDate) > 1) {
+                    $all_volunteer_opportunities = $all_volunteer_opportunities->whereBetween('created_at', $btwDate)->get();
+                } else {
+                    $all_volunteer_opportunities = $all_volunteer_opportunities->get();
+                }
+                $data['volunteer_opportunities'] = count($all_volunteer_opportunities);
+                $data['volunteers'] = count($all_volunteers);
+                $data['updated_at'] = now()->format('d/m/Y');
+            }
+            #admin section
             if ($user->isUser('admin') || $user->isUser('super_admin')) {
                 $data['activities_count'] = $this->getVolunteeringCount();
                 $data['volunteering_hours'] = $this->getVolunteeringHours();

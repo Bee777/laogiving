@@ -113,6 +113,7 @@
                             <p>No results found</p>
                         </div>
                         <!--Not fount-->
+                        <div id="volunteering-list-container" style="position: relative; height: auto; visibility: hidden"></div>
                         <!--Items-->
                         <div v-show="!validated().loading_searches"
                              v-for="(item, idx) in filterShortActivity" :key="idx"
@@ -393,7 +394,7 @@
             }
         },
         computed: {
-            ...mapState(['authUserInfo', 'searchesData']),
+            ...mapState(['isMobile', 'authUserInfo', 'searchesData']),
             filterShortActivity() {
                 let data = this.searchesData.volunteering.data || [];
                 let sort = this.filters.sort;
@@ -430,7 +431,10 @@
                 }
                 this.isSearch = false;//set user searching to false
                 //reset scroll bar position
-                this.$utils.animateScrollToY('html,body', 10);
+                this.$nextTick(() => {
+                    let posY = this.$utils.findPos(this.jq('#volunteering-list-container').get(0)).y;
+                    this.$utils.animateScrollToY('html,body', posY - 300);
+                });
                 this.fetchSearches({
                     filters: this.filters,
                     type: this.type, q: this.query,

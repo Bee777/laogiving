@@ -159,11 +159,13 @@ export default Vue.extend({
             return total_vacancies;
         },
         getVolunteersStatus(data) {
+
             let confirm = 0, confirm_checkin = 0;
             let pending = 0, leader = 0, leader_checkin = 0;
             let confirm_users = [];
             let total_vacancies = 0;
             let positionsData = data && data.positions || [];
+
             positionsData.map(pos => {
                 total_vacancies += pos.vacancies;
                 confirm += pos.active_opportunity || 0;
@@ -176,9 +178,8 @@ export default Vue.extend({
                     if (user.status === 'checkin') {
                         if (user.leader === 'yes') {
                             leader_checkin += 1;
-                        } else if (user.leader === 'no') {
-                            confirm_checkin += 1;
                         }
+                        confirm_checkin += 1;
                     }
                 })
             });

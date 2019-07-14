@@ -155,6 +155,12 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
         Route::get('/volunteering-activity-manager/{id}', 'UserController@responseVolunteeringActivityManager')->name('api.user.manage.volunteeringActivity');
         Route::post('/volunteering-activity-manager-change-status/{id}', 'UserController@responseVolunteeringActivityManagerChangeStatus')->name('api.user.manage-change-status.volunteeringActivity');
         /*** @UserVolunteeringActivity ** */
+        /*** @UserVolunteeringSigupManage ** */
+        Route::post('/volunteering-signup/change-status/{id}', 'UserController@responseVolunteeringSignUpChangeStatus')->name('api.user.manage-change-status.volunteeringSignUp');
+        Route::post('/volunteering-signup/all-change-status', 'UserController@responseAllVolunteeringSignUpChangeStatus')->name('api.user.manage-all-change-status.volunteeringSignUp');
+        Route::post('/volunteering-signup/all-change-attendance', 'UserController@responseAllVolunteeringSignUpChangeAttendance')->name('api.user.manage-all-change-attendance.volunteeringSignUp');
+        Route::get('/volunteering-fetch-all-volunteers', 'UserController@responseFetchAllSignUpVolunteers')->name('api.user.fetch-all-volunteers.volunteeringSignUp');
+        /*** @UserVolunteeringSigupManage ** */
     });
     /******************** @UserSection ****************** */
     /** @Logout */

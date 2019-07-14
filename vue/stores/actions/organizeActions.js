@@ -200,8 +200,27 @@ export const createActions = (utils) => {
         /***  @UsersSettings Profile **/
         /*** @DashboardData **/
         fetchDashboardData(c, d) {
+            let minYear = 2015;
             c.commit('setValidated', {errors: {loading_dashboard_data: true}});
-            client.get(`${apiUrl}/users/dashboard-data`, ajaxToken(c))
+            let filters = d.filters, request = '';
+            if (filters.filter === 'customMonth') {
+                request = `?fromMonths=${filters.from.monthFilter}&fromYears=${filters.from.yearFilter}&toMonths=${filters.to.monthFilter}&toYears=${filters.to.yearFilter}`
+                if (filters.from.yearFilter < minYear) {
+                    c.commit('setValidated', {errors: {custom_date_range: true}});
+                    return;
+                }
+                if (filters.from.yearFilter > filters.to.yearFilter) {
+                    c.commit('setValidated', {errors: {custom_date_range: true}});
+                    return;
+                }
+                if (filters.from.yearFilter === filters.to.yearFilter && (filters.from.monthFilter > filters.to.monthFilter)) {
+                    c.commit('setValidated', {errors: {custom_date_range: true}});
+                    return;
+                }
+            } else {
+                request = `?selectMonths=${filters.filter}`
+            }
+            client.get(`${apiUrl}/users/dashboard-data${request}`, ajaxToken(c))
                 .then(res => {
                     c.commit('setClearMsg');
                     c.commit('setDashboardData', res.data.data);
@@ -308,7 +327,7 @@ export const createActions = (utils) => {
                     filters += `&${filter}=${data.filters[filter] || ''}`;
                 }
             }
-            let request = `&limit=${data.limit || 6 }&page=${data.page || 1}&q=${data.q || ''}${filters}`;
+            let request = `&limit=${data.limit || 6}&page=${data.page || 1}&q=${data.q || ''}${filters}`;
             c.commit('setValidated', {errors: {loading_volunteering_searches: true}});
             return new Promise((r, n) => {
                 client.get(`${apiUrl}/users/volunteering-activity-manager/${data.id || 0}?tab=${data.tab}${request}`, ajaxToken(c))
@@ -341,7 +360,76 @@ export const createActions = (utils) => {
                     n(e);
                 });
             });
-        }
+        },
         /***@VolunteeringActivityData */
+        /***@VolunteeringSignUpActivityData */
+        manageVolunteeringSignUpStatus(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data.data, {
+                    'status': ['required', {max: 191}],
+                }).then(v => {
+                    client.post(`${apiUrl}/users/volunteering-signup/change-status/${data.id}`, data.data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data)
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err)
+                        })
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
+        manageAllVolunteeringSignUpStatus(c, data) {
+            return new Promise((r, n) => {
+                client.post(`${apiUrl}/users/volunteering-signup/all-change-status`, {data: data.data}, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data)
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err)
+                    })
+            });
+        },
+        manageAllVolunteeringSignUpAttendance(c, data) {
+            return new Promise((r, n) => {
+                client.post(`${apiUrl}/users/volunteering-signup/all-change-attendance`, {data: data.data}, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data)
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err)
+                    })
+            });
+        },
+        fetchAllVolunteers(c, data) {
+            return new Promise((r, n) => {
+                let filters = '';
+                for (let filter in data.filters) {
+                    if (data.filters.hasOwnProperty(filter)) {
+                        filters += `&${filter}=${data.filters[filter] || ''}`;
+                    }
+                }
+                c.commit('setValidated', {errors: {loading_all_volunteers: true}});
+                let request = `&limit=${data.limit || 6}&page=${data.page || 1}&q=${data.q || ''}${filters}`;
+                client.get(`${apiUrl}/users/volunteering-fetch-all-volunteers?${request}`, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data);
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err);
+                    });
+            });
+        }
+        /***@VolunteeringSignUpActivityData */
     }
 };

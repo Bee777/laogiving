@@ -18,6 +18,7 @@ use App\Responses\User\UserSignUpVolunteeringActivity;
 use App\Responses\User\UserVolunteeringActivityManage;
 use App\Responses\User\UserVolunteeringActivityManager;
 use App\Responses\User\UserVolunteeringActivityOptions;
+use App\Responses\User\UserVolunteeringSignUpManage;
 use App\Rules\VolunteerPosition;
 use App\Traits\UserRoleTrait;
 use Illuminate\Http\Request;
@@ -282,7 +283,7 @@ class UserController extends Controller
     {
         return new UserVolunteeringActivityManage('discard');
     }
-
+    /****@ResponsesUserVolunteeringActivity  api and action  *** */
     /****@responseVolunteeringActivityManager  api and action  *** */
     public function responseVolunteeringActivityManager(Request $request, $id)
     {
@@ -294,7 +295,7 @@ class UserController extends Controller
         $data = $this->validate($request, [
             'status' => 'required|max:191',
         ]);
-        $volunteerActivity = VolunteeringActivity::find($id);
+        $volunteerActivity = VolunteeringActivity::where('user_id', $request->user()->id)->where('id', $id)->first();
         if (isset($volunteerActivity) && $volunteerActivity->status === 'live') {
             if ($data['status'] === 'close') {
                 $volunteerActivity->status = 'closed';
@@ -307,7 +308,28 @@ class UserController extends Controller
         return response()->json(['success' => false, 'msg' => 'Failed to change the activity status!']);
     }
     /****@responseVolunteeringActivityManager  api and action  *** */
-    /****@ResponsesUserVolunteeringActivity  api and action  *** */
+
+    /****@responseVolunteeringSignUpManage  api and action  *** */
+    public function responseVolunteeringSignUpChangeStatus(Request $request, $id)
+    {
+        return new UserVolunteeringSignUpManage('change-status', ['single' => true]);
+    }
+
+    public function responseAllVolunteeringSignUpChangeStatus(Request $request)
+    {
+        return new UserVolunteeringSignUpManage('change-status', ['single' => false]);
+    }
+
+    public function responseAllVolunteeringSignUpChangeAttendance(Request $request)
+    {
+        return new UserVolunteeringSignUpManage('change-attendance');
+    }
+
+    public function responseFetchAllSignUpVolunteers(Request $request)
+    {
+        return new UserVolunteeringSignUpManage('fetch-all-volunteers');
+    }
+    /****@responseVolunteeringSignUpManage  api and action  *** */
 
     /****@ResponsesUserProfile  api and action  *** */
     public function responseProfileOptions(Request $request): UserProfileOptions

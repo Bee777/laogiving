@@ -109,6 +109,13 @@
                                 <div class="dbl-stats__desc"> total<br>openings</div>
                             </div>
                         </div>
+
+                        <form class="activity" @submit.prevent>
+                            <button class="button-ctn mt-16-tablet-portrait-down export-volunteer-button">EXPORT ALL
+                                VOLUNTEERS
+                            </button>
+                        </form>
+
                     </div>
                     <hr class="hr">
 
@@ -117,7 +124,7 @@
                         <div class="flex-ctn flex-ctn--align-center mt-16-tablet-portrait-up-0 pl-10">
                             <label
                                 class="checkbox-list__checkbox hide-tablet-portrait-up mr-16">
-                                <input v-model="selectAll" type="checkbox"
+                                <input @change="selectAllRows()" v-model="selectAll" type="checkbox"
                                        class="signup-record-checkbox">
                                 <div
                                     class="checkbox-list__lbl-spn checkbox-list__lbl-spn--dark-grey checkbox-list__lbl-spn--small">
@@ -125,15 +132,18 @@
                                 </div>
 
                             </label>
-                            <select v-show="selectAll" class="select-ctn select select--small bulk-signup-status-select"
-                                    data-role="check-any-to-show-target" data-id="bulk-edit">
+                            <select  v-show="selectAll || itemsSelected.length > 0"
+                                    class="select-ctn select select--small bulk-signup-status-select"
+                                    v-model="selectAllAction"
+                                    data-role="check-any-to-show-target" data-id="bulk-edit"
+                                    @change="changeAllSignUpVolunteeringStatus()">
                                 <option value="">ACTIONS</option>
 
-                                <option value="CONFIRMED">Confirmed</option>
+                                <option value="confirm">Confirmed</option>
 
-                                <option value="REJECTED">Rejected</option>
+                                <option value="rejected">Rejected</option>
 
-                                <option value="CONFIRM_AND_MAKE_LEADER">Make Leader</option>
+                                <option value="confirm_and_make_leader">Make Leader</option>
 
                             </select>
                         </div>
@@ -198,7 +208,8 @@
                                 <div class="media-obj">
                                     <div class="media-obj__asset">
                                         <label class="checkbox-list__checkbox">
-                                            <input v-model="item.checked" type="checkbox" value=""
+                                            <input @change="itemsChecked()" v-model="item.checked" type="checkbox"
+                                                   value=""
                                                    class="signup-record-checkbox a-signup-record-checkbox">
                                             <div
                                                 class="checkbox-list__lbl-spn checkbox-list__lbl-spn--dark-grey font-bold"></div>
@@ -250,6 +261,7 @@
                             </td>
                             <td class="line-height-20">
                                 <select
+                                    @change="changeSignUpVolunteeringStatus(item)"
                                     v-model="item.status"
                                     class="select-ctn select--full select--small confirmed leader">
                                     <option value="confirm">
@@ -258,7 +270,10 @@
                                     <option value="rejected">
                                         Rejected
                                     </option>
-                                    <option value="CONFIRM_AND_MAKE_LEADER">
+                                    <option v-if="item.status === 'pending'" value="pending" class="previous-selected">
+                                        Pending
+                                    </option>
+                                    <option value="confirm_and_make_leader">
                                         Make Leader
                                     </option>
                                 </select>
@@ -479,7 +494,8 @@
                                                   class="ico ico-plus"></span></a>
                                             </span>
                                     </div>
-                                    <label class="error-msg volunteer-hour-error" style="display:none;">Please indicate
+                                    <label v-if="item.validated" class="error-msg volunteer-hour-error"
+                                           style="display:block;">Please indicate
                                         the number of hours</label>
                                 </div>
                             </td>
@@ -509,6 +525,7 @@
                                 <div class="input-ctrl">
                                     <label class="checkbox-list__checkbox">
                                         <input
+                                            @change="itemsChecked()"
                                             v-model="item.checked"
                                             type="checkbox"
                                             class="attended volunteer-attend attendance-record-checkbox check-in"
@@ -544,6 +561,7 @@
                                 class="ico ico-page-next"></span></a></li>
                         </ul>
                         <button :disabled="!isHoursVolunteeringChanged"
+                                @click="saveSignUpAttendance()"
                                 class="save-attendance button-ctn button--min-width position-abs-tablet-portrait-up right0 top5neg">
                             SAVE
                         </button>
@@ -570,6 +588,8 @@
             volunteering_status: null,
             selectStatus: null,
             selectAll: false,
+            selectAllAction: '',
+            itemsSelected: [],
             checkInAll: false,
             searchName: '',
             filterBy: 'all',
@@ -588,7 +608,7 @@
                     return f.old_value !== f.value;
                 });
                 let checked = this.attendance.filter(f => {
-                    return f.checked
+                    return !f.checked !== !f.old_checked
                 });
                 return (changed.length > 0 && this.changedHours.length > 0) || checked.length > 0;
             },
@@ -625,6 +645,9 @@
                         return filter;
                     }
                     if (filters[this.filterBy] !== 'leaders') {
+                        if (filter.status === 'confirm_and_make_leader' && filters[this.filterBy] === 'confirm') {
+                            return filter
+                        }
                         return filter.status === filters[this.filterBy];
                     }
                     return filter.leader === 'yes';
@@ -644,7 +667,14 @@
                     if (filters[this.filterBy] === '') {
                         return filter;
                     }
-                    return filter.status === filters[this.filterBy];
+
+                    if (!filter.old_checked && filters[this.filterBy] === 'confirm') {
+                        return filter
+                    }
+                    if (filter.old_checked && filters[this.filterBy] === 'checkin') {
+                        return filter
+                    }
+                    return false;
                 });
 
                 data = data.filter(filter => {
@@ -658,7 +688,8 @@
             }
         },
         methods: {
-            ...mapActions(['manageVolunteeringActivityData', 'manageVolunteeringActivityStatusData']),
+            ...mapActions(['manageVolunteeringActivityData', 'manageVolunteeringActivityStatusData',
+                'manageVolunteeringSignUpStatus', 'manageAllVolunteeringSignUpStatus', 'manageAllVolunteeringSignUpAttendance']),
             ...mapMutations(['setVolunteeringDuplicateData']),
             setTab() {
                 let tab = this.$route.query.active_page;
@@ -726,34 +757,6 @@
                                 this.selectStatus.val('LIVE').trigger('change');
                             }
                         });
-                    }
-                }).catch(err => {
-                    this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
-                });
-            },
-            getManageVolunteering() {
-                this.filterBy = 'all';
-                this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
-                this.manageVolunteeringActivityData({
-                    id: this.singleId, tab: this.tab,
-                    filters: this.filters,
-                    q: this.searchName,
-                    limit: this.paginate.per_page, page: this.paginate.current_page
-                }).then(res => {
-                    this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
-                    if (!res.success) {
-                        this.Route({name: 'home', query: {'active_page': 'our-volunteering'}});
-                    } else {
-                        let data = res.data;
-                        this.volunteering = data.volunteering;
-                        this.setPaginateData(data);
-                        this.volunteering_status = data.volunteering.status.toUpperCase();
-                        this.$nextTick(() => {
-                            if (!this.selectStatus) {
-                                this.initSelect2Status(this.volunteering_status);
-                            }
-                        });
-                        this.selectAllRows();
                     }
                 }).catch(err => {
                     this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
@@ -841,23 +844,37 @@
 
                 this.setChangedHours(item);
             },
+            getConfirmLeader(item) {
+                if ((item.status === 'confirm' || item.status === 'checkin') && item.leader === 'yes') {
+                    item.status = 'confirm_and_make_leader';
+                } else if (item.status === 'checkin') {
+                    item.status = 'confirm'
+                }
+                return '';
+            },
             setPaginateData(data) {
                 if (this.tab === 0) {
                     this.paginate = data.volunteering_sign_ups;
                 } else {
                     this.paginate = data.volunteering_attendance;
+                    this.paginate.data.map(item => {
+                        if (item.checkin_date && (item.status === 'checkin' || item.status === 'confirm' || item.status === 'confirm_and_make_leader')) {
+                            item.checked = true;
+                            item.old_checked = true;
+                        } else {
+                            item.old_checked = false;
+                        }
+                    });
                 }
+                this.paginate.data.map(item => {
+                    this.getConfirmLeader(item);
+                });
             },
-            getVolunteering(t = '') {
-                if (!this.isTyped && t === 'click') {//check if user never type in search box but got click search button
-                    return;
-                }
-                if (!this.isNavigator) {
-                    this.paginate.current_page = 1;
-                }
-                this.isSearch = false;//set user searching to false
-                //reset scroll bar position
-                this.$utils.animateScrollToY('html,body', 10);
+            getManageVolunteering() {
+                this.itemsSelected = [];
+                this.selectAll = false;
+                this.checkInAll = false;
+                this.filterBy = 'all';
                 this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
                 this.manageVolunteeringActivityData({
                     id: this.singleId, tab: this.tab,
@@ -871,8 +888,46 @@
                     } else {
                         let data = res.data;
                         this.volunteering = data.volunteering;
-                        this.setPaginateData(data);
                         this.volunteering_status = data.volunteering.status.toUpperCase();
+                        this.$nextTick(() => {
+                            if (!this.selectStatus) {
+                                this.initSelect2Status(this.volunteering_status);
+                            }
+                        });
+                        this.setPaginateData(data);
+                    }
+                }).catch(err => {
+                    this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                });
+            },
+            getVolunteering(t = '') {
+                if (!this.isTyped && t === 'click') {//check if user never type in search box but got click search button
+                    return;
+                }
+                if (!this.isNavigator) {
+                    this.paginate.current_page = 1;
+                }
+                this.isSearch = false;//set user searching to false
+                //reset scroll bar position
+                if (t !== 'no-loading') {
+                    this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
+                } else {
+                    this.$utils.animateScrollToY('html,body', 10);
+                }
+                this.manageVolunteeringActivityData({
+                    id: this.singleId, tab: this.tab,
+                    filters: this.filters,
+                    q: this.searchName,
+                    limit: this.paginate.per_page, page: this.paginate.current_page
+                }).then(res => {
+                    this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                    if (!res.success) {
+                        this.Route({name: 'home', query: {'active_page': 'our-volunteering'}});
+                    } else {
+                        let data = res.data;
+                        this.volunteering = data.volunteering;
+                        this.volunteering_status = data.volunteering.status.toUpperCase();
+                        this.setPaginateData(data);
                     }
                 }).catch(err => {
                     this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
@@ -895,6 +950,90 @@
                 if (this.paginate.current_page === pageNo) return;
                 this.paginateNavigator({pageNo, dr: 'next'});
             },
+            itemsChecked() {
+                let oldData = this.paginate.data;
+                this.itemsSelected = oldData.filter(f => {
+                    return f.checked;
+                });
+                this.selectAll = this.itemsSelected.length === oldData.length;
+                this.checkInAll = this.itemsSelected.length === oldData.length;
+            },
+            changeSignUpVolunteeringStatus(item) {
+                this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
+                this.manageVolunteeringSignUpStatus({id: item.id, data: item})
+                    .then(res => {
+                        this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                        if (res.success) {
+                            let data = res.data;
+                            item.leader = data.leader;
+                            if (data.leader === 'yes') {
+                                item.status = 'confirm_and_make_leader';
+                            }
+                            this.getVolunteering('no-loading');
+                        }
+                    }).catch(err => {
+                    console.log(err);
+                    this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                })
+            },
+            changeAllSignUpVolunteeringStatus() {
+                if (this.selectAllAction !== '') {
+                    this.itemsSelected = this.paginate.data.filter(f => {
+                        if (f.checked) {
+                            f.status = this.selectAllAction;
+                            if (f.status === 'confirm_and_make_leader') {
+                                f.leader = 'yes'
+                            } else {
+                                f.leader = 'no'
+                            }
+                        }
+                        return f.checked;
+                    });
+                    if (this.itemsSelected && this.itemsSelected.length > 0) {
+                        this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
+                        this.manageAllVolunteeringSignUpStatus({data: this.itemsSelected})
+                            .then(res => {
+                                this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                                if (res.success) {
+                                    this.selectAllAction = '';
+                                    this.selectAll = false;
+                                    this.itemsSelected = [];
+                                    //reset data
+                                    this.paginate.data.map(f => {
+                                        if (f.checked) {
+                                            f.checked = false;
+                                        }
+                                    });
+                                    this.getVolunteering('no-loading');
+                                }
+                            }).catch(err => {
+                            console.log(err)
+                            this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                        })
+                    }
+                }
+            },
+            saveSignUpAttendance() {
+                if (this.isHoursVolunteeringChanged) {
+                    this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
+                    this.manageAllVolunteeringSignUpAttendance({data: this.paginate.data})
+                        .then(res => {
+                            this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                            if (res.success) {
+                                //reset data
+                                res.data.map((item, idx) => {
+                                    this.paginate.data[idx].checkin_date = item.checkin_date;
+                                    this.paginate.data[idx].status = item.status;
+                                    this.paginate.data[idx].checked = item.status === 'checkin';
+                                });
+                                this.getVolunteering('no-loading');
+                            }
+                        }).catch(err => {
+                        console.log(err)
+                        this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                    })
+                }
+            }
         },
         mounted() {
         },
