@@ -126,6 +126,11 @@ class HomeController extends Controller
             ['name' => 'Above 12 Months', 'id' => '13-9999'],
         ];
 
+        $data['post_type'] = [
+            ['name' => 'Organizations Or Groups', 'id' => 'organizations_or_groups', 'count' => 0],
+            ['name' => 'Regular Volunteering', 'id' => 'volunteering', 'count' => 0]
+        ];
+
         return $data;
     }
     /***@Get Home Data */
@@ -157,7 +162,7 @@ class HomeController extends Controller
         ]);
         $received = NewsLetter::where('email', $request->get('email'))->first();
         if (isset($received)) {
-            return response()->json(['errors' => ['email' => ['The email has already been subscribed.']]], 422);
+            return response()->json(['errors' => ['email' => ['The email has already been subscribed . ']]], 422);
         }
         return new SaveNewsLetterResponse('save');
     }

@@ -25,6 +25,20 @@
                     </label>
                 </li>
             </ul>
+            <template v-else>
+                <div class="radio-filters" v-for="(item, idx) in items" :key="idx">
+                    <label class="radio-filters__lbl">
+                        <input @click="clearSelectedVal()" type="radio" name="filter-single"
+                               v-model="mSelected"
+                               :value="item.id"
+                               class="radio-filters__radio callSearch categoriesType targetCategory">
+                        <span
+                            class="radio-filters__text-left">{{item.name}}</span>
+                        <span class="radio-filters__text-right">{{item.count}}</span>
+                    </label>
+                </div>
+            </template>
+
         </div>
     </div>
 </template>
@@ -72,6 +86,9 @@
             },
             setValue(val) {
                 this.mSelected = this.$utils.deepCopy(val);
+            },
+            clearSelectedVal() {
+                this.$emit('onClearSelected');
             }
         },
         created() {

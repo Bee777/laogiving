@@ -54,6 +54,34 @@ export default new Vuex.Store({
                 ],
             },
         },
+        homeData: {
+            all_causes: all_causes,
+            all_suitables: all_suitables,
+            all_skills: all_skills,
+            post_type: [
+                {name: 'Organizations Or Groups', id: 'organizations_or_groups', count: 0},
+                {name: 'Regular Volunteering', id: 'volunteering', count: 0}
+            ],
+            openings: [
+                {name: '1-10', id: '1-10'},
+                {name: '11-20', id: '11-20'},
+                {name: '21-30', id: '21-30'},
+                {name: 'Above 30', id: '31-9999'},
+            ],
+            dates: [
+                {name: 'All Dates', id: 'all_date'},
+                {name: 'Tomorrow', id: 'tomorrow'},
+            ],
+            frequency: [],
+            weekday_or_weekend: [],
+            commitment_duration: [],
+        },
+        postsData: {
+            saved_bookmark: {posts: {}},
+        },
+        postsAllowed: {
+            saved_bookmark: true,
+        },
         volunteeringDuplicateData: {},
         dashboardData: {
             volunteer_opportunities: 0,
@@ -69,6 +97,7 @@ export default new Vuex.Store({
             volunteering: true,
             members: true,
         },
+
     },
     getters: {
         ...defaultGetters,
@@ -122,9 +151,17 @@ export default new Vuex.Store({
         setUserProfileKey(s, p) {
             s.userProfile[p.key] = p.value;
         },
-        setVolunteeringDuplicateData(s, p){
+        setVolunteeringDuplicateData(s, p) {
             s.volunteeringDuplicateData = p;
-        }
+        },
+        setHomeData(s, p) {
+            s.homeData = p;
+        },
+        setPostsData(s, p) {
+            if (!!s.postsAllowed[p.type]) {
+                s.postsData[p.type] = p.data;
+            }
+        },
     },
     actions: {
         ...defaultActions(axiosClient()),

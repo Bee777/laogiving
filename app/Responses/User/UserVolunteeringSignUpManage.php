@@ -9,20 +9,9 @@
 namespace App\Responses\User;
 
 use App\Http\Controllers\Helpers\Helpers;
-use App\Jobs\SendNewVolunteeringCreated;
-use App\Models\CauseDetail;
-use App\Models\Media;
-use App\Models\Skill;
-use App\Models\Suitable;
-use App\Models\VolunteeringActivity;
-use App\Models\VolunteeringActivityPosition;
-use App\Models\VolunteeringActivityPositionSkill;
-use App\Models\VolunteeringActivityPositionSuitable;
 use App\Models\VolunteerSignUpActivity;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use File;
 
 class UserVolunteeringSignUpManage implements Responsable
 {
@@ -148,6 +137,19 @@ class UserVolunteeringSignUpManage implements Responsable
                     ];
                     #counting
                     return response()->json(['success' => true, 'statuses' => $statuses, 'data' => $data]);
+                }
+            } else if ($user->isUser('volunteer')) {
+                $status = $request->get('selectedStatus');
+                $signUpId = $request->get('sign_up_id');
+                if ($this->actionType === 'change-status' && isset($this->options['single']) && $this->options['single'] === true) {
+                    $signUpVolunteering = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                        ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                        ->where('volunteer_sign_up_activities.user_id', $user->id)
+                        ->where('volunteer_sign_up_activities.id', $signUpId)->first();
+                    if (isset($signUpVolunteering) && $status === 'withdrawn') {
+                        $this->changeStaus($signUpVolunteering, $status);
+                        return response()->json(['success' => true, 'data' => VolunteerSignUpActivity::find($signUpId)]);
+                    }
                 }
             }
             return response()->json(['success' => false, 'data' => $data]);

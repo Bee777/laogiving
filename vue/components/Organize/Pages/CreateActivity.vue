@@ -2,7 +2,8 @@
     <main class="laogiving activity clearfix" style="padding-right: 1rem; padding-left: 1rem;">
         <div
             class="pad-navbar hero-container hero-container--light-grey hero-container--auto-w create-volunteer-act__head">
-            <h2 class="h2 create-volunteer-act__title text-center">{{$utils.isEmptyVar(id)? 'New': (isDuplicate ? 'Duplicate' :  'Edit')}} Volunteering
+            <h2 class="h2 create-volunteer-act__title text-center">{{$utils.isEmptyVar(id)? 'New': (isDuplicate ?
+                'Duplicate' : 'Edit')}} Volunteering
                 Opportunity</h2>
             <p class="body-txt body-txt--small mb-16"> You are setting up a volunteer activity for <b>Bee
                 Organisation</b></p>
@@ -46,7 +47,7 @@
                 class="rounded-card rounded-card--no-pad rounded-card--light-shadow rounded-card--height-auto rounded-card--full create-volunteer-act__main">
                 <StepOne :edit="!$utils.isEmptyVar(id)" ref="step-1" :causes="causes" v-show="tab===0"/>
                 <StepTwo :edit="!$utils.isEmptyVar(id)"
-                         :disabled-required-field="status==='cancelled'||status==='closed'" ref="step-2"
+                         :disabled-required-field="status==='cancelled' || status === 'closed' || isHaveSignUpUsers " ref="step-2"
                          v-show="tab===1"/>
                 <StepThree :edit="!$utils.isEmptyVar(id)" :skills="skills" :suitables="suitables" ref="step-3"
                            v-show="tab===2"/>
@@ -126,6 +127,7 @@
         data: () => ({
             id: null,
             status: '',
+            isHaveSignUpUsers: false,
             isDraft: false,
             isDuplicate: false,
             stepSave: 0,
@@ -190,6 +192,7 @@
                 this.Route({name: 'create-activity', query: {active_page: n, volunteering_id: this.id}});
             },
             getVolunteeringActivityData(id = null) {
+                this.isHaveSignUpUsers = false;
                 this.fetchVolunteeringActivityData({id: id || this.id})
                     .then(res => {
                         if (res.success) {
@@ -203,6 +206,11 @@
                                         && this.$route.query.duplicate_id === this.$route.query.volunteering_id) {
                                         this.setData(this.volunteeringDuplicateData);
                                         this.isDuplicate = true;
+                                    } else {
+                                        let signUpUsers = res.data.volunteering.positions.filter(f => {
+                                            return f.active_opportunity > 0 || f.total_pending > 0;
+                                        });
+                                        this.isHaveSignUpUsers = signUpUsers.length > 0;
                                     }
                                 } else {
                                     this.id = null;

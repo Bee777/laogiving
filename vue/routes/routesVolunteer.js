@@ -1,4 +1,5 @@
 import Home from '@com/Volunteer/Default/Home.vue'
+import ManageSignUpVolunteers from '@com/Volunteer/Pages/ManageSignUpVolunteers.vue'
 
 let adminTypes = ['admin', 'super_admin'];
 const metas = {
@@ -31,6 +32,17 @@ export default [
         path: `${prefix}/`,
         name: 'home',
         component: Home,
+        meta: {
+            ...metas.df({
+                hideNavFooter: false,
+            }),
+            ...metas.authMeta
+        },
+    },
+    {
+        path: `${prefix}/manage-sign-up-volunteers`,
+        name: 'manage-sign-up-volunteers',
+        component: ManageSignUpVolunteers,
         meta: {
             ...metas.df({
                 hideNavFooter: false,

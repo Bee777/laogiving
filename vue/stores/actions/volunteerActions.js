@@ -13,11 +13,18 @@ export const axiosClient = () => createAxiosClient();
 export const createActions = (utils) => {
     return {
         fetchSearches(c, i) {
-            let request = `limit=${i.limit}&page=${i.page}&q=${i.q}`;
+
+            let filters = '';
+            for (let filter in i.filters) {
+                if (i.filters.hasOwnProperty(filter)) {
+                    filters += `&${filter}=${i.filters[filter] || ''}`;
+                }
+            }
+            let request = `limit=${i.limit}&page=${i.page}&q=${i.q}${filters}`;
             c.commit('setValidated', {errors: {loading_searches: true}});
             client.get(`${apiUrl}/users/searches/${i.type}?${request}`, ajaxToken(c))
                 .then(res => {
-                    c.commit('setSearchesData', {type: i.type, data: res.data.data});
+                    c.commit('setSearchesData', {type: i.type, data: res.data.data, options: res.data.options});
                     c.commit('setClearMsg');
                 })
                 .catch(err => {
@@ -94,7 +101,6 @@ export const createActions = (utils) => {
         postChangeCredentialsUser(c, data) {
             return new Promise((r, n) => {
                 utils.Validate(data, {
-                    'new_email': ['email', {max: 191}],
                     'new_password': [{min: 6}, {max: 191}],
                     'new_password_confirmation': [{min: 6}, {max: 191}],
                     'current_password': ['required', {max: 191}],
@@ -153,5 +159,117 @@ export const createActions = (utils) => {
             })
         },
         /***@SaveNewsLetter */
+        /***@postChangeSignUpVolunteeringStatus */
+        postChangeSignUpVolunteeringStatus(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data.data, {
+                    'selectedStatus': ['required', {max: 191}],
+                }).then(v => {
+                    client.post(`${apiUrl}/users/volunteering-signup/change-status/${data.id}`, data.data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data)
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err)
+                        })
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
+        /***@postChangeSignUpVolunteeringStatus */
+        manageVolunteeringActivityData(c, data) {
+            let filters = '';
+            for (let filter in data.filters) {
+                if (data.filters.hasOwnProperty(filter)) {
+                    filters += `&${filter}=${data.filters[filter] || ''}`;
+                }
+            }
+            let request = `&limit=${data.limit || 6}&page=${data.page || 1}&q=${data.q || ''}${filters}`;
+            c.commit('setValidated', {errors: {loading_volunteering_searches: true}});
+            return new Promise((r, n) => {
+                client.get(`${apiUrl}/users/volunteering-activity-manager/${data.id || 0}?tab=${data.tab}${request}`, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data);
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err);
+                    });
+            });
+        },
+        manageVolunteeringActivityStatusData(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data.data, {
+                    'status': ['required', {max: 191}],
+                }).then(v => {
+                    client.post(`${apiUrl}/users/volunteering-activity-manager-change-status/${data.id}`, data.data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data)
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err)
+                        })
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
+        /***@VolunteeringActivityData */
+        /***@VolunteeringSignUpActivityMangeData */
+        manageVolunteeringSignUpStatus(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data.data, {
+                    'status': ['required', {max: 191}],
+                }).then(v => {
+                    client.post(`${apiUrl}/users/volunteering-signup/change-status/${data.id}`, data.data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data)
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err)
+                        })
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
+        manageAllVolunteeringSignUpStatus(c, data) {
+            return new Promise((r, n) => {
+                client.post(`${apiUrl}/users/volunteering-signup/all-change-status`, {data: data.data}, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data)
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err)
+                    })
+            });
+        },
+        manageAllVolunteeringSignUpAttendance(c, data) {
+            return new Promise((r, n) => {
+                client.post(`${apiUrl}/users/volunteering-signup/all-change-attendance`, {data: data.data}, ajaxToken(c))
+                    .then(res => {
+                        c.commit('setClearMsg');
+                        r(res.data)
+                    })
+                    .catch(err => {
+                        c.dispatch('HandleError', err.response);
+                        n(err)
+                    })
+            });
+        },
+        /***@VolunteeringSignUpActivityMangeData */
     }
 };

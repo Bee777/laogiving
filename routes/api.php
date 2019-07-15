@@ -161,6 +161,9 @@ Route::group(['prefix' => '/', 'middleware' => ['cors', 'parseToken', 'auth:api'
         Route::post('/volunteering-signup/all-change-attendance', 'UserController@responseAllVolunteeringSignUpChangeAttendance')->name('api.user.manage-all-change-attendance.volunteeringSignUp');
         Route::get('/volunteering-fetch-all-volunteers', 'UserController@responseFetchAllSignUpVolunteers')->name('api.user.fetch-all-volunteers.volunteeringSignUp');
         /*** @UserVolunteeringSigupManage ** */
+        /*********@Posts */
+        Route::get('/posts/{type}', 'UserController@responsePosts')->name('api.users.postsResponse');
+        /*********@Posts */
     });
     /******************** @UserSection ****************** */
     /** @Logout */

@@ -4,7 +4,7 @@
         <section class="page-top pt-40">
             <div class="cWidth-1200">
 
-                <button @click="Route({name: 'home', query: {active_page: 'our-volunteering' } })"
+                <button @click="Route({name: 'home', query: {active_page: 'activities' } })"
                         class="button-ctn font-bold button--with-icon button--no-bg button--large button--no-left-pad back-button">
                     <div class="button--with-icon__wrapper button--with-icon__wrapper"><i
                         class="ico material-icons button--with-icon__icon">keyboard_backspace</i> BACK
@@ -33,26 +33,26 @@
                         </div>
                     </div>
                     <div class="mt-16-custom-768-up-0">
-                        <button
-                            @click="Route({name: 'create-activity',  query: {active_page: 'general-info-&-permissions', volunteering_id: volunteering.id}})"
-                            class="hide-tablet-landscape-up button-ctn button--icon button--ghost mr-16 edit-volunteer-button">
-                            <i style="font-size: 20px; padding-top: 2px;" class="ico material-icons">edit</i> <span
-                            class="button--icon__name">EDIT</span></button>
-                        <button
-                            @click="duplicateData(volunteering)"
-                            class="hide-tablet-landscape-up button-ctn button--icon button--ghost mr-16 duplicate-volunteer-button">
-                            <i style="font-size: 20px; padding-top: 2px;" class="ico material-icons">filter_none</i>
-                            <span class="button--icon__name">DUPLICATE</span></button>
-                        <button
-                            @click="Route({name: 'create-activity',  query: {active_page: 'general-info-&-permissions', volunteering_id: volunteering.id}})"
-                            class="button-ctn button--min-width hide-tablet-landscape-down mr-16 edit-volunteer-button">
-                            EDIT
-                        </button>
-                        <button
-                            @click="duplicateData(volunteering)"
-                            class="button-ctn button--ghost button--min-width hide-tablet-landscape-down mr-16 duplicate-volunteer-button">
-                            DUPLICATE
-                        </button>
+                        <!--<button-->
+                        <!--@click="Route({name: 'create-activity',  query: {active_page: 'general-info-&-permissions', volunteering_id: volunteering.id}})"-->
+                        <!--class="hide-tablet-landscape-up button-ctn button&#45;&#45;icon button&#45;&#45;ghost mr-16 edit-volunteer-button">-->
+                        <!--<i style="font-size: 20px; padding-top: 2px;" class="ico material-icons">edit</i> <span-->
+                        <!--class="button&#45;&#45;icon__name">EDIT</span></button>-->
+                        <!--<button-->
+                        <!--@click="duplicateData(volunteering)"-->
+                        <!--class="hide-tablet-landscape-up button-ctn button&#45;&#45;icon button&#45;&#45;ghost mr-16 duplicate-volunteer-button">-->
+                        <!--<i style="font-size: 20px; padding-top: 2px;" class="ico material-icons">filter_none</i>-->
+                        <!--<span class="button&#45;&#45;icon__name">DUPLICATE</span></button>-->
+                        <!--<button-->
+                        <!--@click="Route({name: 'create-activity',  query: {active_page: 'general-info-&-permissions', volunteering_id: volunteering.id}})"-->
+                        <!--class="button-ctn button&#45;&#45;min-width hide-tablet-landscape-down mr-16 edit-volunteer-button">-->
+                        <!--EDIT-->
+                        <!--</button>-->
+                        <!--<button-->
+                        <!--@click="duplicateData(volunteering)"-->
+                        <!--class="button-ctn button&#45;&#45;ghost button&#45;&#45;min-width hide-tablet-landscape-down mr-16 duplicate-volunteer-button">-->
+                        <!--DUPLICATE-->
+                        <!--</button>-->
                         <select name="volunteer-status" id="volunteer-status-select"
                                 class="select-ctn select2-status" data-selected="LIVE"
                                 tabindex="-1" aria-hidden="true"
@@ -132,7 +132,7 @@
                                 </div>
 
                             </label>
-                            <select  v-show="selectAll || itemsSelected.length > 0"
+                            <select v-show="selectAll || itemsSelected.length > 0"
                                     class="select-ctn select select--small bulk-signup-status-select"
                                     v-model="selectAllAction"
                                     data-role="check-any-to-show-target" data-id="bulk-edit"
@@ -273,7 +273,8 @@
                                     <option v-if="item.status === 'pending'" value="pending" class="previous-selected">
                                         Pending
                                     </option>
-                                    <option v-if="item.status === 'withdrawn'" value="withdrawn" class="previous-selected">
+                                    <option v-if="item.status === 'withdrawn'" value="withdrawn"
+                                            class="previous-selected">
                                         Withdrawn
                                     </option>
                                     <option value="confirm_and_make_leader">
@@ -579,7 +580,7 @@
 
 <script>
     import Base from "@com/Bases/OrganizeBase.js";
-    import {mapActions, mapState, mapMutations} from 'vuex'
+    import {mapActions} from 'vuex'
 
     export default Base.extend({
         name: "ManageSignUpVolunteers",
@@ -693,7 +694,6 @@
         methods: {
             ...mapActions(['manageVolunteeringActivityData', 'manageVolunteeringActivityStatusData',
                 'manageVolunteeringSignUpStatus', 'manageAllVolunteeringSignUpStatus', 'manageAllVolunteeringSignUpAttendance']),
-            ...mapMutations(['setVolunteeringDuplicateData']),
             setTab() {
                 let tab = this.$route.query.active_page;
                 if (tab && typeof this.tabs[tab] !== "undefined") {
@@ -764,27 +764,6 @@
                 }).catch(err => {
                     this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
                 });
-            },
-            duplicateData(data) {
-                let duplicateData = JSON.parse(JSON.stringify(data));
-                //reset data
-                duplicateData.frequency = '';
-                duplicateData.duration = '';
-                duplicateData.days_of_week = [];
-                duplicateData.start_date = '';
-                duplicateData.end_date = '';
-                duplicateData.deadline_sign_ups_date = '';
-                //reset data
-                this.setVolunteeringDuplicateData(duplicateData);
-                this.Route({
-                        name: 'create-activity',
-                        query: {
-                            active_page: 'general-info-&-permissions',
-                            volunteering_id: duplicateData.id,
-                            duplicate_id: duplicateData.id
-                        }
-                    }, 300
-                );
             },
             getSignUpDate(item) {
                 //08/05/2019
@@ -887,7 +866,7 @@
                 }).then(res => {
                     this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
                     if (!res.success) {
-                        this.Route({name: 'home', query: {'active_page': 'our-volunteering'}});
+                        this.Route({name: 'home', query: {'active_page': 'activities'}});
                     } else {
                         let data = res.data;
                         this.volunteering = data.volunteering;

@@ -175,7 +175,6 @@ export const createActions = (utils) => {
         postChangeCredentialsUser(c, data) {
             return new Promise((r, n) => {
                 utils.Validate(data, {
-                    'new_email': ['email', {max: 191}],
                     'new_password': [{min: 6}, {max: 191}],
                     'new_password_confirmation': [{min: 6}, {max: 191}],
                     'current_password': ['required', {max: 191}],
@@ -429,7 +428,42 @@ export const createActions = (utils) => {
                         n(err);
                     });
             });
-        }
+        },
         /***@VolunteeringSignUpActivityData */
+        /*** @HomeData **/
+        fetchHomeData(c, i) {
+            client.get(`${apiUrl}/home/index`, ajaxConfig.getHeaders())
+                .then(res => {
+                    c.commit('setClearMsg');
+                    c.commit('setHomeData', res.data.data)
+                })
+                .catch(err => {
+                    c.dispatch('HandleError', err.response);
+                });
+        },
+        /*** @HomeData **/
+        /*** @PostsData **/
+        fetchPostsData(c, i) {
+            let request = `limit=${i.limit}&page=${i.page}&q=${i.q}`;
+            let options_request = '';
+            for (let o in i.options) {
+                if (i.options.hasOwnProperty(o)) {
+                    let op = i.options[o] || '';
+                    op = utils.isArray(op) ? op.join(',') : op;
+                    options_request += `&${o}=${op}`;
+                }
+            }
+            c.commit('setValidated', {errors: {loading_search_posts: true}});
+            client.get(`${apiUrl}/users/posts/${i.type}?${request}${options_request}`, ajaxToken(c))
+                .then(res => {
+                    c.commit('setSearchQuery', {text: i.q, filters: i.filters});
+                    c.commit('setClearMsg', {delay: 300});
+                    c.commit('setPostsData', {data: res.data, type: i.type})
+                })
+                .catch(err => {
+                    c.dispatch('HandleError', err.response);
+                });
+        },
+        /*** @PostsData **/
     }
 };

@@ -117,6 +117,7 @@
         created() {
             this.fetchAuthUserInfo({no_redirect: true});//get first user data
             this.getUserProfile();
+            this.fetchHomeData();
         },
         beforeDestroy() {
             if (window.removeEventListener) {

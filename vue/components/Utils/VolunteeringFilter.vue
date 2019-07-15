@@ -61,35 +61,49 @@
                         <!--</div>-->
                         <!--</div>-->
                         <!--</div>-->
+                        <FilterItem v-if="!disableFilters.post_type" ref="post-type-filter" v-model="filters.post_type"
+                                    type="radio-count"
+                                    name="TYPE"
+                                    @onClearSelected="()=>{filters.post_type = ''}"
+                                    :items="options.post_type"/>
+
                         <!--Radio Item-->
                         <!--Checkbox Item-->
 
-                        <FilterItem ref="causes-filter" v-model="filters.causes" name="CAUSES"
+                        <FilterItem v-if="!disableFilters.causes" ref="causes-filter" v-model="filters.causes"
+                                    name="CAUSES"
                                     :items="options.all_causes"/>
 
                         <template v-if="displayType !== 'organize'">
 
-                            <FilterItem ref="openings-filter" v-model="filters.openings" name="OPENING"
+                            <FilterItem v-if="!disableFilters.openings" ref="openings-filter" v-model="filters.openings"
+                                        name="OPENING"
                                         :items="options.openings"/>
 
-                            <FilterItem ref="suitables-filter" v-model="filters.suitables" name="SUITABILITY"
+                            <FilterItem v-if="!disableFilters.suitables" ref="suitables-filter"
+                                        v-model="filters.suitables" name="SUITABILITY"
                                         :items="options.all_suitables"/>
 
-                            <FilterItem ref="weekday_or_weekend-filter" v-model="filters.weekday_or_weekend"
+                            <FilterItem v-if="!disableFilters.weekday_or_weekend" ref="weekday_or_weekend-filter"
+                                        v-model="filters.weekday_or_weekend"
                                         name="WEEKDAY OR WEEKEND"
                                         :items="options.weekday_or_weekend"/>
 
-                            <FilterItem ref="commitment_duration-filter" v-model="filters.commitment_duration"
+                            <FilterItem v-if="!disableFilters.commitment_duration" ref="commitment_duration-filter"
+                                        v-model="filters.commitment_duration"
                                         name="COMMITMENT DURATION"
                                         :items="options.commitment_duration"/>
 
-                            <FilterItem ref="frequency-filter" v-model="filters.frequency" name="FREQUENCY"
+                            <FilterItem v-if="!disableFilters.frequency" ref="frequency-filter"
+                                        v-model="filters.frequency" name="FREQUENCY"
                                         :items="options.frequency"/>
 
-                            <FilterItem ref="skills-filter" v-model="filters.skills" name="SKILLS"
+                            <FilterItem v-if="!disableFilters.skills" ref="skills-filter" v-model="filters.skills"
+                                        name="SKILLS"
                                         :items="options.all_skills"/>
 
-                            <FilterItem ref="date-filter" type="radio" v-model="filters.date" name="DATE"
+                            <FilterItem v-if="!disableFilters.date" ref="date-filter" type="radio"
+                                        v-model="filters.date" name="DATE"
                                         :items="options.dates"/>
 
                         </template>
@@ -190,7 +204,153 @@
                     </div>
                 </div>
                 <div class="search-result__gallery-flex gallery--flex gallery--flex-fill-empty">
-                    <template v-if="displayType !== 'organize'">
+                    <template v-if="displayType === 'all'">
+                        <template v-for="(item, idx) in  paginate.data">
+                            <!--CardItem Volunteering-->
+                            <template v-if="item.post_type==='activity'">
+                                <div class="card card--flex" :key="idx">
+                                    <div class="card__head">
+                                        <div class="gradient-over-image">
+                                            <div
+                                                :style="`background-image: url(${item.images_media[0].image_base64});`"
+                                                class="gradient-over-image__image--bg gradient-over-image__image">
+
+                                            </div>
+                                        </div>
+                                        <div class="stats card__head-overlay font-white font-white"><span
+                                            class="stats__num">{{getTotalVacancies(item)}}</span> <span
+                                            class="stats__des">openings</span>
+                                        </div>
+                                    </div>
+                                    <!--Card Body-->
+                                    <div class="card__body">
+                                        <h2 class="card__title break-word truncate">
+                                            {{item.name}}
+                                        </h2>
+                                        <div class="media-by">
+                                            <p
+                                                class="body-txt body-txt--smaller body-txt--no-letter-space font-mid-grey break-word">
+                                                by <span
+                                                class="bold break-word">{{item.organize}}</span>
+                                            </p>
+                                        </div>
+
+                                        <div class="media-obj mt-16">
+                                            <div class="media-obj__asset"><i
+                                                class="material-icons ico--small">event</i></div>
+                                            <div
+                                                class="media-obj__main media-obj__main--small-spacing body-txt body-txt--small">
+                                                {{ getMonthsTextRange(item) }}
+                                            </div>
+                                        </div>
+
+                                        <!--<div class="media-obj mt-16">-->
+                                        <!--<div class="media-obj__asset"><i-->
+                                        <!--class="material-icons ico&#45;&#45;small">event</i></div>-->
+                                        <!--<div-->
+                                        <!--class="media-obj__main media-obj__main&#45;&#45;small-spacing body-txt body-txt&#45;&#45;small">-->
+                                        <!--Thu, 02 May 2019-->
+                                        <!--&lt;!&ndash;<span&ndash;&gt;-->
+                                        <!--&lt;!&ndash;class="other-date-label">+3 other dates</span>&ndash;&gt;-->
+                                        <!--</div>-->
+                                        <!--</div>-->
+                                        <div class="media-obj mt-16">
+                                            <div class="media-obj__asset"><i
+                                                class="material-icons ico--small">query_builder</i></div>
+                                            <div
+                                                class="media-obj__main media-obj__main--small-spacing body-txt body-txt--small body-txt--no-letter-space">
+                                                <span class="volunteer-preview-frequency volunteer-preview-start-time">{{ getFrequency()[item.frequency]}} on {{ getDaysOfWeek(item.days_of_week)}}</span>
+                                                <br><span
+                                                class="font-mid-grey body-txt--small frequency_duration_view">{{ item.duration}} hours per session</span>
+                                            </div>
+                                        </div>
+                                        <div class="media-obj mt-16">
+                                            <div class="media-obj__asset"><i
+                                                class="material-icons ico--small">place</i></div>
+                                            <div
+                                                class="media-obj__main media-obj__main--small-spacing body-txt body-txt--small">
+                                                {{ item.town }}
+                                            </div>
+                                        </div>
+                                        <div class="media-obj mt-16">
+                                            <div class="media-obj__asset"><i
+                                                class="material-icons ico--small">group</i></div>
+                                            <div
+                                                class="media-obj__main media-obj__main--small-spacing body-txt body-txt--small">
+                                                Suitable for: {{item.suitablesTexts}}
+                                            </div>
+                                        </div>
+                                        <div class="card__cta">
+                                            <button @click="emitRemoveAction(item)" v-if="removeAction"
+                                                    class="button-ctn button--full mb-8">{{!item.removed ? 'REMOVE':
+                                                'FAVOURITE'}}
+                                            </button>
+                                            <button v-else @click="openVolunteeringTab(item.id)"
+                                                    class="btn button--no-bg button--full">
+                                                LEARN MORE
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!--Card Body-->
+                                    <!--Card Link-->
+                                    <div>
+                                        <a class="card__link" :href="`/posts/volunteer-activity/${item.id}`"
+                                           target="_blank"></a>
+                                    </div>
+                                    <!--Card Link-->
+                                </div>
+                            </template>
+                            <!--CardItem Volunteering-->
+                            <template v-else>
+                                <!--CardItem Organize-->
+                                <div class="card card--flex" :key="idx">
+                                    <div class="card__head">
+                                        <div class="gradient-over-image">
+                                            <div
+                                                :style="`background-image: url(${item.image});`"
+                                                class="gradient-over-image__image--bg gradient-over-image__image">
+
+                                            </div>
+                                        </div>
+                                        <div class="stats card__head-overlay font-white font-white"><span
+                                            class="stats__num">{{item.volunteering}}</span> <span
+                                            class="stats__des">volunteer opportunity</span>
+                                        </div>
+                                    </div>
+                                    <!--Card Body-->
+                                    <div class="card__body">
+                                        <div>
+                                            <h2 class="card__title break-word truncate">
+                                                {{item.user_name}}
+                                            </h2>
+                                            <p class="truncate2 card__description break-word">{{$utils.sub(item.about,
+                                                115)}}</p>
+                                        </div>
+                                        <div class="card__cta">
+                                            <button @click="emitRemoveAction(item)" v-if="removeAction"
+                                                    class="button-ctn button--full mb-8">{{!item.removed ? 'REMOVE':
+                                                'FAVOURITE'}}
+                                            </button>
+                                            <button v-else @click="openOrganizeTab(item.user_id)"
+                                                    class="btn button--no-bg button--full">
+                                                LEARN MORE
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!--Card Body-->
+                                    <!--Card Link-->
+                                    <div>
+                                        <a class="card__link" :href="`/organisation/profile/${item.user_id}`"
+                                           target="_blank"></a>
+                                    </div>
+                                    <!--Card Link-->
+                                </div>
+                                <!--CardItem Organize-->
+                            </template>
+                        </template>
+                    </template>
+                    <!--ALL ITEM TYPE-->
+                    <template v-else-if="displayType !== 'organize'">
                         <!--CardItem Volunteering-->
                         <div class="card card--flex" :key="idx"
                              v-for="(item, idx) in  postsData.activities.posts.data">
@@ -366,10 +526,14 @@
             displayType: {
                 default: ''
             },
+            removeAction: {
+                default: false
+            },
             filters: {
                 default: function () {
                     return {
                         causes: [],
+                        post_type: '',
                         openings: [],
                         skills: [],
                         suitables: [],
@@ -377,6 +541,21 @@
                         weekday_or_weekend: [],
                         commitment_duration: [],
                         frequency: []
+                    };
+                }
+            },
+            disableFilters: {
+                default: function () {
+                    return {
+                        post_type: false,
+                        causes: false,
+                        openings: false,
+                        skills: false,
+                        suitables: false,
+                        date: false,
+                        weekday_or_weekend: false,
+                        commitment_duration: false,
+                        frequency: false
                     };
                 }
             },
@@ -394,6 +573,7 @@
             options: {
                 default: function () {
                     return {
+                        post_type: [],
                         all_causes: [],
                         dates: [
                             {name: 'All Dates', id: 1},
@@ -434,19 +614,22 @@
             clearFilters() {
                 this.showFilter = false;
                 this.removeClasses();
-                this.$refs['causes-filter'].setValue([]);
 
-                if (this.displayType !== 'organize') {
-                    this.$refs['date-filter'].setValue('all_date');
-                    this.$refs['openings-filter'].setValue([]);
-                    this.$refs['suitables-filter'].setValue([]);
-                    this.$refs['weekday_or_weekend-filter'].setValue([]);
-                    this.$refs['commitment_duration-filter'].setValue([]);
-                    this.$refs['frequency-filter'].setValue([]);
-                    this.$refs['skills-filter'].setValue([]);
+                for (let filter in this.$refs) {
+                    if (this.$refs.hasOwnProperty(filter) && filter.indexOf('filter') !== -1) {
+                        if (filter === 'date-filter') {
+                            this.$refs[filter].setValue('all_date');
+                        } else if (filter === 'post-type-filter') {
+                            this.$refs[filter].setValue('');
+                        } else {
+                            this.$refs[filter].setValue([]);
+                        }
+                    }
                 }
-
                 this.$emit('onClearFilters');
+            },
+            emitRemoveAction(item) {
+                this.$emit('onRemoveAction', item);
             },
             openVolunteeringTab(id) {
                 window.open(`/posts/volunteer-activity/${id}`);

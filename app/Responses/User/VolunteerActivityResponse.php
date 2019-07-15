@@ -12,7 +12,6 @@ use App\Http\Controllers\Helpers\Helpers;
 use App\Models\VolunteeringActivity;
 use App\User;
 use Illuminate\Contracts\Support\Responsable;
-use File;
 
 class VolunteerActivityResponse implements Responsable
 {

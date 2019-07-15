@@ -14,6 +14,7 @@ use App\Responses\User\UserNewsResponse;
 use App\Responses\User\UserProfileManage;
 use App\Responses\User\UserProfileOptions;
 use App\Models\Site;
+use App\Responses\User\UserSavedBookmarkResponse;
 use App\Responses\User\UserSignUpVolunteeringActivity;
 use App\Responses\User\UserVolunteeringActivityManage;
 use App\Responses\User\UserVolunteeringActivityManager;
@@ -94,7 +95,20 @@ class UserController extends Controller
      * @param $type
      * @return \Illuminate\Http\JsonResponse
      */
+    /***@PostsResponse *
+     * @param Request $request
+     * @param $type
+     */
+    public function responsePosts(Request $request, $type)
+    {
+        if ($type === 'saved_bookmark') {
+            /****@ResponsesUserSavedBookmark  api and action  *** */
+            return new UserSavedBookmarkResponse();
+            /****@ResponsesUserSavedBookmark  api and action  *** */
+        }
+    }
 
+    /***@PostsResponse * */
     public function responseSearches(Request $request, $type): JsonResponse
     {
         $data = [];
@@ -108,13 +122,31 @@ class UserController extends Controller
         if ($type === 'news') {
             $data = (new UserNewsResponse('get', ['text' => $text, 'limit' => $paginateLimit]))->get($request);
         } else if ($type === 'volunteering') {
+            $user = $request->user('api');
+
             $data = (new UserVolunteeringActivityManage('get', ['text' => $text, 'limit' => $paginateLimit, 'volunteering' => $volunteering]))->get($request);
-            $options = DB::table('volunteering_activities')
-                ->selectRaw("SUM(CASE WHEN status = 'live' THEN 1 ELSE 0 END) AS `LIVE_COUNT`,
+
+            if ($user->isUser('organize') || $user->isUser('super_admin') || $user->isUser('admin')) {
+                $options = DB::table('volunteering_activities')
+                    ->selectRaw("SUM(CASE WHEN status = 'live' THEN 1 ELSE 0 END) AS `LIVE_COUNT`,
                 SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) AS `CLOSED_COUNT`,
                 SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS `DRAFT_COUNT`,
                 SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS `CANCELLED_COUNT`")
-                ->where('user_id', auth()->user()->id)->first();
+                    ->where('user_id', $user->id)->first();
+            } else {
+                $options['volunteering_activities'] = DB::table('volunteering_activities')
+                    ->selectRaw("SUM(CASE WHEN volunteering_activities.status = 'live' THEN 1 ELSE 0 END) AS `LIVE_COUNT`,
+                SUM(CASE WHEN volunteering_activities.status = 'closed' THEN 1 ELSE 0 END) AS `CLOSED_COUNT`,
+                SUM(CASE WHEN volunteering_activities.status = 'cancelled' THEN 1 ELSE 0 END) AS `CANCELLED_COUNT`")
+                    ->join('volunteer_sign_up_activities', 'volunteer_sign_up_activities.volunteering_activity_id', '=', 'volunteering_activities.id')
+                    ->where('volunteer_sign_up_activities.user_id', $user->id)->first();
+                $options['volunteering_statuses'] = DB::table('volunteer_sign_up_activities')
+                    ->selectRaw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN 1 ELSE 0 END) AS `CHECKIN_COUNT`,
+                SUM(CASE WHEN volunteer_sign_up_activities.status = 'confirm' THEN 1 ELSE 0 END) AS `CONFIRM_COUNT`,
+                SUM(CASE WHEN volunteer_sign_up_activities.leader = 'yes' THEN 1 ELSE 0 END) AS `LEADER_COUNT`, 
+                SUM(volunteer_sign_up_activities.hour_per_volunteer) AS `HOURS_COUNT`")
+                    ->where('user_id', $user->id)->first();;
+            }
         }
 
         if (count($data) > 0) {

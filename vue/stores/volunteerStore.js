@@ -37,14 +37,51 @@ export default new Vuex.Store({
             date_of_birth: '', salutation: 'none',
             profile_image_base64: '', gender: 'none',
         },
+        homeData: {
+            all_causes: all_causes,
+            all_suitables: all_suitables,
+            all_skills: all_skills,
+            post_type: [
+                {name: 'Organizations Or Groups', id: 'organizations_or_groups', count: 0},
+                {name: 'Regular Volunteering', id: 'volunteering', count: 0}
+            ],
+            openings: [
+                {name: '1-10', id: '1-10'},
+                {name: '11-20', id: '11-20'},
+                {name: '21-30', id: '21-30'},
+                {name: 'Above 30', id: '31-9999'},
+            ],
+            dates: [
+                {name: 'All Dates', id: 'all_date'},
+                {name: 'Tomorrow', id: 'tomorrow'},
+            ],
+            frequency: [],
+            weekday_or_weekend: [],
+            commitment_duration: [],
+        },
+        postsData: {
+            saved_bookmark: {posts: {}},
+        },
+        postsAllowed: {
+            saved_bookmark: true,
+        },
         dashboardData: {
-            activities_count: 0,
+            volunteer_opportunities: 0,
+            volunteers: 0,
+            updated_at: '',
         },
         searchesData: {
-            activity: {},
+            volunteering: {},
+            options: {
+                volunteering: {
+                    volunteering_activities: {},
+                    volunteering_statuses: {}
+                }
+            },
         },
         searchesAllowed: {
-            activity: true,
+            volunteering: true,
+            members: true,
         },
     },
     getters: {
@@ -83,6 +120,7 @@ export default new Vuex.Store({
             if (!!s.searchesAllowed[p.type]) {
                 s.searchesData[p.type] = p.data;
                 s.searchesData[p.type].items = [];
+                s.searchesData.options[p.type] = p.options;
             }
         },
         setSearchQuery(s, p) {
@@ -97,7 +135,15 @@ export default new Vuex.Store({
         },
         setUserProfileKey(s, p) {
             s.userProfile[p.key] = p.value;
-        }
+        },
+        setHomeData(s, p) {
+            s.homeData = p;
+        },
+        setPostsData(s, p) {
+            if (!!s.postsAllowed[p.type]) {
+                s.postsData[p.type] = p.data;
+            }
+        },
     },
     actions: {
         ...defaultActions(axiosClient()),

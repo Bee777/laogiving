@@ -33,6 +33,7 @@ class UserVolunteeringActivityManager implements Responsable
         if (Helpers::isAjax($request)) {
             $user = $request->user();
             if ($user->isUser('organize')) {
+
                 $data['volunteering'] = $this->transformUserActivity($user, $request->id);
                 $data['volunteering_sign_ups'] = null;
                 $data['volunteering_attendance'] = null;
@@ -65,8 +66,56 @@ class UserVolunteeringActivityManager implements Responsable
                     $data['volunteering_attendance'] = $data['volunteering_attendance']->paginate($paginateLimit);
                     $data['volunteering_attendance']->appends(['limit' => $paginateLimit, 'q' => $text]);
                 }
+                return response()->json(['success' => true, 'data' => $data]);
             }
-            return response()->json(['success' => true, 'data' => $data]);
+            #volunteer leader
+            if ($user->isUser('volunteer')) {
+                $activity = VolunteeringActivity::find($request->id);
+                $signUpVolunteering = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                    ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                    ->where('volunteer_sign_up_activities.user_id', $user->id)
+                    ->where('volunteer_sign_up_activities.leader', 'yes')
+                    ->where('volunteering_activities.id', $activity->id ?? 0)->first();
+
+                if (isset($signUpVolunteering)) {
+                    $organizeUser = User::find($activity->user_id);
+                    $data['volunteering'] = $this->transformUserActivity($organizeUser, $request->id);
+                    $data['volunteering_sign_ups'] = null;
+                    $data['volunteering_attendance'] = null;
+
+                    if (!isset($data['volunteering'])) {
+                        return response()->json(['success' => false, 'data' => $data]);
+                    }
+
+                    $paginateLimit = ($request->exists('limit') && !empty($request->get('limit'))) ? $request->get('limit') : 10;
+                    $paginateLimit = Helpers::isNumber($paginateLimit) ? $paginateLimit : 10;
+
+                    $text = $request->get('q');
+                    if ((int)$request->tab === 0) {
+                        $data['volunteering_sign_ups'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', DB::raw('(select count(null)) as checked'), DB::raw('(select count(null)) as show_other_response'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) {
+                            $query->select('users.*', 'volunteer_profiles.gender');
+                            $query->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
+                        }])->orderBy('id', 'desc');
+                        #paginate
+                        $data['volunteering_sign_ups'] = $data['volunteering_sign_ups']->paginate($paginateLimit);
+                        $data['volunteering_sign_ups']->appends(['limit' => $paginateLimit, 'q' => $text]);
+
+                    } else {
+                        $data['volunteering_attendance'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'volunteer_sign_up_activities.hour_per_volunteer as hours', DB::raw('(select count(null)) as checked, (select count(null)) as old_checked'),
+                            DB::raw('(select count(null)) as validated'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) {
+                            $query->select('users.*', 'volunteer_profiles.gender');
+                            $query->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
+                        }])->whereIn('status', ['confirm', 'checkin'])->orderBy('id', 'desc');
+                        #paginate
+                        $data['volunteering_attendance'] = $data['volunteering_attendance']->paginate($paginateLimit);
+                        $data['volunteering_attendance']->appends(['limit' => $paginateLimit, 'q' => $text]);
+                    }
+                    return response()->json(['success' => true, 'data' => $data]);
+                }
+            }
+            #volunteer leader
+            //else otherwise
+            return response()->json(['success' => false, 'data' => $data]);
         }
     }
 
@@ -74,7 +123,7 @@ class UserVolunteeringActivityManager implements Responsable
     {
         $activity = null;
         if (isset($user)) {
-            $activity = VolunteeringActivity::find($id);
+            $activity = VolunteeringActivity::where('user_id', $user->id)->where('id', $id)->first();
             if (isset($activity)) {
                 $activity->start_date_formatted_number = Helpers::toFormatDateString($activity->start_date, 'd M Y');
                 $activity->end_date_formatted_number = Helpers::toFormatDateString($activity->end_date, 'd M Y');

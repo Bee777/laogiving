@@ -36,44 +36,74 @@ class UserVolunteeringActivityManage implements Responsable
 //    GET
     public function get($request)
     {
+        $user = $request->user('api');
         $fields = [
-            'name',
-            'description',
-            'volunteer_type',
-            'duration',
-            'start_date',
-            'end_date',
-            'deadline_sign_ups_date',
-            'points_to_note',
-            'other_response_required',
-            'town',
-            'block_street',
-            'building_name',
-            'building_unit_number',
-            'contact_title',
-            'contact_name',
-            'contact_designation',
-            'contact_phone_number',
-            'contact_email',
-            'created_at', 'updated_at'];
+            'volunteering_activities.name',
+            'volunteering_activities.description',
+            'volunteering_activities.volunteer_type',
+            'volunteering_activities.duration',
+            'volunteering_activities.start_date',
+            'volunteering_activities.end_date',
+            'volunteering_activities.deadline_sign_ups_date',
+            'volunteering_activities.points_to_note',
+            'volunteering_activities.other_response_required',
+            'volunteering_activities.town',
+            'volunteering_activities.block_street',
+            'volunteering_activities.building_name',
+            'volunteering_activities.building_unit_number',
+            'volunteering_activities.contact_title',
+            'volunteering_activities.contact_name',
+            'volunteering_activities.contact_designation',
+            'volunteering_activities.contact_phone_number',
+            'volunteering_activities.contact_email',
+            'volunteering_activities.created_at',
+            'volunteering_activities.updated_at'];
+
         $request->request->add(['fields' => $fields]);
         $text = $this->options['text'];
         $paginateLimit = $this->options['limit'];
         $status = strtolower($request->volunteering);
-        $data = VolunteeringActivity::select(array_merge($fields, [
-            'id',
-            'frequency',
-            'weekday',
-            'weekend',
-            'volunteer_gender',
-            'volunteer_contact_phone_number',
-            'volunteer_signups_confirm',
-            'status',
-        ]))->where('user_id', auth()->user()->id)->where('status', $status);
+        #volunteer
+        if ($user->isUser('volunteer')) {
+            $data = VolunteeringActivity::select(array_merge($fields, [
+                'volunteering_activities.id',
+                'volunteering_activities.frequency',
+                'volunteering_activities.weekday',
+                'volunteering_activities.weekend',
+                'volunteering_activities.volunteer_gender',
+                'volunteering_activities.volunteer_contact_phone_number',
+                'volunteering_activities.volunteer_signups_confirm',
+                'volunteering_activities.status',
+                'volunteer_sign_up_activities.id as sign_up_id',
+                'volunteer_sign_up_activities.status as sign_up_status',
+                'volunteer_sign_up_activities.slot as sign_up_slot',
+                'volunteer_sign_up_activities.leader as sign_up_leader',
+                'volunteer_sign_up_activities.hour_per_volunteer as sign_up_hour_per_volunteer',
+                'volunteer_sign_up_activities.volunteering_activity_position_id as sign_up_position_id',
+                'volunteer_sign_up_activities.created_at as sign_up_created_at',
+                'users.name as organize_name',
+            ]))->join('volunteer_sign_up_activities', 'volunteer_sign_up_activities.volunteering_activity_id', '=', 'volunteering_activities.id')
+                ->join('users', 'users.id', 'volunteering_activities.user_id')
+                ->where('volunteer_sign_up_activities.user_id', $user->id)
+                ->where('volunteering_activities.status', $status);
+        } else {
+            $data = VolunteeringActivity::select(array_merge($fields, [
+                'id',
+                'frequency',
+                'weekday',
+                'weekend',
+                'volunteer_gender',
+                'volunteer_contact_phone_number',
+                'volunteer_signups_confirm',
+                'status',
+            ]))->where('user_id', $user->id)->where('status', $status);
+        }
+
         $data->where(function ($query) use ($request, $text) {
             foreach ($request->fields as $k => $f) {
-                if ($f === 'start_date' || $f === 'end_date' ||
-                    $f === 'deadline_sign_ups_date' || $f === 'created_at' || $f === 'updated_at') {
+                if ($f === 'volunteering_activities.start_date' || $f === 'volunteering_activities.end_date'
+                    || $f === 'volunteering_activities.deadline_sign_ups_date' || $f === 'volunteering_activities.created_at'
+                    || $f === 'volunteering_activities.updated_at') {
                     if (Helpers::isEngText($text)) {
                         $query->orWhere($f, 'LIKE', "%{$text}%");
                     } else {
@@ -84,11 +114,11 @@ class UserVolunteeringActivityManage implements Responsable
             }
         });
 
-        $data = $data->orderBy('name', 'asc')->paginate($paginateLimit);
-//      $data = $data->orderBy('created_at', 'asc')->paginate($paginateLimit);
-//      $data = $data->orderBy('created_at', 'desc')->paginate($paginateLimit);
+        $data = $data->orderBy('volunteering_activities.name', 'asc')->paginate($paginateLimit);
 
         $data->map(function ($activity) {
+            $activity->toggleDetail = false;
+            $activity->selectedStatus = $activity->sign_up_status ?? '';
             $activity->activity_causes = CauseDetail::list('activity', $activity->id)->pluck('cause_id');
             $activity_causes = CauseDetail::list('activity', $activity->id);
             $activity_causes->map(function ($item) {
@@ -138,6 +168,10 @@ class UserVolunteeringActivityManage implements Responsable
                 $activity->step = 4;
             }
             #date map
+
+            $activity->start_date_formatted_name = Helpers::toFormatDateString($activity->start_date, 'd M Y');
+            $activity->end_date_formatted_name = Helpers::toFormatDateString($activity->end_date, 'd M Y');
+
             $activity->start_date_formatted = Helpers::toFormatDateString($activity->start_date, 'd/m/Y');
             $activity->end_date_formatted = Helpers::toFormatDateString($activity->end_date, 'd/m/Y');
             $activity->deadline_sign_ups_date_formatted = Helpers::toFormatDateString($activity->deadline_sign_ups_date, 'd/m/Y');

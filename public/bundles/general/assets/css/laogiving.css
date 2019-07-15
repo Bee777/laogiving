@@ -3950,7 +3950,8 @@ card__body > div > *, .activity .card__body > div > * {
     color: #6BC1CC !important;
     background-color: transparent;
     opacity: 1;
-    font-weight: bold;
+    font-weight: bold !important;
+    font-size: 14px !important;
     border: none;
 }
 
@@ -6056,6 +6057,14 @@ hr.grey {
     color: #999999;
     font-size: 1rem;
     padding-bottom: 1rem;
+}
+
+.radio-filters:hover .radio-filters__text-left {
+    color: #6BC1CC;
+}
+
+.radio-filters:hover .radio-filters__text-right {
+    color: #999999;
 }
 
 .radio-filters--blk {
