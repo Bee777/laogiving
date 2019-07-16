@@ -359,6 +359,7 @@
         },
         data: () => ({
             ...mapGetters(['validated', 'succeeded']),
+            isFirstLoad: true,
             filterItems: [
                 {text: 'Current Opportunities', value: 'LIVE', count: 0},
                 {text: 'Past Opportunities', value: 'CLOSED', count: 0},
@@ -431,10 +432,13 @@
                 }
                 this.isSearch = false;//set user searching to false
                 //reset scroll bar position
-                this.$nextTick(() => {
-                    let posY = this.$utils.findPos(this.jq('#volunteering-list-container').get(0)).y;
-                    this.$utils.animateScrollToY('html,body', posY - 300);
-                });
+                if (!this.isFirstLoad) {
+                    this.$nextTick(() => {
+                        let posY = this.$utils.findPos(this.jq('#volunteering-list-container').get(0)).y;
+                        this.$utils.animateScrollToY('html,body', posY - 300);
+                    });
+                }
+                this.isFirstLoad = false;
                 this.fetchSearches({
                     filters: this.filters,
                     type: this.type, q: this.query,

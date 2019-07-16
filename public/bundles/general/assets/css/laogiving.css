@@ -233,6 +233,10 @@ a:hover.read-more {
     color: #6b7380
 }
 
+.toasted .primary .action, .toasted.toasted-primary .action {
+    color: #fff !important;
+}
+
 .home-one .navbar li.pull-right a.menu-cart {
     border: 1px solid #eee;
     padding-right: 10px

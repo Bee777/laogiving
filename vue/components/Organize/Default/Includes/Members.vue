@@ -124,7 +124,7 @@
         },
         data: () => ({
             ...mapGetters(['validated', 'succeeded']),
-            // toggleRadio: false,
+            isFirstLoad: true,
             paginate: {per_page: 8, data: [], current_page: 1, last_page: 0, total: 0},
             isNavigator: false,
             isSearch: false,
@@ -180,32 +180,28 @@
                 }
                 this.isSearch = false;//set user searching to false
                 //reset scroll bar position
-                this.$nextTick(() => {
-                    let posY = this.$utils.findPos(this.jq('#item-list').get(0)).y;
-                    this.$utils.animateScrollToY('html,body', posY - 300);
-                });
+                if (!this.isFirstLoad) {
+                    this.$nextTick(() => {
+                        let posY = this.$utils.findPos(this.jq('#item-list').get(0)).y;
+                        this.$utils.animateScrollToY('html,body', posY - 300);
+                    });
+                }
+                this.isFirstLoad = false;
                 this.fetchAllVolunteers({
                     filters: this.filters,
                     q: this.query,
                     limit: this.paginate.per_page, page: this.paginate.current_page
                 }).then(res => {
-
-                    if (!res.success) {
-                        this.Route({name: 'home', query: {'active_page': 'our-volunteering'}});
-                    } else {
-                        this.paginate = res.data;
-                        let statuses = res.statuses;
-                        this.filterItems.map(item => {
-                            if (item.group) {
-                                item.group.items[0].count = statuses['total_leaders'];
-                            } else {
-                                item.count = statuses['total_volunteers'];
-                            }
-                        });
-                    }
-                }).catch(err => {
-
-                });
+                    this.paginate = res.data;
+                    let statuses = res.statuses;
+                    this.filterItems.map(item => {
+                        if (item.group) {
+                            item.group.items[0].count = statuses['total_leaders'];
+                        } else {
+                            item.count = statuses['total_volunteers'];
+                        }
+                    });
+                }).catch(err => {});
             },
             paginateNavigator(p) {
                 this.isNavigator = true; //set to true to tell the request this is navigator action

@@ -126,7 +126,24 @@ class UserController extends Controller
 
             $data = (new UserVolunteeringActivityManage('get', ['text' => $text, 'limit' => $paginateLimit, 'volunteering' => $volunteering]))->get($request);
 
-            if ($user->isUser('organize') || $user->isUser('super_admin') || $user->isUser('admin')) {
+            if ($user->isUser('super_admin') || $user->isUser('admin')) {
+                $options = [
+                    'volunteering_activities' => [
+                        'LIVE_COUNT' => 0,
+                        'CLOSED_COUNT' => 0,
+                        'CANCELLED_COUNT' => 0],
+                    'volunteering_statuses' => [
+                        'CHECKIN_COUNT' => 0,
+                        'CONFIRM_COUNT' => 0,
+                        'LEADER_COUNT' => 0,
+                        'HOURS_COUNT' => 0
+                    ],
+                    'LIVE_COUNT' => 0,
+                    'CLOSED_COUNT' => 0,
+                    'CANCELLED_COUNT' => 0,
+                    'DRAFT_COUNT' => 0
+                ];
+            } else if ($user->isUser('organize')) {
                 $options = DB::table('volunteering_activities')
                     ->selectRaw("SUM(CASE WHEN status = 'live' THEN 1 ELSE 0 END) AS `LIVE_COUNT`,
                 SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) AS `CLOSED_COUNT`,

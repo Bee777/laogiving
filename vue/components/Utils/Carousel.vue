@@ -75,6 +75,7 @@
                     this.addVideoIframes(swiper);
                 });
                 //init swiper
+                return this.carousel;
             },
             addVideoIframes(swiper) {
                 let Video = swiper.slides[swiper.activeIndex];

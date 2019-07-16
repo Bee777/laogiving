@@ -171,7 +171,12 @@ class PostsResponse implements Responsable
             ->where('users.status', 'approved');
 
         $dataFilter = [];
-
+        #filter by organize id
+        $organize_id = $request->get('organize_id');
+        if ($organize_id !== null) {
+            $data->where('users.id', $organize_id);
+        }
+        #filter by organize id
         $causes = array_filter(explode(',', $request->causes));
         $openings = array_filter(explode(',', $request->openings));
         $skills = array_filter(explode(',', $request->skills));

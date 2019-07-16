@@ -208,6 +208,12 @@ class DashboardResponse implements Responsable
                 $data['volunteering_hours'] = $this->getVolunteeringHours();
                 $data['latest_volunteers_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->where('user_types.type_user_id', $this->getTypeUserId('volunteer'))->count();
                 $data['latest_organizes_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->where('user_types.type_user_id', $this->getTypeUserId('organize'))->count();
+                #for other pages
+                $data['volunteer_opportunities'] = 0;
+                $data['volunteering_hours'] = 0;
+                $data['volunteers'] = 0;
+                $data['updated_at'] = now()->format('d/m/Y');
+                #for other pages
             }
             return response()->json(['data' => $data]);
         }

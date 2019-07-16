@@ -392,7 +392,6 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
                         this.isLoading = false;
                     })
                     .catch(err => {
-                        console.log(err);
                         this.showErrorToast({msg: 'Failed to update your profile!', dt});
                         this.isLoading = false;
                     })
@@ -433,7 +432,6 @@ e.g: Our organisation is committed to the welfare of youth-at-risk"
                     .catch(err => {
                         this.showErrorToast({msg: 'Failed to load your profile!', dt: 3500});
                         this.isLoading = false;
-                        console.log(err);
                     })
             },
             toggleClearImage() {

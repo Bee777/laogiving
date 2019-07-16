@@ -56,7 +56,8 @@
                                         <span class="volunteer-event__pt-desc"
                                               v-if="item.minimum_age > 0 && !$utils.isEmptyVar(item.minimum_age)"> <span
                                             class="bold">Min. age:</span> {{item.minimum_age}} </span>
-                                        <div class=" mt-16 body-txt break-word pre-wrap" v-html="item.key_responsibilities"></div>
+                                        <div class=" mt-16 body-txt break-word pre-wrap"
+                                             v-html="item.key_responsibilities"></div>
                                         <div class="mt-32"
                                         ><a :disabled="!canSeeSignUp(item.id)"
                                             @click="signUpVolunteering(item.id, singlePostsData.activities.data)"
@@ -104,7 +105,8 @@
                                 <h3 class="h3">Point to note</h3>
                             </template>
                             <template slot="body-content">
-                                <div class="pre-wrap break-word" v-html="singlePostsData.activities.data.points_to_note"></div>
+                                <div class="pre-wrap break-word"
+                                     v-html="singlePostsData.activities.data.points_to_note"></div>
                             </template>
                         </AccordionCard>
 
@@ -119,7 +121,8 @@
                                      class="profile-pic profile-pic--small mr-16">
                                 <h4 class="h4 breakword">by <a
                                     v-if="singlePostsData.activities.data.visibility === 'visible'" class="cursor"
-                                    @click="Route({name: 'organize-profile', params: {id: singlePostsData.activities.data.user_id  }})"
+                                    @click="Route({name: 'organize-profile', params: {id: singlePostsData.activities.data.user_id  },
+                                    query: {'active_page': 'organization-profile'}})"
                                     style="color:#6bc1cc !important;">{{singlePostsData.activities.data.organize_name}}</a>
                                     <a v-else
                                        style="color:#6bc1cc !important;">{{singlePostsData.activities.data.organize_name}}</a>

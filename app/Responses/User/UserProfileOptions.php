@@ -33,6 +33,27 @@ class UserProfileOptions implements Responsable
                 $user = $request->user();
                 if ($user->isUser('volunteer') || $user->isUser('organize')) {
                     $data = $this->transformUserProfile($request->user(), $type);
+                } else {
+                    $data = [
+                        'name' => '',
+                        'email' => '',
+                        'user_profile' => null,
+                        'user_causes' => [],
+                        'user_causes_display' => [],
+                    ];
+                    if ($type === 'organize') {
+                        $data['user_media'] = [
+                            'video' => ['validated' => '', 'url' => ''],
+                            'images' => [
+                                [
+                                    'image_base64' => '',
+                                    'image' => null,
+                                    'validated' => '',
+                                    'removable' => false
+                                ]
+                            ]
+                        ];
+                    }
                 }
                 $data['causes'] = Cause::getCauses('all');
                 return response()->json(['success' => true, 'data' => $data]);
