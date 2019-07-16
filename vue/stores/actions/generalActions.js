@@ -63,7 +63,7 @@ export const createActions = (utils) => {
         },
         /*** @HomeData **/
         fetchHomeData(c, i) {
-            client.get(`${apiUrl}/home/index`, ajaxConfig.getHeaders())
+            client.get(`${apiUrl}/home/index`, ajaxToken(c))
                 .then(res => {
                     c.commit('setClearMsg');
                     c.commit('setHomeData', res.data.data)

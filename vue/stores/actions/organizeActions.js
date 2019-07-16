@@ -465,5 +465,30 @@ export const createActions = (utils) => {
                 });
         },
         /*** @PostsData **/
+        /*** @postSaveBookMark **/
+        postSaveBookMark(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data, {
+                    'post_id': ['required', {max: 191}],
+                    'checked': ['required', {max: 191}],
+                    'type': ['required', {max: 191}]
+                }).then(v => {
+                    client.post(`${apiUrl}/users/save-post-bookmark`, data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data);
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err);
+                        });
+
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
+        /*** @postSaveBookMark **/
     }
 };

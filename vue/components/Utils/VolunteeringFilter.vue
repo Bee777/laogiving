@@ -547,7 +547,7 @@
             disableFilters: {
                 default: function () {
                     return {
-                        post_type: false,
+                        post_type: true,
                         causes: false,
                         openings: false,
                         skills: false,

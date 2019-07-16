@@ -43,6 +43,7 @@ export default new Vuex.Store({
             frequency: [],
             weekday_or_weekend: [],
             commitment_duration: [],
+            user_causes: [],
         },
         postsData: {
             news: news,//{posts: {}, mostViews: [], comingEvents: []},
@@ -51,11 +52,12 @@ export default new Vuex.Store({
         singlePostsData: {
             news: {data: {}, others: []},
             activities: {data: {}, others: []},
+            organize: {user_profile: {}}
         },
         postsAllowed: {
             news: true,
             activities: true,
-            organizations: true,
+            organize: true,
         },
         searchQuery: {text: '', filters: {}},
     },

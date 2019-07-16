@@ -171,8 +171,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <hr class="hr">
-                                            <div class="input-ctrl">
+                                            <hr v-if="have_sign_up_optional_required" class="hr">
+                                            <div v-if="have_sign_up_optional_required" class="input-ctrl">
                                                 <label class="lbl">
                                                     <h3
                                                         class="h3 font-dark-grey font-16-tablet-portrait-down">Personal
@@ -493,6 +493,9 @@
             date_of_birth: function () {
                 let date_format = this.getDateFormat();
                 return `${date_format.days}-${date_format.months_number}-${date_format.years}`;
+            },
+            have_sign_up_optional_required: function () {
+                return this.modalData[this.modalNames.signUpVolunteer].need_date_of_birth || this.getVolunteering().volunteer_contact_phone_number === 'yes' || !this.$utils.isEmptyVar(this.getVolunteering().other_response_required)
             }
         },
         watch: {

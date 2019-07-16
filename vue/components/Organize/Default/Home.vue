@@ -299,7 +299,6 @@
                 from: {monthFilter: 0, yearFilter: new Date().getFullYear()},
                 to: {monthFilter: 0, yearFilter: new Date().getFullYear()},
             },
-            toggleRadio: false,
             isEditProfile: false,
         }),
         computed: {

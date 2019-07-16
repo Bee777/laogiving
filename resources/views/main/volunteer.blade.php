@@ -68,6 +68,10 @@
         var baseUrl = '{{ url('/') }}';
         var pathPrefix = '/';
         var baseRes = '/bundles/volunteer/';
+        var all_causes = [];
+        var all_suitables = [];
+        var all_skills = [];
+
         window.$ = jQuery;
     </script>
     {{-- @GeneratedResourcesBottom--}}

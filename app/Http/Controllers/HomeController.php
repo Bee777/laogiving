@@ -6,7 +6,9 @@ use App\Jobs\SendContactInfo;
 use App\Jobs\SendReportAbuse;
 use App\Models\Banner;
 use App\Models\Cause;
+use App\Models\CauseDetail;
 use App\Models\NewsLetter;
+use App\Models\OrganizeProfile;
 use App\Models\Posts;
 use App\Models\Skill;
 use App\Models\Suitable;
@@ -45,6 +47,11 @@ class HomeController extends Controller
     public function responseActivitySingle(Request $request, $id)
     {
         return new SinglePostsResponse(['rootView' => $this->rootView], 'activities', $id);
+    }
+
+    public function responseOrganizeSingle(Request $request, $id)
+    {
+        return new SinglePostsResponse(['rootView' => $this->rootView], 'organize', $id);
     }
     /***@SinglePostsResponse * */
 
@@ -130,6 +137,7 @@ class HomeController extends Controller
             ['name' => 'Organizations Or Groups', 'id' => 'organizations_or_groups', 'count' => 0],
             ['name' => 'Regular Volunteering', 'id' => 'volunteering', 'count' => 0]
         ];
+        $data['user_causes'] = CauseDetail::list('user', $request->user('api')->id ?? 0);
 
         return $data;
     }
@@ -213,6 +221,26 @@ class HomeController extends Controller
                     $bookmark->post_id = $activity->id;
                     $bookmark->user_id = $user->id;
                     $bookmark->type = 'activity';
+                    $bookmark->save();
+                }
+            }
+        } else {
+            $organize = OrganizeProfile::where('user_id', $request->post_id)->where('visibility', 'visible')->first();
+            if (isset($organize, $user) && !($user->isUser('admin') || $user->isUser('super_admin'))) {
+                $success = true;
+                $bookmark = UserSaved::where('post_id', $organize->user_id)->where('user_id', $user->id)
+                    ->where('type', 'organize')->withTrashed()->first();
+                if (isset($bookmark)) {
+                    if (!$checked) {
+                        $bookmark->delete();
+                    } else {
+                        $bookmark->restore();
+                    }
+                } else {
+                    $bookmark = new UserSaved();
+                    $bookmark->post_id = $organize->user_id;
+                    $bookmark->user_id = $user->id;
+                    $bookmark->type = 'organize';
                     $bookmark->save();
                 }
             }

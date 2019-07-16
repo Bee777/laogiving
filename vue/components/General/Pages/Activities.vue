@@ -160,7 +160,7 @@
                 //set query
                 this.$router.replace({path: this.$route.path, query: q});
             },
-            setFilteringGetData() {
+            setFilteringGetData(firstLoad = false) {
                 let q = this.$route.query;
                 //set active tab
                 if (q.type === '' || q.type === 'volunteer') {
@@ -177,6 +177,11 @@
                 this.filters.type = q.type || '';
                 //cause
                 this.filters.causes = q.causes ? q.causes.split(',') : [];
+                if (!q.causes && firstLoad && !this.$utils.getCookie('clearUserCauses')) {
+                    this.filters.causes = this.homeData.user_causes.map(d => {
+                        return d.cause_id;
+                    });
+                }
                 //skills
                 this.filters.skills = q.skills ? q.skills.split(',') : [];
                 //suitables
@@ -207,6 +212,9 @@
                     type: this.filters.type,
                     is_filtering: false
                 };
+                if (this.homeData.user_causes.length > 0) {
+                    this.$utils.setCookie('clearUserCauses', true, 600)
+                }
             },
             triggerButton() {
                 this.setQueryString();
@@ -216,7 +224,7 @@
         created() {
             this.registerWatches();
             this.setPageTitle('Activities');
-            this.setFilteringGetData();
+            this.setFilteringGetData(true);
         }
     });
 </script>

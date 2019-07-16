@@ -725,7 +725,7 @@
                     }
                 ).on('change', function () {
                     if (!self.isOwnerSelectChanged) {
-                        let ans = confirm('Are you sure you want to change the volunteering status?');
+                        let ans = confirm('Are you sure you want to change the volunteering status?\nNote: you will no longer can manage this activity.');
                         if (ans) {
                             self.volunteering_status = $(this).val();
                             self.changeVolunteeringStatus();
@@ -753,6 +753,7 @@
                     this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
                     if (res.success) {
                         this.volunteering.status = this.volunteering_status;
+                        this.Route({name: 'home', query: {'active_page': 'activities'}});
                     } else {
                         this.$nextTick(() => {
                             if (this.selectStatus) {
@@ -904,7 +905,7 @@
                 }).then(res => {
                     this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
                     if (!res.success) {
-                        this.Route({name: 'home', query: {'active_page': 'our-volunteering'}});
+                        this.Route({name: 'home', query: {'active_page': 'activities'}});
                     } else {
                         let data = res.data;
                         this.volunteering = data.volunteering;
@@ -941,6 +942,15 @@
                 this.checkInAll = this.itemsSelected.length === oldData.length;
             },
             changeSignUpVolunteeringStatus(item) {
+                //check owner
+                if (this.authUserInfo.id === item.user_id) {
+                    let ans = confirm('Are you sure you want to change the volunteering sign up status?\nNote: you will no longer can manage this activity.');
+                    if (!ans) {
+                        item.status = 'confirm_and_make_leader';
+                        return;
+                    }
+                }
+                //check owner
                 this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
                 this.manageVolunteeringSignUpStatus({id: item.id, data: item})
                     .then(res => {
@@ -963,17 +973,34 @@
                     this.itemsSelected = this.paginate.data.filter(f => {
                         if (f.checked) {
                             f.status = this.selectAllAction;
+                        }
+                        return f.checked;
+                    });
+                    if (this.itemsSelected && this.itemsSelected.length > 0) {
+                        let item = this.itemsSelected.filter(f => {
+                            return f.user_id === this.authUserInfo.id;
+                        }).shift() || {};
+                        //check owner
+                        if (this.authUserInfo.id === item.user_id) {
+                            let ans = confirm('Are you sure you want to change the volunteering sign up status?\nNote: you will no longer can manage this activity.');
+                            if (!ans) {
+                                return;
+                            }
+                        }
+                        this.itemsSelected.map(f => {
                             if (f.status === 'confirm_and_make_leader') {
                                 f.leader = 'yes'
                             } else {
                                 f.leader = 'no'
                             }
-                        }
-                        return f.checked;
-                    });
-                    if (this.itemsSelected && this.itemsSelected.length > 0) {
+                            return f;
+                        });
+                        //check owner
                         this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
-                        this.manageAllVolunteeringSignUpStatus({data: this.itemsSelected})
+                        this.manageAllVolunteeringSignUpStatus({
+                            volunteering_activity_id: this.volunteering.id,
+                            data: this.itemsSelected
+                        })
                             .then(res => {
                                 this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
                                 if (res.success) {
@@ -998,20 +1025,22 @@
             saveSignUpAttendance() {
                 if (this.isHoursVolunteeringChanged) {
                     this.Event.fire('preload', this.Event.loadingState().NotActiveLoading);
-                    this.manageAllVolunteeringSignUpAttendance({data: this.paginate.data})
-                        .then(res => {
-                            this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
-                            if (res.success) {
-                                //reset data
-                                res.data.map((item, idx) => {
-                                    this.paginate.data[idx].checkin_date = item.checkin_date;
-                                    this.paginate.data[idx].status = item.status;
-                                    this.paginate.data[idx].checked = item.status === 'checkin';
-                                });
-                                this.getVolunteering('no-loading');
-                            }
-                        }).catch(err => {
-                        console.log(err)
+                    this.manageAllVolunteeringSignUpAttendance({
+                        volunteering_activity_id: this.volunteering.id,
+                        data: this.paginate.data
+                    }).then(res => {
+                        this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
+                        if (res.success) {
+                            //reset data
+                            res.data.map((item, idx) => {
+                                this.paginate.data[idx].checkin_date = item.checkin_date;
+                                this.paginate.data[idx].status = item.status;
+                                this.paginate.data[idx].checked = item.status === 'checkin';
+                            });
+                            this.getVolunteering('no-loading');
+                        }
+                    }).catch(err => {
+                        console.log(err);
                         this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
                     })
                 }

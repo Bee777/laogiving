@@ -12,6 +12,18 @@ const ajaxToken = (c, formData = false) => {
 export const axiosClient = () => createAxiosClient();
 export const createActions = (utils) => {
     return {
+        /*** @HomeData **/
+        fetchHomeData(c, i) {
+            client.get(`${apiUrl}/home/index`, ajaxConfig.getHeaders())
+                .then(res => {
+                    c.commit('setClearMsg');
+                    c.commit('setHomeData', res.data.data)
+                })
+                .catch(err => {
+                    c.dispatch('HandleError', err.response);
+                });
+        },
+        /*** @HomeData **/
         fetchSearches(c, i) {
 
             let filters = '';
@@ -125,8 +137,27 @@ export const createActions = (utils) => {
         /***  @UsersSettings Profile **/
         /*** @DashboardData **/
         fetchDashboardData(c, d) {
+            let minYear = 2015;
             c.commit('setValidated', {errors: {loading_dashboard_data: true}});
-            client.get(`${apiUrl}/users/dashboard-data`, ajaxToken(c))
+            let filters = d.filters, request = '';
+            if (filters.filter === 'customMonth') {
+                request = `?fromMonths=${filters.from.monthFilter}&fromYears=${filters.from.yearFilter}&toMonths=${filters.to.monthFilter}&toYears=${filters.to.yearFilter}`
+                if (filters.from.yearFilter < minYear) {
+                    c.commit('setValidated', {errors: {custom_date_range: true}});
+                    return;
+                }
+                if (filters.from.yearFilter > filters.to.yearFilter) {
+                    c.commit('setValidated', {errors: {custom_date_range: true}});
+                    return;
+                }
+                if (filters.from.yearFilter === filters.to.yearFilter && (filters.from.monthFilter > filters.to.monthFilter)) {
+                    c.commit('setValidated', {errors: {custom_date_range: true}});
+                    return;
+                }
+            } else {
+                request = `?selectMonths=${filters.filter}`
+            }
+            client.get(`${apiUrl}/users/dashboard-data${request}`, ajaxToken(c))
                 .then(res => {
                     c.commit('setClearMsg');
                     c.commit('setDashboardData', res.data.data);
@@ -246,7 +277,7 @@ export const createActions = (utils) => {
         },
         manageAllVolunteeringSignUpStatus(c, data) {
             return new Promise((r, n) => {
-                client.post(`${apiUrl}/users/volunteering-signup/all-change-status`, {data: data.data}, ajaxToken(c))
+                client.post(`${apiUrl}/users/volunteering-signup/all-change-status?volunteering_activity_id=${data.volunteering_activity_id}`, {data: data.data}, ajaxToken(c))
                     .then(res => {
                         c.commit('setClearMsg');
                         r(res.data)
@@ -259,7 +290,7 @@ export const createActions = (utils) => {
         },
         manageAllVolunteeringSignUpAttendance(c, data) {
             return new Promise((r, n) => {
-                client.post(`${apiUrl}/users/volunteering-signup/all-change-attendance`, {data: data.data}, ajaxToken(c))
+                client.post(`${apiUrl}/users/volunteering-signup/all-change-attendance?volunteering_activity_id=${data.volunteering_activity_id}`, {data: data.data}, ajaxToken(c))
                     .then(res => {
                         c.commit('setClearMsg');
                         r(res.data)
@@ -271,5 +302,54 @@ export const createActions = (utils) => {
             });
         },
         /***@VolunteeringSignUpActivityMangeData */
+        /*** @PostsData **/
+        fetchPostsData(c, i) {
+            let request = `limit=${i.limit}&page=${i.page}&q=${i.q}`;
+            let options_request = '';
+            for (let o in i.options) {
+                if (i.options.hasOwnProperty(o)) {
+                    let op = i.options[o] || '';
+                    op = utils.isArray(op) ? op.join(',') : op;
+                    options_request += `&${o}=${op}`;
+                }
+            }
+            c.commit('setValidated', {errors: {loading_search_posts: true}});
+            client.get(`${apiUrl}/users/posts/${i.type}?${request}${options_request}`, ajaxToken(c))
+                .then(res => {
+                    c.commit('setSearchQuery', {text: i.q, filters: i.filters});
+                    c.commit('setClearMsg', {delay: 300});
+                    c.commit('setPostsData', {data: res.data, type: i.type})
+                })
+                .catch(err => {
+                    c.dispatch('HandleError', err.response);
+                });
+        },
+        /*** @PostsData **/
+        /*** @postSaveBookMark **/
+        postSaveBookMark(c, data) {
+            return new Promise((r, n) => {
+                utils.Validate(data, {
+                    'post_id': ['required', {max: 191}],
+                    'checked': ['required', {max: 191}],
+                    'type': ['required', {max: 191}]
+                }).then(v => {
+                    client.post(`${apiUrl}/users/save-post-bookmark`, data, ajaxToken(c))
+                        .then(res => {
+                            c.commit('setClearMsg');
+                            r(res.data);
+                        })
+                        .catch(err => {
+                            c.dispatch('HandleError', err.response);
+                            n(err);
+                        });
+
+                }).catch(e => {
+                    c.commit('setValidated', {errors: e.errors});
+                    n(e);
+                });
+            });
+        },
+        /*** @postSaveBookMark **/
+
     }
 };

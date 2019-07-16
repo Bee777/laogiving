@@ -4,27 +4,35 @@
 
             <section class="company-profile__head">
                 <div class="cWidth-1200 company-profile__head-title-logo">
-                    <div class="company-profile__logo"><img
-                        src="https://www.giving.sg/image/organization_logo?img_id=6090606&amp;1508937117000"></div>
-                    <div class="company-profile__title-views-ctn"><h2 class="h2">National
-                        Neuroscience Institute</h2>
+                    <div class="company-profile__logo">
+                        <img v-if="shouldShowSingle()"
+                             :src="`${baseUrl}${singlePostsData.organize.user_profile.organize_image}`"></div>
+                    <div class="company-profile__title-views-ctn"><h2 class="h2">
+                        {{singlePostsData.organize.user_profile.display_name}}</h2>
                         <div
                             class="font-dark-grey mt-16 body-txt--small flex-ctn flex-ctn flex-ctn--dir-col-tablet-landscape-up-row">
                             <div class="mr-0-tablet-landscape-up-24">
                                 <div class="social-list mt-8">
                                     <a class="button-ctn button--icon button--ghost "
+                                       :href="sharer('fb', type, singlePostsData.organize.user_profile, link)"
                                        title="Facebook"> <i class="material-icons button--icon__icon">share</i>
                                         <span class="button--icon__name">SHARE</span>
                                     </a>
                                     <label class="btn-checkbox-btn btn-checkbox-btn--save ">
-                                        <input type="checkbox" name="saving-bookmark">
-                                        <span class="button-ctn button--icon button--ghost">
+                                        <input v-if="LoggedIn()" v-model="bookmarkOrganize" type="checkbox"
+                                               name="saving-bookmark"
+                                               @change="saveMyBookmark(singlePostsData.organize.user_profile)">
+                                        <input v-else disabled type="checkbox">
+                                        <span @click="checkingSaveBookmark()"
+                                              class="button-ctn button--icon button--ghost">
                                       <i class="material-icons ico-save button--icon__icon">bookmark_border</i>
                                       <span class="button--icon__name">SAVE</span>
                                     </span>
                                     </label>
-                                    <a class="button-ctn button--icon button--ghost "
-                                       title="Link copy to clipboard"> <i
+                                    <a
+                                        @click="copyToClipboard({text: link})"
+                                        class="button-ctn button--icon button--ghost "
+                                        title="Link copy to clipboard"> <i
                                         class="material-icons button--icon__icon">link</i>
                                         <span class="button--icon__name">LINK</span>
                                     </a>
@@ -298,145 +306,124 @@
                 </main>
             </div>
             <!--Activities-->
+
             <!--Profile-->
             <div class="ctn" v-show="tab===1">
                 <div class="cWidth-1200">
                     <section class="company-profile__body ctn clearfix">
                         <div class="company-profile__main objectfit ">
                             <div class="swiper-arrow-wrap swiper-container-horizontal">
-                                <div class="swiper-container--images swiper-container">
-                                    <div class="swiper-wrapper">
-                                        <div class="swiper-slide">
-                                            <img alt="" class="img-placeolder"
-                                                 src="https://www.giving.sg/image/logo?img_id=6080036">
+                                <Carousel :hasVideos="true" ref="organize-profile">
+                                    <template slot="slide-item">
+                                        <div class="swiper-slide" v-if="user_media.video.url !==''">
+                                            <div class="video-container none-active"
+                                                 :data-embed="covertYoutubeUrlToEmBed(user_media.video.url)">
+                                            </div>
                                         </div>
-                                        <div class="swiper-slide">
-                                            <img alt="" class="img-placeolder"
-                                                 src="https://www.giving.sg/image/logo?img_id=9040323">
+                                        <div class="swiper-slide" v-for="(item, idx) in user_media.images"
+                                             v-if="item.image_base64!==''" :key="idx">
+                                            <img :alt="item.url" class="img-placeolder"
+                                                 :src="item.image_base64">
                                         </div>
-                                    </div>
-                                    <div class="swiper-button-prev rotage"></div>
-                                    <div class="swiper-button-next"></div>
-                                </div>
+                                    </template>
+                                </Carousel>
+
                                 <div class="swiper-pagination swiper-pagination-bullets"><span
                                     class="swiper-pagination-bullet swiper-pagination-bullet-active"></span></div>
                             </div>
                         </div>
                         <div class="company-profile__donate">
-                            <div class="accordion-card">
-                                <div class="accordion-card__head">
+                            <AccordionCard>
+                                <template slot="header-title">
                                     <h6 class="h6">VISION &amp;
                                         MISSION</h6>
-                                    <i class="material-icons accordion-card__chevron">keyboard_arrow_up</i>
-                                    <div class="accordion-card__hitarea"></div>
-                                </div>
-                                <div class="accordion-card__body"><p>NNI is the national
-                                    specialist centre and regional centre for clinical referrals for the management and
-                                    treatment of the neurosciences.</p></div>
-                            </div>
+                                </template>
+                                <template slot="body-content">
+                                    <p class="break-word pre-wrap"
+                                       v-text="singlePostsData.organize.user_profile.vision_mission"></p>
+                                </template>
+                            </AccordionCard>
                         </div>
                         <div class="company-profile__options">
                             <div class="company-profile__description">
 
-                                <div class="accordion-card accordion-card--borderless">
-                                    <div class="accordion-card__head"><h3 class="h3">About
-                                        Us</h3> <i class="material-icons accordion-card__chevron">keyboard_arrow_up</i>
-                                        <div class="accordion-card__hitarea"></div>
-                                    </div>
-                                    <div class="accordion-card__body">
-                                        <div class="body-txt break-word"> National Neuroscience Institute (NNI) is the
-                                            national specialist centre and regional centre for clinical referrals for
-                                            the management and treatment of the neurosciences, as well as for education
-                                            and research conducted in the field. <br><br>Offering a comprehensive range
-                                            of Neurology, Neurosurgery and Neuroradiology services using the latest
-                                            technology and experience of our healthcare professionals, NNI is at the
-                                            forefront of neuroscience care in Singapore and across the region. <br><br>NNI
-                                            operates directly from two campuses; Tan Tock Seng Hospital and Singapore
-                                            General Hospital (SGH), as well as provides specialty services to most other
-                                            hospitals in Singapore. <br><br>We are a member of the SingHealth (Singapore
-                                            Health Services) Group, an integrated healthcare delivery network which
-                                            offers a complete range of multi-disciplinary and integrated medical care.
-                                            The Group comprises hospitals, national specialty centres and a network of
-                                            polyclinics.
-                                        </div>
-                                    </div>
-                                </div>
+                                <AccordionCard containerClasses="accordion-card--borderless">
+                                    <template slot="header-title">
+                                        <h3 class="h3">About Us</h3>
+                                    </template>
+                                    <template slot="body-content">
+                                        <div class="body-txt break-word pre-wrap"
+                                             v-html="singlePostsData.organize.user_profile.about"></div>
+                                    </template>
+                                </AccordionCard>
 
-                                <div class="accordion-card accordion-card--borderless">
-                                    <div class="accordion-card__head"><h3 class="h3">Our
-                                        Programmes</h3> <i class="material-icons accordion-card__chevron">keyboard_arrow_up</i>
-                                        <div class="accordion-card__hitarea"></div>
-                                    </div>
-                                    <div class="accordion-card__body">
-                                        <div class="body-txt break-word"> Our
-                                            programmes are centered around our 3 pillars - Education, Research and
-                                            Clinical Services. We believe strongly in patients at the heart of all we
-                                            do. Find out more at www.nni.com.sg today!
-                                        </div>
-                                    </div>
-                                </div>
+                                <AccordionCard containerClasses="accordion-card--borderless">
+                                    <template slot="header-title">
+                                        <h3 class="h3">Our Programmes</h3>
+                                    </template>
+                                    <template slot="body-content">
+                                        <div class="body-txt break-word pre-wrap"
+                                             v-html="singlePostsData.organize.user_profile.our_programmes"></div>
+                                    </template>
+                                </AccordionCard>
 
                             </div>
                         </div>
 
                         <div class="company-profile__causes-contact">
-                            <div class="accordion-card">
-                                <div class="accordion-card__head"><h6 class="h6">SUPPORTED
-                                    CAUSES</h6> <i class="material-icons accordion-card__chevron">keyboard_arrow_up</i>
-                                    <div class="accordion-card__hitarea"></div>
-                                </div>
-                                <div class="accordion-card__body">
+
+                            <AccordionCard>
+                                <template slot="header-title">
+                                    <h6 class="h6">SUPPORTED
+                                        CAUSES</h6>
+                                </template>
+                                <template slot="body-content">
                                     <ul class="list list--spacing">
-                                        <li><i
-                                            style="background-image: url('https://www.giving.sg/givingsg-theme/images/mt/ic-community.svg');"
-                                            class="ico ico--medium ico-community mr-8"></i>Community
-                                        </li>
-                                        <li><i
-                                            style="background-image: url('https://www.giving.sg/givingsg-theme/images/mt/ic-education.svg');"
-                                            class="ico ico--medium ico-education mr-8"></i>Education
-                                        </li>
-                                        <li><i
-                                            style="background-image: url('https://www.giving.sg/givingsg-theme/images/mt/ic-elderly.svg');"
-                                            class="ico ico--medium ico-elderly mr-8"></i>Elderly
-                                        </li>
-                                        <li><i
-                                            style="background-image: url('https://www.giving.sg/givingsg-theme/images/mt/ic-health.svg');"
-                                            class="ico ico--medium ico-health mr-8"></i>Health
+                                        <li v-for="(item, idx) in user_causes_display" :key="idx"><i
+                                            :style="`background-image: url('${baseUrl}/assets/images/icon/causes/${item.small_icon}');`"
+                                            class="ico ico--medium ico-community mr-8"></i>{{item.name}}
                                         </li>
                                     </ul>
-                                </div>
-                            </div>
+                                </template>
+                            </AccordionCard>
 
-                            <div class="accordion-card mt-16">
-                                <div class="accordion-card__head"><h6 class="h6">CONTACT
-                                    US</h6> <i class="material-icons accordion-card__chevron">keyboard_arrow_up</i>
-                                    <div class="accordion-card__hitarea"></div>
-                                </div>
-                                <div class="accordion-card__body">
-                                    <div><h4 style="margin-bottom:10px">Volunteer Co-ordinator</h4>
-                                        <p class="body-txt">National Neuroscience Institute</p></div>
+                            <AccordionCard containerClasses="mt-16">
+                                <template slot="header-title">
+                                    <h6 class="h6">CONTACT
+                                        US</h6>
+                                </template>
+                                <template slot="body-content">
+                                    <div><h4 style="margin-bottom:10px">
+                                        {{singlePostsData.organize.user_profile.contact_person}}</h4>
+                                        <p class="body-txt">{{singlePostsData.organize.user_profile.display_name}}</p>
+                                    </div>
                                     <div class="mb-16"><i class="ico material-icons gray mr-6">call</i>
-                                        <a href="tel:63577095"
-                                           class="text-link text-link--dark-grey">63577095</a>
+                                        <a :href="`tel:${singlePostsData.organize.user_profile.phone_number}`"
+                                           class="text-link text-link--dark-grey">{{singlePostsData.organize.user_profile.phone_number}}</a>
                                     </div>
                                     <div class="mb-16">
                                         <i class="ico material-icons gray mr-6">email</i>
                                         <a
-                                            class="text-link text-link--dark-grey" href="mailto:giving@nni.com.sg">giving@nni.com.sg</a>
+                                            class="text-link text-link--dark-grey"
+                                            :href="`mailto:${singlePostsData.organize.user_profile.public_email}`">{{singlePostsData.organize.user_profile.public_email}}</a>
                                     </div>
                                     <div class="mb-16">
                                         <i class="ico material-icons gray mr-6">public</i>
                                         <a
-                                            href="http://www.giving.sg" class="text-link text-link--dark-grey"
-                                            target="_blank">www.giving.sg</a></div>
-                                </div>
-                            </div>
+                                            :href="$utils.httpOrHttps(singlePostsData.organize.user_profile.website, true)"
+                                            class="text-link text-link--dark-grey"
+                                            target="_blank">{{singlePostsData.organize.user_profile.website}}</a></div>
+                                    <div>
+                                        <i class="ico ico-facebook-gray mr-8"></i>
+                                        <a target="_blank"
+                                           class="text-link text-link--dark-grey"
+                                           :href="`https://www.facebook.com/${singlePostsData.organize.user_profile.facebook}`">{{singlePostsData.organize.user_profile.facebook}}</a>
+                                    </div>
+                                </template>
+                            </AccordionCard>
 
-                            <div class="text-center mb-16">
-                                <a id="report-abuse-button" class="text-link"><i
-                                    class="ico  material-icons ico-flag mr-8">outlined_flag</i>Report
-                                    abuse</a>
-                            </div>
+                            <ReportAbuse :data="{user_id: $store.state.authUserInfo.id || 0, type: 'profile'}"
+                                         :email="$store.state.authUserInfo.email || ''"/>
 
                         </div>
 
@@ -452,38 +439,109 @@
 
 <script>
     import Base from '@com/Bases/GeneralBase.js'
+    import AccordionCard from '@com/Utils/AccordionCard.vue'
+    import Carousel from '@com/Utils/Carousel.vue'
+    import ReportAbuse from '@com/Utils/ReportAbuse.vue'
+    import {mapActions} from 'vuex'
 
     export default Base.extend({
         name: "CompanyProfile",
         data: () => ({
-            type: 'CompanyProfile',
+            type: 'organize',
             tab: 1,
+            link: '',
+            bookmarkOrganize: false,
+            user_media: {
+                video: {validated: '', url: ''},
+                images: [
+                    {
+                        image_base64: '',
+                        image: null,
+                        validated: '',
+                        removable: false,
+                    }
+                ],
+            },
+            user_causes_display: []
         }),
+        components: {
+            AccordionCard,
+            ReportAbuse,
+            Carousel
+        },
         methods: {
-            initCarousel() {
-                var mSwiper = new Swiper('.swiper-container', {
-                    loop: true,
-                    // Navigation arrows
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
-                    },
-                    pagination: {
-                        el: '.swiper-pagination',
-                        clickable: true,
-                    },
-                    spaceBetween: 10,
+            ...mapActions(['copyToClipboard']),
+            covertYoutubeUrlToEmBed(url) {
+                let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                let match = url.match(regExp);
+
+                if (match && match[2].length === 11) {
+                    return `${match[2]}`;
+                } else {
+                    return '';
+                }
+            },
+            saveMyBookmark(data) {
+                if (this.LoggedIn()) {
+                    this.postSaveBookMark({
+                        post_id: data.user_id,
+                        type: 'organize',
+                        checked: this.bookmarkOrganize
+                    }).then((res) => {
+                        if (!res.success) {
+                            this.bookmarkOrganize = false;
+                        }
+                    }).catch(() => {
+                        this.bookmarkOrganize = false;
+                    });
+                } else {
+                    this.toaster('You do not have permission to favourite')
+                }
+            },
+            setItem(data) {
+                this.bookmarkOrganize = !(!(data.saved_bookmark));
+                this.setPageTitle(data.name + ' - Company Profile');
+                this.user_media = data.user_media;
+                this.user_causes_display = data.user_causes_display;
+                this.$nextTick(() => {
+                    this.initCarousel();
                 })
             },
+            initCarousel() {
+                let carousel = this.$refs['organize-profile'];
+                if (carousel) {
+                    carousel.initCarousel();
+                }
+            },
+            checkingSaveBookmark() {
+                if (!this.LoggedIn()) {
+                    this.toaster('You do not have permission to favourite')
+                }
+            },
+            shouldShowSingle() {
+                return !this.$utils.isEmptyObject(this.singlePostsData[this.type].user_profile);
+            },
+            destroyCarousel() {
+                let carousel = this.$refs['organize-profile'];
+                if (carousel) {
+                    carousel.removeCarousel();
+                }
+            },
         },
-        mounted() {
-            this.initCarousel();
+        beforeDestroy() {
+            this.destroyCarousel();
         },
         created() {
             this.setPageTitle('Company Profile - ');
+            this.link = this.baseUrl + this.$route.fullPath;
+            this.registerWatches();
+            this.singleId = this.$route.params.id;
+            this.saveMyBookmark = this.debounce(this.saveMyBookmark, 250);
             let tab = this.$route.query.activities;
             if (tab) {
                 this.tab = 0;
+            } else {
+                this.fetchSinglePostsData({type: this.type, id: this.singleId});
             }
         }
     });

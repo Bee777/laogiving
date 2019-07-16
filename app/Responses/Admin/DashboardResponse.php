@@ -120,6 +120,88 @@ class DashboardResponse implements Responsable
                 $data['volunteers'] = count($all_volunteers);
                 $data['updated_at'] = now()->format('d/m/Y');
             }
+            #organize
+
+            #volunteer statuses
+            if ($user->isUser('volunteer')) {
+                $selectMonths = $request->get('selectMonths');
+                $fromMonths = $request->get('fromMonths');
+                $fromYears = $request->get('fromYears');
+                $toMonths = $request->get('toMonths');
+                $toYears = $request->get('toYears');
+                $format = 'Y-m-d';
+                $minYear = 2015;
+                $btwDate = [];
+                switch ($selectMonths) {
+                    case 'this1Month':
+                        {
+                            $btwDate = Helpers::getFirstLastDayOfCurrentMonth();
+                            $btwDate[0] = $btwDate[0]->format($format);
+                            $btwDate[1] = $btwDate[1]->format($format);
+                            break;
+                        }
+                    case 'past1Month':
+                        {
+                            $btwDate = Helpers::getFirstLastDayOfCurrentMonth();
+                            $btwDate[0] = $btwDate[0]->subMonth()->format($format);
+                            $btwDate[1] = $btwDate[1]->subMonth()->format($format);
+                            break;
+                        }
+                    case 'past3Month':
+                        {
+                            $btwDate = Helpers::getFirstLastDayOfCurrentMonth();
+                            $btwDate[0] = $btwDate[0]->subMonths(3)->format($format);
+                            $btwDate[1] = $btwDate[1]->subMonths(3)->format($format);
+                            break;
+                        }
+                    case 'past6Month':
+                        {
+                            $btwDate = Helpers::getFirstLastDayOfCurrentMonth();
+                            $btwDate[0] = $btwDate[0]->subMonths(6)->format($format);
+                            $btwDate[1] = $btwDate[1]->subMonth(6)->format($format);
+                            break;
+                        }
+                    default:
+                        {
+                            if ($fromYears < $minYear) {
+                                break;
+                            }
+                            if (!($fromYears <= $toYears)) {
+                                break;
+                            }
+                            if ($fromYears === $toYears && !($fromMonths <= $toMonths)) {
+                                break;
+                            }
+                            try {
+                                $dateFormMonth = \DateTime::createFromFormat('!m', $fromMonths + 1)->format('F');
+                                $dateToMonth = \DateTime::createFromFormat('!m', $toMonths + 1)->format('F');
+                                $btwDate[] = new Carbon("first day of $dateFormMonth $fromYears");
+                                $btwDate[] = new Carbon("last day of $dateToMonth $toYears");
+                                $btwDate[0] = $btwDate[0]->format($format);
+                                $btwDate[1] = $btwDate[1]->format($format);
+                            } catch (\Exception $ex) {
+                                Log::info("toFormatDateString: {$ex->getMessage()}");
+                            }
+                            break;
+                        }
+                }
+                #volunteering
+                $sign_up_statuses = DB::table('volunteer_sign_up_activities')
+                    ->selectRaw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN 1 ELSE 0 END) AS `CHECKIN_COUNT`,
+                SUM(CASE WHEN volunteer_sign_up_activities.status = 'confirm' THEN 1 ELSE 0 END) AS `CONFIRM_COUNT`,
+                SUM(CASE WHEN volunteer_sign_up_activities.leader = 'yes' THEN 1 ELSE 0 END) AS `LEADER_COUNT`, 
+                SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN  volunteer_sign_up_activities.hour_per_volunteer ELSE 0 END) AS `HOURS_COUNT`")
+                    ->where('user_id', $user->id);
+                if (count($btwDate) > 1) {
+                    $sign_up_statuses = $sign_up_statuses->whereBetween('volunteer_sign_up_activities.created_at', $btwDate)->first();
+                } else {
+                    $sign_up_statuses = $sign_up_statuses->first();
+                }
+                $data['volunteer_opportunities'] = $sign_up_statuses->CHECKIN_COUNT ?? 0;
+                $data['volunteering_hours'] = $sign_up_statuses->HOURS_COUNT ?? 0;
+                $data['updated_at'] = now()->format('d/m/Y');
+            }
+            #volunteer statuses
             #admin section
             if ($user->isUser('admin') || $user->isUser('super_admin')) {
                 $data['activities_count'] = $this->getVolunteeringCount();

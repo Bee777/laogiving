@@ -11,8 +11,8 @@
     var activities =  {!! $activities !!};
 
     var all_causes = {!! $all_causes !!};;
-    var all_suitables = {!! $all_suitables !!};;
-    var all_skills = {!! $all_skills !!};;
+    var all_suitables = {!! $all_suitables !!};
+    var all_skills = {!! $all_skills !!};
 
 
 </script>

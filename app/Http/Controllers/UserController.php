@@ -144,8 +144,8 @@ class UserController extends Controller
                     ->selectRaw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN 1 ELSE 0 END) AS `CHECKIN_COUNT`,
                 SUM(CASE WHEN volunteer_sign_up_activities.status = 'confirm' THEN 1 ELSE 0 END) AS `CONFIRM_COUNT`,
                 SUM(CASE WHEN volunteer_sign_up_activities.leader = 'yes' THEN 1 ELSE 0 END) AS `LEADER_COUNT`, 
-                SUM(volunteer_sign_up_activities.hour_per_volunteer) AS `HOURS_COUNT`")
-                    ->where('user_id', $user->id)->first();;
+                SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN  volunteer_sign_up_activities.hour_per_volunteer ELSE 0 END) AS `HOURS_COUNT`")
+                    ->where('user_id', $user->id)->first();
             }
         }
 
@@ -327,15 +327,35 @@ class UserController extends Controller
         $data = $this->validate($request, [
             'status' => 'required|max:191',
         ]);
-        $volunteerActivity = VolunteeringActivity::where('user_id', $request->user()->id)->where('id', $id)->first();
-        if (isset($volunteerActivity) && $volunteerActivity->status === 'live') {
-            if ($data['status'] === 'close') {
-                $volunteerActivity->status = 'closed';
-            } else if ($data['status'] === 'cancel') {
-                $volunteerActivity->status = 'cancelled';
+        $user = $request->user('api');
+
+        if ($user->isUser('organize')) {
+            $volunteerActivity = VolunteeringActivity::where('user_id', $user->id)->where('id', $id)->first();
+            if (isset($volunteerActivity) && $volunteerActivity->status === 'live') {
+                if ($data['status'] === 'close') {
+                    $volunteerActivity->status = 'closed';
+                } else if ($data['status'] === 'cancel') {
+                    $volunteerActivity->status = 'cancelled';
+                }
+                $volunteerActivity->save();
+                return response()->json(['success' => true, 'msg' => 'The activity status was successfully changed!']);
             }
-            $volunteerActivity->save();
-            return response()->json(['success' => true, 'msg' => 'The activity status was successfully changed!']);
+        } else if ($user->isUser('volunteer')) {
+            $volunteerActivity = VolunteeringActivity::where('status', 'live')->where('id', $id)->first();
+            $signUpVolunteeringLeader = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                ->where('volunteer_sign_up_activities.user_id', $user->id)
+                ->where('volunteer_sign_up_activities.leader', 'yes')
+                ->where('volunteer_sign_up_activities.volunteering_activity_id', $volunteerActivity->id ?? 0)->first();
+            if (isset($volunteerActivity, $signUpVolunteeringLeader) && $volunteerActivity->status === 'live') {
+                if ($data['status'] === 'close') {
+                    $volunteerActivity->status = 'closed';
+                } else if ($data['status'] === 'cancel') {
+                    $volunteerActivity->status = 'cancelled';
+                }
+                $volunteerActivity->save();
+                return response()->json(['success' => true, 'msg' => 'The activity status was successfully changed!']);
+            }
         }
         return response()->json(['success' => false, 'msg' => 'Failed to change the activity status!']);
     }

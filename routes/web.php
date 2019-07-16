@@ -29,7 +29,7 @@ Route::group(['prefix' => 'posts/{type}'], function () {
     Route::get('/single/{id}', 'HomeController@responsePostsSingle')->name('get.home.posts.single');
 });
 Route::get('posts/volunteer-activity/{id}', 'HomeController@responseActivitySingle')->name('get.home.volunteer.activity');
-Route::get('/organisation/profile/{id}', 'HomeController@index')->name('get.home.organize.profile');
+Route::get('/organisation/profile/{id}', 'HomeController@responseOrganizeSingle')->name('get.home.organize.profile');
 /**@Posts */
 
 /**@ResetPasswordForm */

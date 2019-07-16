@@ -67,7 +67,7 @@ export default new Vuex.Store({
         },
         dashboardData: {
             volunteer_opportunities: 0,
-            volunteers: 0,
+            volunteering_hours: 0,
             updated_at: '',
         },
         searchesData: {

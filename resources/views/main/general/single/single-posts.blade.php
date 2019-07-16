@@ -22,6 +22,15 @@
         $image_url = $post->images_media[0]['image_base64'];
         $title = $post->name .' - Activity Volunteering | ' . $s['site_name'];
         $description = $post->name . ' - ' . strip_tags(htmlspecialchars_decode($post->description))  . ' - Activity Volunteering on ' . $s['site_name'] . ', Latest Activity Volunteering on ' . $s['site_name'] . ' | ' .  $s['site_name'];
+    }else if($type==='organize'){
+        $user = App\User::find($post->user_id);
+        $post_type_name = 'Company Profile';
+        $post->user = new \stdClass();
+        $post->user->name = $post->display_name;
+        $post->title = $post->display_name;
+        $image_url = url('/') . "/assets/images/user_profiles/{$user->image}";
+        $title = $post->display_name .' - Organizations or Groups | ' . $s['site_name'];
+        $description = $post->display_name . ' - ' . strip_tags(htmlspecialchars_decode($post->about))  . ' - Organizations or Groups on ' . $s['site_name'] . ' | ' .  $s['site_name'];
     }else{
         $image_url = url('/') . \App\Models\Posts::$uploadPath . $post->image;
         $title = $post->title .' - ' . $post_type_name . ' | ' . $s['site_name'];

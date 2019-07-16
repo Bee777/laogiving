@@ -9,6 +9,7 @@
 namespace App\Responses\User;
 
 use App\Http\Controllers\Helpers\Helpers;
+use App\Models\VolunteeringActivity;
 use App\Models\VolunteerSignUpActivity;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\DB;
@@ -141,6 +142,7 @@ class UserVolunteeringSignUpManage implements Responsable
             } else if ($user->isUser('volunteer')) {
                 $status = $request->get('selectedStatus');
                 $signUpId = $request->get('sign_up_id');
+                #user withdrawn
                 if ($this->actionType === 'change-status' && isset($this->options['single']) && $this->options['single'] === true) {
                     $signUpVolunteering = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
                         ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
@@ -149,6 +151,79 @@ class UserVolunteeringSignUpManage implements Responsable
                     if (isset($signUpVolunteering) && $status === 'withdrawn') {
                         $this->changeStaus($signUpVolunteering, $status);
                         return response()->json(['success' => true, 'data' => VolunteerSignUpActivity::find($signUpId)]);
+                    }
+                }
+                #user withdrawn
+                #leader
+                $activity = VolunteeringActivity::where('status', 'live')->where('id', $request->volunteering_activity_id)->first();
+                $signUpVolunteeringLeader = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                    ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                    ->where('volunteer_sign_up_activities.user_id', $user->id)
+                    ->where('volunteer_sign_up_activities.leader', 'yes')
+                    ->where('volunteer_sign_up_activities.volunteering_activity_id', $activity->id ?? 0)->first();
+                if (isset($signUpVolunteeringLeader)) {
+                    if ($this->actionType === 'change-status' && isset($this->options['single'])) {
+                        if (!$this->options['single']) {
+                            $data = $request->data;
+                            if (is_array($data) && count($data) > 0) {
+                                foreach ($data as $sign_up_data) {
+                                    $signUpVolunteering = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                                        ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                                        ->where('volunteering_activities.id', $activity->id)
+                                        ->where('volunteering_activities.user_id', $activity->user_id)
+                                        ->where('volunteer_sign_up_activities.id', $sign_up_data['id'] ?? 0)->first();
+
+                                    if (isset($signUpVolunteering) && $sign_up_data['status'] !== 'withdrawn' && $this->statuses($sign_up_data['status'])) {
+                                        $this->changeStaus($signUpVolunteering, $sign_up_data['status']);
+                                    }
+                                }
+                                return response()->json(['success' => true, 'data' => $data]);
+                            }
+                        } else if ($this->options['single'] === true) {
+                            $signUpVolunteering = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                                ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                                ->where('volunteering_activities.id', $activity->id)
+                                ->where('volunteering_activities.user_id', $activity->user_id)->where('volunteer_sign_up_activities.id', $request->id)->first();
+                            if (isset($signUpVolunteering) && $request->status !== 'withdrawn' && $this->statuses($request->status)) {
+                                $this->changeStaus($signUpVolunteering, $request->status);
+                                return response()->json(['success' => true, 'data' => VolunteerSignUpActivity::find($request->id)]);
+                            }
+                        }
+                    } else if ($this->actionType === 'change-attendance') {
+                        $data = $request->data;
+                        if (is_array($data) && count($data) > 0) {
+                            foreach ($data as $key => $sign_up_data) {
+
+                                $signUpVolunteering = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                                    ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                                    ->where('volunteering_activities.id', $activity->id)
+                                    ->where('volunteering_activities.user_id', $activity->user_id)
+                                    ->whereIn('volunteer_sign_up_activities.status', ['confirm', 'checkin'])
+                                    ->where('volunteer_sign_up_activities.id', $sign_up_data['id'] ?? 0)->first();
+
+                                if (isset($signUpVolunteering)) {
+                                    if (isset($sign_up_data['hour_per_volunteer'])) {
+                                        $hours = $sign_up_data['hour_per_volunteer'];
+                                        if ($hours >= 0 && $hours < 1000000) {
+                                            $signUpVolunteering->hour_per_volunteer = $sign_up_data['hour_per_volunteer'];
+                                        }
+                                    }
+                                    if (isset($sign_up_data['checked']) && $sign_up_data['checked'] === true) {
+                                        $signUpVolunteering->checkin_date = now();
+                                        $signUpVolunteering->status = 'checkin';
+                                        $data[$key]['checkin_date'] = $signUpVolunteering->checkin_date;
+                                        $data[$key]['status'] = $signUpVolunteering->status;
+                                    } else {
+                                        $signUpVolunteering->checkin_date = null;
+                                        $signUpVolunteering->status = 'confirm';
+                                        $data[$key]['checkin_date'] = $signUpVolunteering->checkin_date;
+                                        $data[$key]['status'] = $signUpVolunteering->status;
+                                    }
+                                    $signUpVolunteering->save();
+                                }
+                            }
+                            return response()->json(['success' => true, 'data' => $data]);
+                        }
                     }
                 }
             }

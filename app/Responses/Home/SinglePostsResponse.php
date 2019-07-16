@@ -11,11 +11,13 @@ namespace App\Responses\Home;
 use App\Http\Controllers\Helpers\Helpers;
 use App\Models\CauseDetail;
 use App\Models\Media;
+use App\Models\OrganizeProfile;
 use App\Models\Posts;
 use App\Models\UserSaved;
 use App\Models\VolunteeringActivity;
 use App\Models\VolunteerSignUpActivity;
 use App\Traits\DefaultData;
+use App\User;
 use Illuminate\Contracts\Support\Responsable;
 
 class SinglePostsResponse implements Responsable
@@ -75,6 +77,37 @@ class SinglePostsResponse implements Responsable
                 ->where('volunteering_activities.id', $this->id)->first();
         }
         //@end for checking volunteering
+
+        //@for checking organization
+        if ($type === 'organize_profile') {
+            $withUserStatus = 'approved';
+            $isAdmin = false;
+            $isOwner = false;
+            if (isset($user)) {
+                #check if admin
+                $isAdmin = $user->isUser('admin') || $user->isUser('super_admin');
+                #check if organize
+                $self_post_user = OrganizeProfile::where('user_id', $this->id)->where('user_id', $user->id)->exists();
+                if ($self_post_user && $user->isUser('organize')) {
+                    $isOwner = true;
+                }
+            }
+            $post = OrganizeProfile::select('organize_profiles.*')->join('users', 'users.id', 'organize_profiles.user_id')
+                ->join('user_types', 'user_types.user_id', 'users.id')
+                ->where('user_types.type_user_id', $this->getTypeUserId('organize'));
+
+            if ($isAdmin) {
+                $post = $post->where('organize_profiles.user_id', $this->id)->first();
+            } else if ($isOwner) {
+                $post = $post->where('users.status', $withUserStatus)->where('organize_profiles.user_id', $this->id)->first();
+            } else {
+                $post = $post->where('organize_profiles.visibility', 'visible')
+                    ->where('users.status', $withUserStatus)
+                    ->where('organize_profiles.user_id', $this->id)->first();
+            }
+        }
+        //@for checking organization
+
         if (Helpers::isAjax($request)) {
             if (!isset($post)) {
                 return response()->json(['success' => false, 'msg' => 'The post does not exits!.']);
@@ -85,6 +118,13 @@ class SinglePostsResponse implements Responsable
             }
             //@for volunteering
 
+            //@for organization
+            if ($type === 'organize_profile') {
+                OrganizeProfile::IncreaseViews($post->id);
+                return $this->getOrganizationProfile($post, $user);
+            }
+            //@for organization
+            //@for volunteering
             //@other posts type
             Posts::IncreaseViews($post->id);
             return $this->postsPaginator($request);
@@ -252,7 +292,7 @@ class SinglePostsResponse implements Responsable
         $types = [
             'activities' => 'activity', 'news' => 'news',
             'events' => 'event', 'scholarships' => 'scholarship',
-            'dictionaries' => 'dictionary',
+            'organize' => 'organize_profile',
         ];
         return $types[$title] ?? '';
     }
@@ -319,5 +359,54 @@ class SinglePostsResponse implements Responsable
         $data->setRelations([]);
         unset($data->user_id);
         //remove relationship
+    }
+
+    public function getOrganizationProfile($organize_profile, $user)
+    {
+        $data = [];
+        if (isset($user)) {
+            $data['saved_bookmark'] = UserSaved::where('post_id', $organize_profile->user_id)->where('user_id', $user->id)
+                ->where('type', 'organize')->exists();
+        }
+        //user organize
+        $user = User::find($organize_profile->user_id);
+        $data['name'] = $user->name;
+        $data['email'] = $user->email;
+        $userProfile = $organize_profile;
+        $data['user_profile'] = $userProfile;
+        if (isset($userProfile)) {
+            $data['user_profile']['organize_image'] = "/assets/images/user_profiles/{$user->image}";
+            $data['user_profile']['registration_date_formatted'] = isset($userProfile->registration_date) ? $userProfile->registration_date->format('d/m/Y') : '';
+            $data['user_profile']['profile_image_base64'] = '';
+            $data['user_profile']['website_in_our_site'] = $userProfile->visibility ? route('get.home.organize.profile', $user->id) : '';
+
+        }
+        $data['user_causes'] = CauseDetail::list('user', $user->id)->pluck('cause_id');
+        $user_causes = CauseDetail::list('user', $user->id);
+        $user_causes->map(function ($item) {
+            $item->cause_data = $item->cause;
+            return $item;
+        });
+        $data['user_causes_display'] = $user_causes->pluck('cause_data');
+        $data['user_media'] = [
+            'video' => ['validated' => '', 'url' => ''],
+            'images' => [
+                [
+                    'image_base64' => '',
+                    'image' => null,
+                    'validated' => '',
+                    'removable' => false
+                ]
+            ]
+        ];
+        $userMediaVideo = Media::single('user', 'youtube', $user->id);
+        if (isset($userMediaVideo)) {
+            $data['user_media']['video'] = $userMediaVideo;
+        }
+        $userMediaImages = Media::list('user', 'image', $user->id);
+        if (count($userMediaImages) > 0) {
+            $data['user_media']['images'] = $userMediaImages;
+        }
+        return $data;
     }
 }

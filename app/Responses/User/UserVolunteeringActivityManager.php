@@ -70,7 +70,7 @@ class UserVolunteeringActivityManager implements Responsable
             }
             #volunteer leader
             if ($user->isUser('volunteer')) {
-                $activity = VolunteeringActivity::find($request->id);
+                $activity = VolunteeringActivity::where('status', 'live')->where('id', $request->id)->first();
                 $signUpVolunteering = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
                     ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
                     ->where('volunteer_sign_up_activities.user_id', $user->id)
