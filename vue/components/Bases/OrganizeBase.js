@@ -29,7 +29,7 @@ export default Vue.extend({
     },
     methods: {
         ...mapMutations([]),
-        ...mapActions(['setPageTitle', 'fetchHomeData', 'fetchPostsData', 'fetchSinglePostsData']),
+        ...mapActions(['setPageTitle', 'fetchHomeData', 'fetchPostsData', 'fetchSinglePostsData', 'postAutoUserLogin']),
         /***@Posts */
         getDetail(type, data) {
             this.Route({name: `${type}-single`, params: {id: data.id}});
@@ -198,6 +198,19 @@ export default Vue.extend({
             return (item.positions || []).filter(pos => {
                 return pos.id === pos_id;
             }).shift() || {};
+        },
+        downloadExportFile(data) {
+            this.postAutoUserLogin()
+                .then(res => {
+                    if (res.success) {
+                        let req = `?redirect_url=${encodeURIComponent(`/${data.type_user}/me/download/${data.type}?export_type=${data.export_type}`)}`;
+                        let url = res.data + req;
+                        this.$utils.downloadURL(url, 'frame-download')
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         }
     },
     created() {

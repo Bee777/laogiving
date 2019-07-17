@@ -1324,6 +1324,8 @@ export default {
         var field = document.createElement('input');
         field.setAttribute('type', 'text');
         field.style.opacity = '0';
+        field.style.width = '0';
+        field.style.height = '0';
         field.style.position = 'absolute';
         field.setAttribute('id', 'util-hidden-keyboard-trigger');
         el.parentNode.insertBefore(field, el);
@@ -1377,6 +1379,7 @@ export default {
             if (!regex.test(url)) {
                 return `http://${url}`;
             }
+            return url;
         }
         return regex.test(url);
     },

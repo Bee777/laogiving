@@ -266,6 +266,9 @@ a:hover.read-more {
     color: #333;
     font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
+.footer-widget .menu {
+    font-family: Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
+}
 
 .laogiving .slides > li .btn-blue {
     text-transform: inherit;

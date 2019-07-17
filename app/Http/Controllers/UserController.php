@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Exports\AllVolunteersExport;
 use App\Models\Posts;
 use App\Models\VolunteeringActivity;
 use App\Models\VolunteeringActivityPosition;
@@ -30,6 +31,7 @@ use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use PDF, Excel;
 
 class UserController extends Controller
 {
@@ -89,15 +91,68 @@ class UserController extends Controller
         return response()->json(['success' => true, 'data' => $data]);
     }
 
-    /****@ResponsesSearches api and action  *** */
-    /**
-     * @param Request $request
-     * @param $type
-     * @return \Illuminate\Http\JsonResponse
-     */
+    public function isDownloadableFile($title)
+    {
+        $allowed = ['excel', 'pdf'];
+        return in_array($title, $allowed, true);
+    }
+
+    public function download(Request $request, $type)
+    {
+        $type = strtolower($type);
+        if ($this->isDownloadableFile($type)) {
+            return $this->$type($request);
+        }
+        return redirect('/');
+    }
+
+    /***@DownloadResponse */
+    public function pdf(Request $request)
+    {
+        $user = $request->user();
+        $export_type = $request->export_type;
+//        //return view('users.generate.score-pdf', compact('scores', 'gradesColors', 'request', 'title'));
+//        $generatePdf = PDF::loadView('users.generate.score-pdf', compact('scores', 'gradesColors', 'request', 'title'));
+//        $fileName = Auth::user()->Student_ID . '_Year_' . $request->get('year') . '_Term_' . $request->get('term') . '.pdf';
+//        return $generatePdf->download($fileName);
+        return redirect('/');
+    }
+
+    public function excel(Request $request)
+    {
+        $user = $request->user();
+        $export_type = $request->export_type;
+        if ($export_type === 'all-sign-up-volunteers' && $user->isUser('organize')) {
+            $all_sign_up_volunteers = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'users.name as user_name', 'users.image', 'volunteer_profiles.salutation', 'volunteer_profiles.public_email', 'volunteer_profiles.phone_number',
+                DB::raw('count(volunteer_sign_up_activities.user_id) as  activities_count'),
+                DB::raw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN volunteer_sign_up_activities.hour_per_volunteer ELSE 0 END) AS `hours_number`"))
+                ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
+                ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                ->where('volunteering_activities.user_id', $user->id)
+                ->groupBy('users.id')
+                ->orderBy('users.name', 'asc')
+                ->get();
+
+            $fileName = 'all-volunteers-' . now()->year . '-' . uniqid('all-volunteer-export', true) . '.xlsx';
+            $data = [];
+            $data['sheet_name'] = 'All volunteers sign up';
+            $data['organize'] = $user;
+            $data['volunteers'] = $all_sign_up_volunteers;
+            $all_sign_up_volunteers_exporter = new AllVolunteersExport($data);
+            $all_sign_up_volunteers_exporter->setDatesCoordinate(['B2']);
+            $all_sign_up_volunteers_exporter->setTimeCoordinate(['B3']);
+            return Excel::download($all_sign_up_volunteers_exporter, $fileName);
+        }
+        return redirect('/');
+    }
+
+    /***@DownloadResponse */
+
     /***@PostsResponse *
      * @param Request $request
      * @param $type
+     * @return UserSavedBookmarkResponse
      */
     public function responsePosts(Request $request, $type)
     {

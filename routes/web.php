@@ -51,8 +51,12 @@ Route::group(['prefix' => $user_prefixs[1] . '/me', 'middleware' => []], functio
     Route::get('/all-volunteers', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.all-volunteers");
     Route::get('/manage-sign-up-volunteers', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.manage-sign-up-volunteers");
     Route::get('/create-activity', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.create-activity");
+    Route::get('/download/{type}', 'UserController@download')->name('users.student.downloadFile');
 });
 /***** @VolunteerRoutes ***** */
+/***@AutoUserLogin*/
+Route::get('/users/me/auto-login/{confirmation_token}', 'Auth\LoginController@userAutoLogin')->name('get.user.UserAutoLogin');
+/***@AutoUserLogin*/
 
 
 

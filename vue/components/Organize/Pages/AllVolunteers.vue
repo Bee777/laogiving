@@ -42,7 +42,9 @@
                             </div>
                         </div>
                         <form class="activity" @submit.prevent>
-                            <button class="button-ctn mt-16-tablet-portrait-down"> Export All</button>
+                            <button @click="downloadExcelFile()" class="button-ctn mt-16-tablet-portrait-down"> Export
+                                All
+                            </button>
                         </form>
                     </div>
                     <hr class="hr">
@@ -185,7 +187,7 @@
                 data = data.filter(filter => {
                     if (this.searchName !== '') {
                         return filter.user_name.indexOf(this.searchName) !== -1 ||
-                            (filter.public_email|| '').indexOf(this.searchName) !== -1;
+                            (filter.public_email || '').indexOf(this.searchName) !== -1;
                     }
                     return filter;
                 });
@@ -242,6 +244,13 @@
                 if (this.paginate.current_page === pageNo) return;
                 this.paginateNavigator({pageNo, dr: 'next'});
             },
+            downloadExcelFile() {
+                this.downloadExportFile({
+                    type_user: 'organize',
+                    type: 'excel',
+                    export_type: 'all-sign-up-volunteers'
+                });
+            }
         },
         mounted() {
         },
