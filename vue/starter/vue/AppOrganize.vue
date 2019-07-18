@@ -55,7 +55,7 @@
             }
         },
         computed: {
-            ...mapState(['isMobile']),
+            ...mapState(['isMobile', 'authUserInfo']),
         },
         watch: {
             'authUserInfo': function (n, o) {

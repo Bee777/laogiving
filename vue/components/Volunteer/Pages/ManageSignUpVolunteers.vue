@@ -111,8 +111,11 @@
                         </div>
 
                         <form class="activity" @submit.prevent>
-                            <button class="button-ctn mt-16-tablet-portrait-down export-volunteer-button">EXPORT ALL
+                            <button v-if="!validated().loading_download_export" @click="downloadExcelFile()" class="button-ctn mt-16-tablet-portrait-down export-volunteer-button">EXPORT ALL
                                 VOLUNTEERS
+                            </button>
+                            <button v-else class="button-ctn mt-16-tablet-portrait-down export-volunteer-button">EXPORT ALL
+                                VOLUNTEERS...
                             </button>
                         </form>
 
@@ -1040,10 +1043,17 @@
                             this.getVolunteering('no-loading');
                         }
                     }).catch(err => {
-                        console.log(err);
                         this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
                     })
                 }
+            },
+            downloadExcelFile() {
+                this.downloadExportFile({
+                    type_user: 'volunteer',
+                    type: 'excel',
+                    export_type: 'all-sign-up-volunteering',
+                    activity_id: this.singleId
+                });
             }
         },
         mounted() {

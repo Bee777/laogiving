@@ -1035,7 +1035,6 @@
                                 this.getVolunteering('no-loading');
                             }
                         }).catch(err => {
-                        console.log(err)
                         this.Event.fire('preload', this.Event.loadingState().ActiveNotLoading);
                     })
                 }

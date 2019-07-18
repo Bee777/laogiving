@@ -13,14 +13,15 @@
 
 Route::group(['prefix' => 'admin/me', 'middleware' => []], function () {
     Route::get('/', 'AdminController@index')->name('admin.get.index');
-    Route::get('/members', 'AdminController@index')->name('admin.get.index.members');
-    Route::get('/organizations', 'AdminController@index')->name('admin.get.index.organizations');
-    Route::get('/members-profile', 'AdminController@index')->name('admin.get.index.membersProfile');
-    Route::get('/members-profile/{id}', 'AdminController@index')->name('admin.get.singleMemberProfile');
+    Route::get('/volunteer', 'AdminController@index')->name('admin.get.index.volunteer');
+    Route::get('/organize', 'AdminController@index')->name('admin.get.index.organize');
+    Route::get('/volunteer-activities', 'AdminController@index')->name('admin.get.index.volunteer-activities');
     Route::get('/site-setting', 'AdminController@index')->name('admin.get.site-setting');
     Route::get('/contact-info', 'AdminController@index')->name('admin.get.contact-info');
     Route::get('/about', 'AdminController@index')->name('admin.get.about');
     Route::get('/news', 'AdminController@index')->name('admin.get.news');
-    Route::get('/activity', 'AdminController@index')->name('admin.get.activity');
-    Route::get('/upload-files', 'AdminController@index')->name('admin.get.uploadfile');
+    Route::get('/causes', 'AdminController@index')->name('admin.get.causes');
+    Route::get('/skill', 'AdminController@index')->name('admin.get.skill');
+    Route::get('/suitable', 'AdminController@index')->name('admin.get.suitable');
+
 });

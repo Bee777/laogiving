@@ -37,11 +37,12 @@ Route::get('/forgot-password', 'HomeController@index')->name('get.home.forgot-pa
 Route::get('/password/reset/{token}', 'HomeController@index')->name('password.reset');
 Route::get('/reset-password-successfully', 'HomeController@index')->name('get.home.reset-password-successfully');
 /**@ResetPasswordForm */
-
-/***** @VolunteerRoutes ***** */
+/***** @DEFINE__NAME ***** */
 $user_prefixs = ['volunteer', 'organize', 'admin'];
+/***** @VolunteerRoutes ***** */
 Route::group(['prefix' => $user_prefixs[0] . '/me', 'middleware' => []], function () use ($user_prefixs) {
     Route::get('/', ucfirst($user_prefixs[0]) . 'Controller@index')->name("get.{$user_prefixs[0]}.index");
+    Route::get('/manage-sign-up-volunteers', ucfirst($user_prefixs[0]) . 'Controller@index')->name("get.{$user_prefixs[0]}.index");
     Route::get('/download/{type}', 'UserController@download')->name("get.{$user_prefixs[1]}.downloadFile");
 });
 /***** @VolunteerRoutes ***** */
@@ -55,9 +56,9 @@ Route::group(['prefix' => $user_prefixs[1] . '/me', 'middleware' => []], functio
     Route::get('/download/{type}', 'UserController@download')->name("get.{$user_prefixs[1]}.downloadFile");
 });
 /***** @VolunteerRoutes ***** */
-/***@AutoUserLogin*/
+/***@AutoUserLogin */
 Route::get('/users/me/auto-login/{confirmation_token}', 'Auth\LoginController@userAutoLogin')->name('get.user.UserAutoLogin');
-/***@AutoUserLogin*/
+/***@AutoUserLogin */
 
 
 

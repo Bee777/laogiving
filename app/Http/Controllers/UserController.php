@@ -86,7 +86,7 @@ class UserController extends Controller
     public function responseActionUserAutoLogin(Request $request)
     {
         $user = $request->user();
-        $user->confirmation_code = encrypt(Str::random() . $user->id);
+        $user->confirmation_code = Str::random(218);
         $user->save();
         $data = route('get.user.UserAutoLogin', $user->confirmation_code);
         return response()->json(['success' => true, 'data' => $data]);
@@ -151,6 +151,7 @@ class UserController extends Controller
         $user = $request->user();
         $export_type = $request->export_type;
         if ($user->isUser('organize')) {
+
             if ($export_type === 'all-sign-up-volunteers') {
                 $all_sign_up_volunteers = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'users.name as user_name', 'users.image', 'volunteer_profiles.salutation', 'volunteer_profiles.public_email', 'volunteer_profiles.phone_number',
                     DB::raw('count(volunteer_sign_up_activities.user_id) as  activities_count'),
@@ -172,7 +173,9 @@ class UserController extends Controller
                 $all_sign_up_volunteers_exporter->setDatesCoordinate(['B2']);
                 $all_sign_up_volunteers_exporter->setTimeCoordinate(['B3']);
                 return Excel::download($all_sign_up_volunteers_exporter, $fileName);
-            } else if ($export_type === 'all-sign-up-volunteering') {
+            }
+
+            if ($export_type === 'all-sign-up-volunteering') {
                 $all_sign_up_volunteerigns = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'users.name as user_name', 'users.image', 'volunteer_profiles.salutation', 'volunteer_profiles.public_email', 'volunteer_profiles.phone_number',
                     DB::raw('count(volunteer_sign_up_activities.user_id) as  activities_count'),
                     DB::raw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN volunteer_sign_up_activities.hour_per_volunteer ELSE 0 END) AS `hours_number`"))
@@ -202,6 +205,53 @@ class UserController extends Controller
                     $data['sign_up_activities'] = $sign_up_activities;
                     $all_sign_up_volunteerings_exporter = new AllVolunteeringsExport($data);
                     return Excel::download($all_sign_up_volunteerings_exporter, $fileName);
+                }
+            }
+        } else if ($user->isUser('volunteer')) {
+
+            if ($export_type === 'all-sign-up-volunteering') {
+                #check if leader
+                $activity = VolunteeringActivity::where('status', 'live')->where('id', $request->activity_id)->first();
+                $signUpVolunteeringLeader = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
+                    ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                    ->where('volunteer_sign_up_activities.user_id', $user->id)
+                    ->where('volunteer_sign_up_activities.leader', 'yes')
+                    ->where('volunteer_sign_up_activities.volunteering_activity_id', $activity->id ?? 0)->first();
+
+                if (isset($signUpVolunteeringLeader)) {
+
+                    $all_sign_up_volunteerigns = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'users.name as user_name', 'users.image', 'volunteer_profiles.salutation', 'volunteer_profiles.public_email', 'volunteer_profiles.phone_number',
+                        DB::raw('count(volunteer_sign_up_activities.user_id) as  activities_count'),
+                        DB::raw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN volunteer_sign_up_activities.hour_per_volunteer ELSE 0 END) AS `hours_number`"))
+                        ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
+                        ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
+                        ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                        ->where('volunteering_activities.id', $activity->id)
+                        ->where('volunteering_activities.user_id', $activity->user_id)
+                        ->groupBy('users.id')
+                        ->orderBy('users.name', 'asc')
+                        ->get();
+
+                    $activity = VolunteeringActivity::select('volunteering_activities.*')->join('users', 'users.id', 'volunteering_activities.user_id')
+                        ->join('user_types', 'user_types.user_id', 'users.id')
+                        ->join('organize_profiles', 'organize_profiles.user_id', 'users.id')
+                        ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
+                        ->where('users.id', $activity->user_id)
+                        ->where('volunteering_activities.id', $activity->id)->first();
+
+                    if (isset($activity)) {
+                        $fileName = 'all-volunteering-sign-up-' . now()->year . '-' . uniqid('all-volunteering-export', true) . '.xlsx';
+                        $data = [];
+                        $data['sheet_name'] = 'All volunteers sign up';
+                        $data['organize'] = $user;
+                        $data['activity'] = $activity;
+                        $data['volunteers'] = $all_sign_up_volunteerigns;
+                        $sign_up_activities = VolunteerSignUpActivity::where('volunteering_activity_id', $activity->id)->get();
+                        $data['sign_up_activities'] = $sign_up_activities;
+                        $all_sign_up_volunteerings_exporter = new AllVolunteeringsExport($data);
+                        return Excel::download($all_sign_up_volunteerings_exporter, $fileName);
+                    }
+
                 }
             }
         }

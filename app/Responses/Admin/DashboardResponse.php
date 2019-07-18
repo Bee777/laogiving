@@ -33,6 +33,16 @@ class DashboardResponse implements Responsable
     {
         if (Helpers::isAjax($request)) {
             $data = [];
+            #set default data
+            $data['volunteer_opportunities'] = 0;
+            $data['volunteers'] = 0;
+            $data['volunteering_hours'] = 0;
+            $data['updated_at'] = now()->format('d/m/Y');
+            $data['activities_count'] = ['active' => 0, 'all' => 0, 'success' => 0];
+            $data['volunteering_hours'] = 0;
+            $data['latest_volunteers_count'] = 0;
+            $data['latest_organizes_count'] = 0;
+            #set default data
             $user = $request->user('api');
             #organize
             if ($user->isUser('organize')) {

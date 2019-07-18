@@ -49,6 +49,7 @@
     <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.css" id="theme_base">
     <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.date.css" id="theme_date">
     <link rel="stylesheet" href="{{url('/')}}/bundles/general/assets/plugins/pickadate/themes/classic.time.css" id="theme_time">
+    <link rel="stylesheet" href="{{url('/')}}/bundles/organize/assets/css/select2.min.css">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/global.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/style.css{{$s['fresh_version']}}">
     <link rel=stylesheet href="{{url('/')}}/bundles/general/assets/css/laogiving.css{{$s['fresh_version']}}">
@@ -64,6 +65,7 @@
     <script src="{{url('/')}}/bundles/general/assets/plugins/pickadate/picker.date.js"></script>
     <script src="{{url('/')}}/bundles/general/assets/plugins/pickadate/picker.time.js"></script>
     <script src="{{url('/')}}/bundles/general/assets/plugins/pickadate/legacy.js"></script>
+    <script src="{{url('/')}}/bundles/organize/assets/js/select2.min.js"></script>
     <script>
         var baseUrl = '{{ url('/') }}';
         var pathPrefix = '/';
@@ -75,6 +77,6 @@
         window.$ = jQuery;
     </script>
     {{-- @GeneratedResourcesBottom--}}
-    <script type="text/javascript" src="{{url('/bundles/generated/volunteer')}}/volunteer.69e91c5f5a40fe46ddbc.bundle.js"></script>
+    <script type="text/javascript" src="{{url('/bundles/generated/volunteer')}}/volunteer.98ed7ec9d7cce8901c9e.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection
