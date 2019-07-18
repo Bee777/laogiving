@@ -29,7 +29,7 @@ export default Vue.extend({
     },
     methods: {
         ...mapMutations([]),
-        ...mapActions(['setPageTitle',]),
+        ...mapActions(['setPageTitle', 'postAutoUserLogin']),
         /***@Posts */
         getDetail(type, data) {
             this.Route({name: `${type}-single`, params: {id: data.id}});
@@ -119,8 +119,21 @@ export default Vue.extend({
                 }
             }
             return res;
-        }
+        },
         /***@SinglePost*/
+        downloadExportFile(data) {
+            this.postAutoUserLogin()
+                .then(res => {
+                    if (res.success) {
+                        let req = `?redirect_url=${encodeURIComponent(`/${data.type_user}/me/download/${data.type}?export_type=${data.export_type}&activity_id=${data.activity_id || ''}`)}`;
+                        let url = res.data + req;
+                        this.$utils.downloadURL(url, 'frame-download')
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
     },
     created() {
         this.getItems = this.debounce(this.getItems, 150);

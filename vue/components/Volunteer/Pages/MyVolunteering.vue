@@ -19,7 +19,8 @@
                         <div class="dbl-stats__desc"> total hours</div>
                     </div>
                 </div>
-                <button class="button-ctn mt-16-tablet-portrait-down export-volunteer-button">EXPORT PDF</button>
+                <button v-if="!validated().loading_download_export" @click="downloadPdfFile()" class="button-ctn mt-16-tablet-portrait-down export-volunteer-button">EXPORT PDF</button>
+                <button v-else class="button-ctn mt-16-tablet-portrait-down export-volunteer-button">EXPORT PDF...</button>
             </div>
             <hr class="hr">
 
@@ -459,7 +460,7 @@
         },
         methods: {
             ...mapMutations(['setClearValidate']),
-            ...mapActions(['showErrorToast', 'showInfoToast', 'fetchSearches', 'postChangeSignUpVolunteeringStatus']),
+            ...mapActions(['showErrorToast', 'showInfoToast', 'fetchSearches', 'postChangeSignUpVolunteeringStatus', 'postAutoUserLogin']),
             getVolunteering(t = '') {
                 if (!this.isTyped && t === 'click') {//check if user never type in search box but got click search button
                     return;
@@ -563,6 +564,26 @@
                 } else {
                     item.selectedStatus = 'pending';
                 }
+            },
+            downloadPdfFile() {
+                this.downloadExportFile({
+                    type_user: 'volunteer',
+                    type: 'pdf',
+                    export_type: 'all-sign-up-volunteering',
+                });
+            },
+            downloadExportFile(data) {
+                this.postAutoUserLogin()
+                    .then(res => {
+                        if (res.success) {
+                            let req = `?redirect_url=${encodeURIComponent(`/${data.type_user}/me/download/${data.type}?export_type=${data.export_type}&activity_id=${data.activity_id || ''}`)}`;
+                            let url = res.data + req;
+                            this.$utils.downloadURL(url, 'frame-download')
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             }
         },
         created() {

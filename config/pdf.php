@@ -10,7 +10,7 @@ return [
     'margin_footer' => 5,
     'margin_top' => 10,
     'margin_bottom' => 20,
-    'creator' => 'FNS-SMS PDF.CREATOR',
+    'creator' => 'Laos Giving PDF.CREATOR',
     'display_mode' => 'fullpage',
     'tempDir' => base_path('../temp/'),
     'font_path' => base_path('public/pdf-fonts'),

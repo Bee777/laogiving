@@ -42,8 +42,11 @@
                             </div>
                         </div>
                         <form class="activity" @submit.prevent>
-                            <button @click="downloadExcelFile()" class="button-ctn mt-16-tablet-portrait-down"> Export
+                            <button v-if="!validated().loading_download_export" @click="downloadExcelFile()" class="button-ctn mt-16-tablet-portrait-down"> Export
                                 All
+                            </button>
+                            <button v-else class="button-ctn mt-16-tablet-portrait-down"> Export
+                                All...
                             </button>
                         </form>
                     </div>

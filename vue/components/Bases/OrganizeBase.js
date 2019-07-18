@@ -203,7 +203,7 @@ export default Vue.extend({
             this.postAutoUserLogin()
                 .then(res => {
                     if (res.success) {
-                        let req = `?redirect_url=${encodeURIComponent(`/${data.type_user}/me/download/${data.type}?export_type=${data.export_type}`)}`;
+                        let req = `?redirect_url=${encodeURIComponent(`/${data.type_user}/me/download/${data.type}?export_type=${data.export_type}&activity_id=${data.activity_id || ''}`)}`;
                         let url = res.data + req;
                         this.$utils.downloadURL(url, 'frame-download')
                     }

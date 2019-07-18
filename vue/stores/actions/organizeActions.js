@@ -493,6 +493,7 @@ export const createActions = (utils) => {
         /***@AutoUserLogin */
         postAutoUserLogin(c, i) {
             return new Promise((r, n) => {
+                c.commit('setValidated', {errors: {loading_download_export: true}});
                 client.post(`${apiUrl}/users/auto-login`, {}, ajaxToken(c))
                     .then(res => {
                         c.commit('setClearMsg');

@@ -5,8 +5,7 @@
             <h2 class="h2 create-volunteer-act__title text-center">{{$utils.isEmptyVar(id)? 'New': (isDuplicate ?
                 'Duplicate' : 'Edit')}} Volunteering
                 Opportunity</h2>
-            <p class="body-txt body-txt--small mb-16"> You are setting up a volunteer activity for <b>Bee
-                Organisation</b></p>
+            <p class="body-txt body-txt--small mb-16"> You are setting up a volunteer activity for <b>{{authUserInfo.name}}</b></p>
             <!--Tabs-->
             <div class="cWidth-1200">
                 <div

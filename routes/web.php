@@ -42,6 +42,7 @@ Route::get('/reset-password-successfully', 'HomeController@index')->name('get.ho
 $user_prefixs = ['volunteer', 'organize', 'admin'];
 Route::group(['prefix' => $user_prefixs[0] . '/me', 'middleware' => []], function () use ($user_prefixs) {
     Route::get('/', ucfirst($user_prefixs[0]) . 'Controller@index')->name("get.{$user_prefixs[0]}.index");
+    Route::get('/download/{type}', 'UserController@download')->name("get.{$user_prefixs[1]}.downloadFile");
 });
 /***** @VolunteerRoutes ***** */
 
@@ -51,7 +52,7 @@ Route::group(['prefix' => $user_prefixs[1] . '/me', 'middleware' => []], functio
     Route::get('/all-volunteers', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.all-volunteers");
     Route::get('/manage-sign-up-volunteers', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.manage-sign-up-volunteers");
     Route::get('/create-activity', ucfirst($user_prefixs[1]) . 'Controller@index')->name("get.{$user_prefixs[1]}.create-activity");
-    Route::get('/download/{type}', 'UserController@download')->name('users.student.downloadFile');
+    Route::get('/download/{type}', 'UserController@download')->name("get.{$user_prefixs[1]}.downloadFile");
 });
 /***** @VolunteerRoutes ***** */
 /***@AutoUserLogin*/

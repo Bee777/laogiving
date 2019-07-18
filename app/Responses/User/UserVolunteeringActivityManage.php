@@ -87,6 +87,7 @@ class UserVolunteeringActivityManage implements Responsable
                 ->where('volunteer_sign_up_activities.user_id', $user->id)
                 ->where('volunteering_activities.status', $status);
         } else {
+            //organize volunteering
             $data = VolunteeringActivity::select(array_merge($fields, [
                 'id',
                 'frequency',
