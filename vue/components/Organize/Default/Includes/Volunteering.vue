@@ -389,7 +389,7 @@
             },
             'searchesData.options.volunteering': function (n) {
                 this.filterItems.map(item => {
-                    item.count = n[`${item.value}_COUNT`];
+                    item.count = n[`${item.value}_COUNT`] || 0;
                     return item;
                 });
             }

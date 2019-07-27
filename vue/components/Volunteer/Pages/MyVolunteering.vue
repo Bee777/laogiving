@@ -5,17 +5,17 @@
                 class="flex-ctn flex-ctn--just-spc-btw flex-ctn--tablet-portrait-up-align-center flex-ctn--dir-col-tablet-portrait-up-row">
                 <div class="dbl-stats">
                     <div class="dbl-stats__item">
-                        <div class="dbl-stats__stats mb-8">{{statuses.CHECKIN_COUNT}}/{{
-                            parseInt(statuses.CHECKIN_COUNT) + parseInt(statuses.CONFIRM_COUNT) }}
+                        <div class="dbl-stats__stats mb-8">{{statuses.CHECKIN_COUNT || 0}}/{{
+                            parseInt(statuses.CHECKIN_COUNT || 0) + parseInt(statuses.CONFIRM_COUNT || 0) }}
                         </div>
                         <div class="dbl-stats__desc"> attended</div>
                     </div>
                     <div class="dbl-stats__item">
-                        <div class="dbl-stats__stats mb-8">{{statuses.LEADER_COUNT}}</div>
+                        <div class="dbl-stats__stats mb-8">{{statuses.LEADER_COUNT || 0}}</div>
                         <div class="dbl-stats__desc"> as leader</div>
                     </div>
                     <div class="dbl-stats__item">
-                        <div class="dbl-stats__stats mb-8">{{$utils.numSpace(statuses.HOURS_COUNT)}}</div>
+                        <div class="dbl-stats__stats mb-8">{{$utils.numSpace(statuses.HOURS_COUNT || 0)}}</div>
                         <div class="dbl-stats__desc"> total hours</div>
                     </div>
                 </div>
@@ -426,7 +426,7 @@
             },
             'searchesData.options.volunteering': function (n) {
                 this.filterItems.map(item => {
-                    item.count = n.volunteering_activities[`${item.value}_COUNT`];
+                    item.count = n.volunteering_activities[`${item.value}_COUNT`] || 0;
                     return item;
                 });
                 this.statuses = n.volunteering_statuses;

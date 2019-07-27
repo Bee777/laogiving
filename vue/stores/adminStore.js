@@ -39,7 +39,7 @@ export default new Vuex.Store({
             latest_members_count: 0,
             latest_volunteers_count: 0,
             latest_organizes_count: 0,
-            news_count: 0,
+            news_count: {all: 0, active: 0},
         },
         searchesData: {
             volunteers: {},
@@ -49,7 +49,8 @@ export default new Vuex.Store({
             banner: {},
             causes: {},
             skills: {},
-            suitables: {},}
+            suitables: {},
+        }
         ,
         searchesAllowed: {
             volunteers: true,

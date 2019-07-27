@@ -39,6 +39,7 @@ class DashboardResponse implements Responsable
             $data['volunteering_hours'] = 0;
             $data['updated_at'] = now()->format('d/m/Y');
             $data['activities_count'] = ['active' => 0, 'all' => 0, 'success' => 0];
+            $data['news_count'] = ['active' => 0, 'all' => 0, 'success' => 0];
             $data['volunteering_hours'] = 0;
             $data['latest_volunteers_count'] = 0;
             $data['latest_organizes_count'] = 0;
@@ -111,7 +112,7 @@ class DashboardResponse implements Responsable
                 $all_volunteers = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
                     ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
                     ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
-                    ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                    ->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
                     ->where('volunteering_activities.user_id', $user->id)
                     ->groupBy('users.id');
                 if (count($btwDate) > 1) {
@@ -214,6 +215,7 @@ class DashboardResponse implements Responsable
             #volunteer statuses
             #admin section
             if ($user->isUser('admin') || $user->isUser('super_admin')) {
+                $data['news_count'] = $this->getPostsCount('news');
                 $data['activities_count'] = $this->getVolunteeringCount();
                 $data['volunteering_hours'] = $this->getVolunteeringHours();
                 $data['latest_volunteers_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->where('user_types.type_user_id', $this->getTypeUserId('volunteer'))->count();
@@ -258,9 +260,9 @@ class DashboardResponse implements Responsable
             ->first();
 
         $data = [];
-        $data['active'] = $volunteering_activities->LIVE_COUNT;
+        $data['active'] = $volunteering_activities->LIVE_COUNT??0;
         $data['all'] = DB::table('volunteering_activities')->get()->count();
-        $data['success'] = $success_volunteering_activities->SUCCESS_COUNT;
+        $data['success'] = $success_volunteering_activities->SUCCESS_COUNT??0;
         return $data;
     }
 

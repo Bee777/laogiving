@@ -46,7 +46,7 @@ class SinglePostsResponse implements Responsable
         $type = $this->getPostsType($this->type);
         $post = Posts::where('type', $type)->whereIn('status', ['open', 'close'])->where('id', $this->id)->first();
         $post_type_name = ucfirst($this->type);
-        $user = $request->user('api');
+        $user = Helpers::isAjax($request) ? $request->user('api') : $request->user();
         $view_by_owner = false;
         //@for checking volunteering
         if ($type === 'activity') {
@@ -69,12 +69,23 @@ class SinglePostsResponse implements Responsable
             }
             $post = VolunteeringActivity::select('volunteering_activities.*', 'users.name as organize_name', 'users.image as organize_image', 'organize_profiles.visibility')
                 ->join('users', 'users.id', 'volunteering_activities.user_id')
-                ->join('user_types', 'user_types.user_id', 'users.id')
-                ->join('organize_profiles', 'organize_profiles.user_id', 'users.id')
-                ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
-                ->whereIn('volunteering_activities.status', array_merge(['live'], $withUserActivityStatus))
-                ->where('users.status', $withUserStatus)
-                ->where('volunteering_activities.id', $this->id)->first();
+                ->join('user_types', 'user_types.user_id', 'users.id');
+            #check if admin user
+            if (isset($user) && ($user->isUser('admin') || $user->isUser('super_admin'))) {
+                $withUserActivityStatus = ['draft', 'closed', 'cancelled'];
+                $post = $post->leftJoin('organize_profiles', 'organize_profiles.user_id', 'users.id')
+                    ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
+                    ->whereIn('volunteering_activities.status', array_merge(['live'], $withUserActivityStatus))
+                    ->where('users.status', $withUserStatus)
+                    ->where('volunteering_activities.id', $this->id)->first();
+            } else {
+                $post = $post->join('organize_profiles', 'organize_profiles.user_id', 'users.id')
+                    ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
+                    ->whereIn('volunteering_activities.status', array_merge(['live'], $withUserActivityStatus))
+                    ->where('users.status', $withUserStatus)
+                    ->where('volunteering_activities.id', $this->id)->first();
+            }
+            #check if admin user
         }
         //@end for checking volunteering
 

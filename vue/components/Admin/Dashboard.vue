@@ -151,7 +151,7 @@
                                         <!--News Card-->
                                         <CounterCard :isLoading="validated().loading_dashboard_data"
                                                      @onCardClick="goTo('news')" title="News" icon="rss_feed"
-                                                     :count="{text: 'Posts', value: dashboardData.news_count}"/>
+                                                     :count="{text: 'Posts', value: dashboardData.news_count.all}"/>
                                         <!--News Card-->
                                     </div>
 
