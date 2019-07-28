@@ -64,7 +64,7 @@
         },
         methods: {
             ...mapMutations(['setMobile']),
-            ...mapActions(['fetchHomeData', 'fetchAuthUserInfo']),
+            ...mapActions(['fetchHomeData', 'fetchAuthUserInfo', 'showInfoToast']),
             getClient: (e, context) => {
                 context.breakPoint = e.currentTarget.innerWidth;
                 context.windowHeight = e.currentTarget.innerHeight;
@@ -99,6 +99,9 @@
         created() {
             this.fetchHomeData();
             this.fetchAuthUserInfo({no_redirect: true});//get first user data
+            if (this.$utils.hasSession('re-validate', true)) {
+                this.showInfoToast({msg: 'ການເຂົ້າສູ່ລະບົບຫມົດອາຍຸ, ກະລຸນາ ເຂົ້າສູ່ລະບົບໃຫມ່.', dt: 4500})
+            }
         },
         beforeDestroy() {
             if (window.removeEventListener) {

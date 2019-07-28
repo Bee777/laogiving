@@ -57,6 +57,7 @@
         </main>
         <VolunteeringFilter ref="volunteeringFilter" @onPaginateNavigator="paginateNavigator" :options="homeData"
                             :displayType="filters.type"
+                            :activityNewTap="false"
                             @onClearFilters="clearFilters()" :isSearch="isSearch" :query="query"
                             :filters="filters" :paginate="paginate"/>
     </div>

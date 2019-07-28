@@ -297,6 +297,7 @@
             userCredential: {},
             isLoading: false,
             datePicker: null,
+            firstLoad: true,
         }),
         watch: {
             visible: function (n) {
@@ -340,7 +341,6 @@
                         this.isLoading = false;
                     })
                     .catch(err => {
-                        console.log(err);
                         this.showErrorToast({msg: 'Failed to update your profile!', dt});
                         this.isLoading = false;
                     })
@@ -365,7 +365,7 @@
                     });
             },
             getUserProfile() {
-                this.fetchOptionProfileData()
+                this.fetchOptionProfileData(this.$route.query.user_id)
                     .then(res => {
                         let s = res.success, d = res.data;
                         if (s) {
@@ -383,12 +383,23 @@
                                 key: 'user_media',
                                 value: {video: d.user_media.video, images: d.user_media.images}
                             });
-
                             this.$refs['user-causes'].setValue(d.user_causes);
-                            this.fetchAuthUserInfo();
+                            if (!this.firstLoad && this.authUserInfo.decodedType === 'organize') {
+                                this.fetchAuthUserInfo();
+                            } else {
+                                this.firstLoad = false;
+                            }
                             this.$nextTick(() => {
                                 this.setDatePicker(this.userProfile.registration_date);
-                            })
+                            });
+                            setTimeout(() => {
+                                let owner_user = d.owner_user;
+                                if (owner_user) {
+                                    this.authUserInfo.name = owner_user.name;
+                                    this.authUserInfo.image = owner_user.image;
+                                    this.authUserInfo.email = owner_user.email;
+                                }
+                            }, 800)
                         }
                         this.isLoading = false;
                     })
@@ -427,9 +438,8 @@
             }
         },
         created() {
-            if (this.visible) {
-                this.getUserProfile();
-            }
+            this.getUserProfile = this.debounce(this.getUserProfile, 150);
+            this.getUserProfile();
         }
     }
 </script>

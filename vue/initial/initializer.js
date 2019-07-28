@@ -308,7 +308,7 @@ export const defaultActions = (api) => {
             }//end handle unknown error
         },
         fetchAuthUserInfo(c, i) {
-            api.client.post(`${api.apiUrl}/users/me`, {file: '123'}, api.ajaxConfig.addHeader('CL-Token', c.getters.getToken))
+            api.client.post(`${api.apiUrl}/users/me`, {}, api.ajaxConfig.addHeader('CL-Token', c.getters.getToken))
                 .then(res => {
                     let i = res.data;
                     if (i.success) {
@@ -331,8 +331,8 @@ export const defaultActions = (api) => {
         },
         Login(c, i) {
             $utils.Validate(i.userInfo, {
-                'email': ['email', 'required'],
-                'password': ['required', {min: 6}],
+                'email': ['email', 'required', {max: 191}],
+                'password': ['required', {min: 6}, {max: 191}],
             }).then((v) => {
                 //global event
                 let bus = Vue.prototype.Event;
@@ -344,6 +344,8 @@ export const defaultActions = (api) => {
                         c.commit('setClearMsg');
                         bus.fire('preload', bus.loadingState().ActiveNotLoading);
                         const iRes = res.data;
+                        const url_session_login_string = iRes.auto_login_session;
+                        let req = `?redirect_url=${encodeURIComponent('/')}`;
                         if (iRes.access_token) {
                             c.commit('setToken', {
                                 user: iRes.user,
@@ -351,21 +353,24 @@ export const defaultActions = (api) => {
                                 seconds: iRes.expires_in
                             });
                             if (i.refreshPage) {
-                                window.location.reload(true);
+                                req = `?redirect_url=${encodeURIComponent(window.location.pathname)}`;
+                                window.location.href = url_session_login_string + req;
                                 return;
                             }
                             if (i.redirectTo && i.redirectTo.redirectTo && c.state.allowedRedirectTo[i.redirectTo.redirectTo]) {
-                                $utils.Location('/' + i.redirectTo.redirectTo);
+                                req = `?redirect_url=${encodeURIComponent('/' + i.redirectTo.redirectTo)}`;
+                                window.location.href = url_session_login_string + req;
                                 return;
                             }
                             const type = iRes.user.type;
                             if (type === $utils.b64EncodeUnicode('admin') || type === $utils.b64EncodeUnicode('super_admin')) {
-                                $utils.Location('/admin/me')
+                                req = `?redirect_url=${encodeURIComponent('/admin/me')}`;
                             } else if (type === $utils.b64EncodeUnicode('volunteer')) {
-                                $utils.Location('/volunteer/me');
+                                req = `?redirect_url=${encodeURIComponent('/volunteer/me')}`;
                             } else if (type === $utils.b64EncodeUnicode('organize')) {
-                                $utils.Location('/organize/me');
+                                req = `?redirect_url=${encodeURIComponent('/organize/me')}`;
                             }
+                            window.location.href = url_session_login_string + req
                         } else {
                             $utils.Location('/');
                         }

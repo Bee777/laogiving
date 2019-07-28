@@ -57,11 +57,14 @@
                             </div>
                             <div class="collapse navbar-collapse">
                                 <ul class="nav navbar-nav flex flex-wrap flex-end ">
-                                    <li><a @click="$utils.Location('/posts/activities?type=volunteer')" class="cursor">Be
-                                        a Volunteer</a></li>
-                                    <li :class="isRoute('home')"><a :class="isRoute('home')"
-                                                                    @click="Route({name: 'home', query: {active_page: 'account'}})"
-                                                                    class="cursor">My Account</a></li>
+                                    <li :class="isRoute('home', {includes: ['our-volunteering']})"><a
+                                        @click="Route({name: 'home', query: {active_page: 'our-volunteering', user_id: $route.query.user_id}})"
+                                        class="cursor" :class="isRoute('home', {includes: ['our-volunteering']})">Our
+                                        Volunteering</a></li>
+                                    <li :class="isRoute('home', {includes: 'all', excepts: ['our-volunteering']})"><a
+                                        :class="isRoute('home', {includes: 'all', excepts: ['our-volunteering']})"
+                                        @click="Route({name: 'home', query: {active_page: 'account'}})"
+                                        class="cursor">My Account</a></li>
                                     <li><a @click="Logout()" class="menu-button">Sign
                                         Out</a>
                                     </li>
@@ -142,6 +145,7 @@
                     that.fixedNavBarHeight = navHeight;
                     that.$emit('onNavbarFixed', {state: true, height: that.navbarHeight});
                 }
+
                 let logoImage = this.$refs['logo-image'];
                 if (logoImage) {
                     if (logoImage.complete) {
@@ -189,8 +193,13 @@
                 if (this.el)
                     this.el.off('scroll');
             },
-            isRoute(n) {
-                return this.$route.name === n ? 'active' : ''
+            isRoute(n, {includes, excepts}) {
+                let nameBool = this.$route.name === n;
+                let active_page = this.$route.query.active_page;
+                if (includes === 'all') {
+                    return (nameBool && !((excepts || []).includes(active_page))) ? 'active' : ''
+                }
+                return (nameBool && (includes || []).includes(active_page)) ? 'active' : '';
             },
         },
         mounted() {

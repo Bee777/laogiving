@@ -241,6 +241,7 @@ class SinglePostsResponse implements Responsable
             'volunteering_activities.status',
         ]))->join('users', 'users.id', 'volunteering_activities.user_id')
             ->join('user_types', 'user_types.user_id', 'users.id')
+            ->join('organize_profiles', 'organize_profiles.user_id', 'users.id')
             ->where('user_types.type_user_id', $this->getTypeUserId('organize'))
             ->where('volunteering_activities.status', 'live')
             ->where('users.status', 'approved')

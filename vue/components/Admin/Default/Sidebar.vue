@@ -24,8 +24,7 @@
                         <a
                             class="app-sidebar-item"
                             @click="GoToOverview"
-                            :class="[{'selected-entry' : $route.name==='dashboard'}]"
-                        >
+                            :class="[{'selected-entry' : $route.name==='dashboard'}]">
                             <div class="app-sidebar-item-lockup">
                                 <i class="material-icons selected-icon">home</i>
                                 <span class="app-sidebar-entry-displayname">Overview</span>
@@ -208,7 +207,7 @@
                 this.routeActions(i);
             },
             GoToSiteSetting() {
-                let i = {name: 'Site Setting', params: {name: 'sitesetting'}};
+                let i = {name: 'Site Setting', params: {name: 'site-setting'}};
                 this.routeActions(i);
             },
             GoToHomePage() {

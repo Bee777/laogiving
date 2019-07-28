@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Responses\Volunteer\IndexVolunteerResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Helpers\Helpers;
@@ -43,9 +44,9 @@ class VolunteerController extends Controller
      * @Responses and Actions api|web
      */
 
-    /****@Responses  api only ***/
+    /****@Responses  api only ** */
 
-    /****@Responses  end api only ***/
+    /****@Responses  end api only ** */
 
     /**
      * @Helper helper functions

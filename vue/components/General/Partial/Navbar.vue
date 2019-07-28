@@ -71,12 +71,10 @@
                                                 Activity</a></li>
                                         </template>
 
-                                        <template v-if="authUserInfo.decodedType === 'volunteer'
-                                        || authUserInfo.decodedType === 'admin'
-                                        || authUserInfo.decodedType === 'super_admin'">
-                                            <li :class="isRoute('home')"><a
-                                                :class="isRoute('home')"
-                                                href="/volunteer/me" class="cursor">My Account</a></li>
+                                        <template>
+                                            <li>
+                                                <a @click.prevent="gotoAccountPage()"
+                                                   href="" class="cursor">My Account</a></li>
                                         </template>
 
                                     </template>
@@ -172,6 +170,7 @@
                     that.fixedNavBarHeight = navHeight;
                     that.$emit('onNavbarFixed', {state: true, height: that.navbarHeight});
                 }
+
                 let logoImage = this.$refs['logo-image'];
                 if (logoImage) {
                     if (logoImage.complete) {
@@ -222,6 +221,21 @@
             isRoute(n) {
                 return this.$route.name === n ? 'active' : ''
             },
+            gotoAccountPage() {
+                let type = this.authUserInfo.decodedType, active_page = 'account';
+                if (!this.LoggedIn()) {
+                    this.$utils.Location('/');
+                    return;
+                }
+                if (type === 'admin'
+                    || type === 'super_admin') {
+                    this.$utils.Location('/admin/me');
+                } else if (type === 'organize') {
+                    this.$utils.Location('/organize/me?active_page=' + active_page);
+                } else {
+                    this.$utils.Location('/volunteer/me?active_page=' + active_page);
+                }
+            }
         },
         created() {
         },

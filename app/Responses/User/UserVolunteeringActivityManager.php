@@ -44,13 +44,13 @@ class UserVolunteeringActivityManager implements Responsable
                 $paginateLimit = ($request->exists('limit') && !empty($request->get('limit'))) ? $request->get('limit') : 10;
                 $paginateLimit = Helpers::isNumber($paginateLimit) ? $paginateLimit : 10;
                 $text = $request->get('q');
-
+                $gender = $data['volunteering']->volunteer_gender === 'yes' ? 'volunteer_profiles.gender' : 'users.updated_at';
 
                 if ((int)$request->tab === 0) {
 
-                    $data['volunteering_sign_ups'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', DB::raw('(select count(null)) as checked'), DB::raw('(select count(null)) as show_other_response'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) {
-                        $query->select('users.*', 'volunteer_profiles.gender');
-                        $query->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
+                    $data['volunteering_sign_ups'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', DB::raw('(select count(null)) as checked'), DB::raw('(select count(null)) as show_other_response'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) use ($gender) {
+                        $query->select('users.*', $gender);
+                        $query->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
                     }])->orderBy('id', 'desc');
                     #paginate
                     $data['volunteering_sign_ups'] = $data['volunteering_sign_ups']->paginate($paginateLimit);
@@ -58,9 +58,9 @@ class UserVolunteeringActivityManager implements Responsable
 
                 } else {
                     $data['volunteering_attendance'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'volunteer_sign_up_activities.hour_per_volunteer as hours', DB::raw('(select count(null)) as checked, (select count(null)) as old_checked'),
-                        DB::raw('(select count(null)) as validated'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) {
-                        $query->select('users.*', 'volunteer_profiles.gender');
-                        $query->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
+                        DB::raw('(select count(null)) as validated'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) use ($gender) {
+                        $query->select('users.*', $gender);
+                        $query->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
                     }])->whereIn('status', ['confirm', 'checkin'])->orderBy('id', 'desc');
                     #paginate
                     $data['volunteering_attendance'] = $data['volunteering_attendance']->paginate($paginateLimit);
@@ -78,6 +78,8 @@ class UserVolunteeringActivityManager implements Responsable
                     ->where('volunteering_activities.id', $activity->id ?? 0)->first();
 
                 if (isset($signUpVolunteering)) {
+
+                    $gender = $activity->volunteer_gender === 'yes' ? 'volunteer_profiles.gender' : 'users.updated_at';
                     $organizeUser = User::find($activity->user_id);
                     $data['volunteering'] = $this->transformUserActivity($organizeUser, $request->id);
                     $data['volunteering_sign_ups'] = null;
@@ -92,9 +94,9 @@ class UserVolunteeringActivityManager implements Responsable
 
                     $text = $request->get('q');
                     if ((int)$request->tab === 0) {
-                        $data['volunteering_sign_ups'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', DB::raw('(select count(null)) as checked'), DB::raw('(select count(null)) as show_other_response'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) {
-                            $query->select('users.*', 'volunteer_profiles.gender');
-                            $query->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
+                        $data['volunteering_sign_ups'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', DB::raw('(select count(null)) as checked'), DB::raw('(select count(null)) as show_other_response'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) use ($gender) {
+                            $query->select('users.*', $gender);
+                            $query->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
                         }])->orderBy('id', 'desc');
                         #paginate
                         $data['volunteering_sign_ups'] = $data['volunteering_sign_ups']->paginate($paginateLimit);
@@ -102,9 +104,9 @@ class UserVolunteeringActivityManager implements Responsable
 
                     } else {
                         $data['volunteering_attendance'] = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*', 'volunteer_sign_up_activities.hour_per_volunteer as hours', DB::raw('(select count(null)) as checked, (select count(null)) as old_checked'),
-                            DB::raw('(select count(null)) as validated'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) {
-                            $query->select('users.*', 'volunteer_profiles.gender');
-                            $query->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
+                            DB::raw('(select count(null)) as validated'))->where('volunteering_activity_id', $data['volunteering']->id)->with(['user' => function ($query) use ($gender) {
+                            $query->select('users.*', $gender);
+                            $query->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id');
                         }])->whereIn('status', ['confirm', 'checkin'])->orderBy('id', 'desc');
                         #paginate
                         $data['volunteering_attendance'] = $data['volunteering_attendance']->paginate($paginateLimit);

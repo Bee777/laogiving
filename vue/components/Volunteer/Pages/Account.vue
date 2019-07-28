@@ -206,6 +206,7 @@
             isLoading: false,
             causes: [],
             datePicker: null,
+            firstLoad: true,
         }),
         watch: {
             visible: function (n) {
@@ -274,7 +275,7 @@
                     });
             },
             getUserProfile() {
-                this.fetchOptionProfileData()
+                this.fetchOptionProfileData(this.$route.query.user_id)
                     .then(res => {
                         let s = res.success, d = res.data;
                         if (s) {
@@ -287,10 +288,21 @@
                             this.userCauses = d.user_causes;
                             this.$refs['user-causes'].setValue(this.userCauses);
                             this.causes = d.causes;
-                            this.fetchAuthUserInfo();
+                            if (!this.firstLoad && this.authUserInfo.decodedType === 'volunteer') {
+                                this.fetchAuthUserInfo();
+                            }
+                            this.firstLoad = false;
                             this.$nextTick(() => {
                                 this.setDatePicker(this.userProfile.date_of_birth);
-                            })
+                            });
+                            setTimeout(() => {
+                                let owner_user = d.owner_user;
+                                if (owner_user) {
+                                    this.authUserInfo.name = owner_user.name;
+                                    this.authUserInfo.image = owner_user.image;
+                                    this.authUserInfo.email = owner_user.email;
+                                }
+                            }, 800)
                         }
                         this.isLoading = false;
                     })
@@ -318,7 +330,7 @@
                     max: new Date(),
                     onOpen: () => {
                     },
-                    onSet: function(){
+                    onSet: function () {
                         that.setUserProfileKey({key: 'date_of_birth', value: this.get('select', 'yyyy-mm-dd')});
                         //console.log(this.get('select', 'yyyy-mm-dd'))
                     }
@@ -326,6 +338,7 @@
             }
         },
         created() {
+            this.getUserProfile = this.debounce(this.getUserProfile, 150);
             this.getUserProfile();
         },
 

@@ -2,7 +2,7 @@
     <div class="ctn">
         <div class="cWidth-1200 clearfix">
             <div class="grid-12 grid-tablet-landscape-up-4-last text-center">
-                <button class="button-ctn button--ghost mt-24" @click="$emit('editProfileClicked')"
+                <button v-if="this.authUserInfo.decodedType === 'organize'" class="button-ctn button--ghost mt-24" @click="$emit('editProfileClicked')"
                         id="editProfileLink">EDIT PROFILE
                 </button>
             </div>
@@ -219,7 +219,7 @@
             ...mapMutations(['setUserProfile', 'setUserProfileKey']),
             ...mapActions(['showErrorToast', 'fetchOptionProfileData']),
             getUserProfile() {
-                this.fetchOptionProfileData()
+                this.fetchOptionProfileData(this.$route.query.user_id)
                     .then(res => {
                         let s = res.success, d = res.data;
                         if (s) {

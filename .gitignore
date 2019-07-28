@@ -22,3 +22,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+
+#Ignore images
+/public/assets/images
+/public/assets/images/

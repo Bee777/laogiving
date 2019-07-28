@@ -55,6 +55,17 @@
                                 </form>
                             </template>
 
+
+                            <!--Slot Actions row context-->
+                            <template slot-scope="{fireEvent, position, data}" slot="action-row-context">
+                                <button
+                                    @click="openOrganizeProfileTab(data.row.data.id)"
+                                    class="v-md-button v-md-icon-button">
+                                    <i class="material-icons v-icon">visibility</i>
+                                </button>
+                            </template>
+                            <!--Slot Actions row context-->
+
                         </TablePaginate>
                         <!--Table card-->
                     </div>
@@ -181,7 +192,7 @@
                 contextMenu.splice(1, 0, userStatusMenu);//add item at second position
                 //add user menu status
                 return {
-                    rowContent: {},
+                    rowContent: {data: data},
                     rows: [
                         {data: data.email, type: 'id', class: 'user-email'},
                         {
@@ -244,6 +255,9 @@
                     .catch(er => {
                         ft.loading = false;
                     })
+            },
+            openOrganizeProfileTab(id) {
+                window.open(`/organize/me/?active_page=account&user_id=${id}`)
             }
         },
         created() {

@@ -487,6 +487,7 @@
                 'volunteer-signup-success': {sign_up: {}, activity: {}}
             },
             link: '',
+            refreshRoutes: {'activity-single': true, 'organize-profile': true},
         }),
         computed: {
             ...mapState(['authUserInfo']),
@@ -516,6 +517,7 @@
                 this.modalData[e.name] = e.params;
             },
             LoginUser(credentials) {
+                credentials.refreshPage = !!this.refreshRoutes[this.$route.name];
                 this.Login(credentials);
             },
             beforeClose(e) {

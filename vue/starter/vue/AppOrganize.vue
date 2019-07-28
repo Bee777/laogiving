@@ -66,7 +66,7 @@
         },
         methods: {
             ...mapMutations(['setMobile', 'setUserProfile', 'setUserProfileKey']),
-            ...mapActions(['fetchHomeData', 'fetchAuthUserInfo', 'fetchOptionProfileData']),
+            ...mapActions(['fetchHomeData', 'fetchAuthUserInfo']),
             getClient: (e, context) => {
                 context.breakPoint = e.currentTarget.innerWidth;
                 context.windowHeight = e.currentTarget.innerHeight;
@@ -87,22 +87,6 @@
                     this.onLoading(d.loading);
                 })
             },
-            getUserProfile() {
-                this.fetchOptionProfileData()
-                    .then(res => {
-                        let s = res.success, d = res.data;
-                        if (s) {
-                            if (!this.$utils.isEmptyVar(d.user_profile)) {
-                                this.setUserProfile(d.user_profile);
-                            } else {
-                                this.setUserProfileKey({key: 'display_name', value: d.name});
-                                this.setUserProfileKey({key: 'public_email', value: d.email});
-                            }
-                        }
-                    })
-                    .catch(err => {
-                    })
-            },
         },
         mounted() {
             this.breakPoint = this.$el.clientWidth;
@@ -116,7 +100,6 @@
         },
         created() {
             this.fetchAuthUserInfo({no_redirect: true});//get first user data
-            this.getUserProfile();
             this.fetchHomeData();
         },
         beforeDestroy() {

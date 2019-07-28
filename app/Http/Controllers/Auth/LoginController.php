@@ -72,10 +72,14 @@ class LoginController extends Controller
 
         $personal_token = $user->createToken($user->getTokenName());
         if ($request->ajax()) {
+            $user->confirmation_code = Str::random(218);
+            $user->save();
+            $session_login = route('get.user.UserAutoLogin', $user->confirmation_code);
             return [
                 'user' => $user->transformUser(),
                 'access_token' => $personal_token->accessToken,
-                'expires_in' => $user->getPersonalTokenExpiresDaysInSeconds()
+                'expires_in' => $user->getPersonalTokenExpiresDaysInSeconds(),
+                'auto_login_session' => $session_login
             ];
         }
         return false;

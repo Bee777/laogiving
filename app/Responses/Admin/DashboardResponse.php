@@ -34,6 +34,7 @@ class DashboardResponse implements Responsable
         if (Helpers::isAjax($request)) {
             $data = [];
             #set default data
+            $data['latest_members_count'] = 0;
             $data['volunteer_opportunities'] = 0;
             $data['volunteers'] = 0;
             $data['volunteering_hours'] = 0;
@@ -215,6 +216,7 @@ class DashboardResponse implements Responsable
             #volunteer statuses
             #admin section
             if ($user->isUser('admin') || $user->isUser('super_admin')) {
+                $data['latest_members_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->whereIn('user_types.type_user_id', User::getNonAdminUserIds())->count();
                 $data['news_count'] = $this->getPostsCount('news');
                 $data['activities_count'] = $this->getVolunteeringCount();
                 $data['volunteering_hours'] = $this->getVolunteeringHours();
@@ -222,7 +224,6 @@ class DashboardResponse implements Responsable
                 $data['latest_organizes_count'] = User::join('user_types', 'user_types.user_id', 'users.id')->where('user_types.type_user_id', $this->getTypeUserId('organize'))->count();
                 #for other pages
                 $data['volunteer_opportunities'] = 0;
-                $data['volunteering_hours'] = 0;
                 $data['volunteers'] = 0;
                 $data['updated_at'] = now()->format('d/m/Y');
                 #for other pages
@@ -260,9 +261,9 @@ class DashboardResponse implements Responsable
             ->first();
 
         $data = [];
-        $data['active'] = $volunteering_activities->LIVE_COUNT??0;
+        $data['active'] = $volunteering_activities->LIVE_COUNT;
         $data['all'] = DB::table('volunteering_activities')->get()->count();
-        $data['success'] = $success_volunteering_activities->SUCCESS_COUNT??0;
+        $data['success'] = $success_volunteering_activities->SUCCESS_COUNT;
         return $data;
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Exports\AllVolunteeringsExport;
 use App\Exports\AllVolunteersExport;
 use App\Models\Posts;
@@ -91,6 +90,12 @@ class UserController extends Controller
         $data = route('get.user.UserAutoLogin', $user->confirmation_code);
         return response()->json(['success' => true, 'data' => $data]);
     }
+    /****@ResponsesSearches api and action  *** */
+    /**
+     * @param Request $request
+     * @param $type
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function isDownloadableFile($title)
     {
@@ -134,6 +139,7 @@ class UserController extends Controller
                     'volunteer_sign_up_activities.hour_per_volunteer as sign_up_hour_per_volunteer',
                     'volunteer_sign_up_activities.volunteering_activity_position_id as sign_up_position_id',
                     'volunteer_sign_up_activities.sign_up_date',
+                    'volunteer_sign_up_activities.status  as sign_up_status',
                     'users.name as organize_name',
                 ])->join('volunteer_sign_up_activities', 'volunteer_sign_up_activities.volunteering_activity_id', '=', 'volunteering_activities.id')
                     ->join('users', 'users.id', 'volunteering_activities.user_id')
@@ -158,7 +164,7 @@ class UserController extends Controller
                     DB::raw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN volunteer_sign_up_activities.hour_per_volunteer ELSE 0 END) AS `hours_number`"))
                     ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
                     ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
-                    ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                    ->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
                     ->where('volunteering_activities.user_id', $user->id)
                     ->groupBy('users.id')
                     ->orderBy('users.name', 'asc')
@@ -181,7 +187,7 @@ class UserController extends Controller
                     DB::raw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN volunteer_sign_up_activities.hour_per_volunteer ELSE 0 END) AS `hours_number`"))
                     ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
                     ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
-                    ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                    ->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
                     ->where('volunteering_activities.user_id', $user->id)
                     ->groupBy('users.id')
                     ->orderBy('users.name', 'asc')
@@ -225,7 +231,7 @@ class UserController extends Controller
                         DB::raw("SUM(CASE WHEN volunteer_sign_up_activities.status = 'checkin' and volunteer_sign_up_activities.checkin_date IS NOT NULL THEN volunteer_sign_up_activities.hour_per_volunteer ELSE 0 END) AS `hours_number`"))
                         ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
                         ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
-                        ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                        ->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
                         ->where('volunteering_activities.id', $activity->id)
                         ->where('volunteering_activities.user_id', $activity->user_id)
                         ->groupBy('users.id')
@@ -263,7 +269,6 @@ class UserController extends Controller
     /***@PostsResponse *
      * @param Request $request
      * @param $type
-     * @return UserSavedBookmarkResponse
      */
     public function responsePosts(Request $request, $type)
     {
@@ -499,12 +504,14 @@ class UserController extends Controller
         return new UserVolunteeringActivityManage('discard');
     }
     /****@ResponsesUserVolunteeringActivity  api and action  *** */
-    /****@responseVolunteeringActivityManager  api and action  *** */
+    #for manage volunteering sign up activity
+    /****@responseVolunteeringActivityManager *** */
     public function responseVolunteeringActivityManager(Request $request, $id)
     {
         return new UserVolunteeringActivityManager();
     }
-
+    #for manage volunteering sign up activity
+    #for volunteering activity
     public function responseVolunteeringActivityManagerChangeStatus(Request $request, $id)
     {
         $data = $this->validate($request, [
@@ -543,6 +550,7 @@ class UserController extends Controller
         return response()->json(['success' => false, 'msg' => 'Failed to change the activity status!']);
     }
     /****@responseVolunteeringActivityManager  api and action  *** */
+    #for volunteering activity
 
     /****@responseVolunteeringSignUpManage  api and action  *** */
     public function responseVolunteeringSignUpChangeStatus(Request $request, $id)
@@ -717,6 +725,11 @@ class UserController extends Controller
         $user = $request->user('api');
         if ($user->status !== 'approved' || !$user->isUser('volunteer')) {
             return response()->json(['errors' => ['sign_up_not_valid' => ['You don\'t have permission to signup this volunteer activity.']]], 422);
+        }
+        $checkUser = User::join('user_types', 'user_types.user_id', 'users.id')
+            ->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')->where('users.id', $user->id)->first();
+        if (!isset($checkUser)) {
+            return response()->json(['errors' => ['sign_up_not_valid' => ['You don\'t have permission to signup this volunteer activity, Please complete your profile first.']]], 422);
         }
         $activity = VolunteeringActivity::select('volunteering_activities.*')->join('users', 'users.id', 'volunteering_activities.user_id')
             ->join('user_types', 'user_types.user_id', 'users.id')

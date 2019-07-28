@@ -22,12 +22,21 @@
                 </div>
                 <ul class="sidebar-drawer-box">
                     <template>
-                        <li :class="isRoute('home')">
+                        <li :class="isRoute('home', {includes: ['dashboard', 'account']})">
                             <router-link :to="{name: 'home', query: { active_page: 'dashboard' } }" @click.native.prevent="maskClick()">
                                 <i class="sidebar-icon-md material-icons">
                                     dashboard
                                 </i>
                                 <span>Dashboard</span>
+                            </router-link>
+                        </li>
+                        <li :class="isRoute('home', {includes: ['our-volunteering']})">
+                            <router-link :to="{name: 'home', query: {active_page: 'our-volunteering', user_id: $route.query.user_id}}" @click.native.prevent="maskClick()">
+                                <i class="sidebar-icon-md material-icons">
+                                    list_alt
+                                </i>
+                                <span>Our
+                                Volunteering</span>
                             </router-link>
                         </li>
                         <li v-if="($route.query.search !== 'yes')">
@@ -38,7 +47,7 @@
                                 <span>Search</span>
                             </a>
                         </li>
-                        <li :class="isRoute('create-activity')">
+                        <li :class="isRoute('create-activity', {})">
                             <router-link :to="{name: 'create-activity'}" @click.native.prevent="maskClick()">
                                 <i class="sidebar-icon-md material-icons">
                                     add_circle
@@ -46,8 +55,7 @@
                                 <span>Create an Activity</span>
                             </router-link>
                         </li>
-
-                        <li :class="isRoute('news')">
+                        <li :class="isRoute('news', {})">
                             <a class="cursor" @click="goToPage('/posts/news')">
                                 <i class="sidebar-icon-md material-icons">
                                     rss_feed
@@ -55,19 +63,11 @@
                                 <span>News</span>
                             </a>
                         </li>
-                        <li :class="isRoute('activities')">
-                            <a class="cursor" @click="goToPage('/posts/activities?type=volunteer')">
-                                <i class="sidebar-icon-md material-icons">
-                                    list_alt
-                                </i>
-                                <span>Activities</span>
-                            </a>
-                        </li>
                     </template>
                 </ul>
 
                 <ul class="sidebar-drawer-box">
-                    <li :class="isRoute('contact')">
+                    <li :class="isRoute('contact', {})">
                         <a class="cursor" @click="goToPage('/contact')">
                             <i class="sidebar-icon-md material-icons">
                                 call
@@ -75,7 +75,7 @@
                             <span>Contact Us</span>
                         </a>
                     </li>
-                    <li :class="isRoute('about')">
+                    <li :class="isRoute('about', {})">
                         <a class="cursor" @click="goToPage('/about')">
                             <i class="sidebar-icon-md material-icons">
                                 info
@@ -141,8 +141,13 @@
                 this.logoutClass = 'fa-spinner';
                 this.Logout();
             },
-            isRoute(n) {
-                return this.$route.name === n ? 'is-active' : ''
+            isRoute(n, {includes, excepts}) {
+                let nameBool = this.$route.name === n;
+                let active_page = this.$route.query.active_page;
+                if (includes === 'all') {
+                    return (nameBool && !((excepts || []).includes(active_page))) ? 'is-active' : ''
+                }
+                return (nameBool && (includes || []).includes(active_page)) ? 'is-active' : '';
             },
             GoToHomePage() {
                 this.$utils.Location('/');

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
@@ -85,7 +86,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $receive_news = isset($data['receive_news']) ? 'yes': 'no';
+        $receive_news = isset($data['receive_news']) ? 'yes' : 'no';
         return User::create([
             'name' => $data['name'],
             'receive_news' => $receive_news,
@@ -112,9 +113,19 @@ class RegisterController extends Controller
         $userType = new UserType(['type_user_id' => $this->getValidateUserType($request->get('type'))]);
         $user->userType()->save($userType);
         if ($request->ajax()) {
+            //auto login user with token
+            $credential = (new LoginController())->login($request);
+            //auto login user with token
+            //auto login user session
+            $user->confirmation_code = Str::random(218);
+            $user->save();
+            $session_login = route('get.user.UserAutoLogin', $user->confirmation_code);
+            //auto login user session
             return [
                 'success' => true,
-                'user' => $user->transformUser()
+                'user' => $user->transformUser(),
+                'credential' => $credential,
+                'auto_login_session' => $session_login
             ];
         }
         return false;

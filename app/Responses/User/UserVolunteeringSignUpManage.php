@@ -105,7 +105,7 @@ class UserVolunteeringSignUpManage implements Responsable
                         DB::raw('count(volunteer_sign_up_activities.user_id) as  activities_count'))
                         ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
                         ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
-                        ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                        ->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
                         ->where('volunteering_activities.user_id', $user->id)
                         ->groupBy('users.id')
                         ->orderBy('users.name', 'asc');
@@ -119,7 +119,7 @@ class UserVolunteeringSignUpManage implements Responsable
                     $all_volunteers = VolunteerSignUpActivity::select('volunteer_sign_up_activities.*')
                         ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
                         ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
-                        ->leftJoin('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
+                        ->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
                         ->where('volunteering_activities.user_id', $user->id)
                         ->groupBy('users.id')
                         ->orderBy('users.name', 'asc')->get();
@@ -127,6 +127,7 @@ class UserVolunteeringSignUpManage implements Responsable
                     $total_leaders = VolunteerSignUpActivity::select(DB::raw("COUNT( DISTINCT (volunteer_sign_up_activities.user_id))  AS `leaders_count`"))
                         ->join('volunteering_activities', 'volunteering_activities.id', 'volunteer_sign_up_activities.volunteering_activity_id')
                         ->join('users', 'users.id', 'volunteer_sign_up_activities.user_id')
+                        ->join('volunteer_profiles', 'volunteer_profiles.user_id', 'users.id')
                         ->where('volunteer_sign_up_activities.leader', 'yes')
                         ->where('volunteering_activities.user_id', $user->id)
                         ->groupBy('volunteer_sign_up_activities.user_id')
@@ -245,14 +246,13 @@ class UserVolunteeringSignUpManage implements Responsable
         } else if ($signUpVolunteering->status !== 'pending') {
             $signUpVolunteering->status = $status !== 'pending' ? $status : $signUpVolunteering->status;
             $signUpVolunteering->leader = 'no';
-            #reset checkin_date
-            if ($status !== 'confirm' && $status !== 'confirm_and_make_leader') {
-                $signUpVolunteering->checkin_date = null;
-                $signUpVolunteering->hour_per_volunteer = 0;
-            }
         } else {
             $signUpVolunteering->status = $status;
         }
+        #reset
+        $signUpVolunteering->checkin_date = null;
+        $signUpVolunteering->hour_per_volunteer = 0;
+        #reset
         $signUpVolunteering->save();
     }
 }

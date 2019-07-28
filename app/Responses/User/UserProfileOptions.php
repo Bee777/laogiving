@@ -34,25 +34,33 @@ class UserProfileOptions implements Responsable
                 if ($user->isUser('volunteer') || $user->isUser('organize')) {
                     $data = $this->transformUserProfile($request->user(), $type);
                 } else {
-                    $data = [
-                        'name' => '',
-                        'email' => '',
-                        'user_profile' => null,
-                        'user_causes' => [],
-                        'user_causes_display' => [],
-                    ];
-                    if ($type === 'organize') {
-                        $data['user_media'] = [
-                            'video' => ['validated' => '', 'url' => ''],
-                            'images' => [
-                                [
-                                    'image_base64' => '',
-                                    'image' => null,
-                                    'validated' => '',
-                                    'removable' => false
-                                ]
-                            ]
+                    #find
+                    $mUser = User::find($request->user_id);
+                    if (isset($mUser)) {
+                        $data = $this->transformUserProfile($mUser, $type);
+                        $data['user_profile']['profile_image_base64'] = url('/') . '/assets/images/user_profiles/96x96-' . $mUser->image;
+                        $data['owner_user'] = $mUser->transformUser();
+                    } else {
+                        $data = [
+                            'name' => '',
+                            'email' => '',
+                            'user_profile' => null,
+                            'user_causes' => [],
+                            'user_causes_display' => [],
                         ];
+                        if ($type === 'organize') {
+                            $data['user_media'] = [
+                                'video' => ['validated' => '', 'url' => ''],
+                                'images' => [
+                                    [
+                                        'image_base64' => '',
+                                        'image' => null,
+                                        'validated' => '',
+                                        'removable' => false
+                                    ]
+                                ]
+                            ];
+                        }
                     }
                 }
                 $data['causes'] = Cause::getCauses('all');

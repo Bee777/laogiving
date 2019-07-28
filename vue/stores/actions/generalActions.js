@@ -24,6 +24,15 @@ export const createActions = (utils) => {
                         .then(res => {
                             c.commit('setClearMsg', {delay: 1000});
                             utils.setSession('registered', true);
+                            if(res.data.success){
+                                let iRes = res.data.credential;
+                                utils.setSession('registered_url_login_session', res.data.auto_login_session);
+                                c.commit('setToken', {
+                                    user: iRes.user,
+                                    token: iRes.access_token,
+                                    seconds: iRes.expires_in
+                                });
+                            }
                             r(res.data);
                         })
                         .catch(err => {
@@ -40,7 +49,7 @@ export const createActions = (utils) => {
         forgotPassword(c, data) {
             return new Promise((r, n) => {
                 utils.Validate(data, {
-                    'email': ['email', 'required', {max: 191}],
+                    'email': ['email', 'required', {max: 60}],
                 }).then((v) => {
                     c.commit('setValidated', {errors: {loading: 'yes'}});
                     client.post(`${apiUrl}/guest/forgot-password`, data, ajaxConfig)
@@ -255,7 +264,7 @@ export const createActions = (utils) => {
                 let rule = {};
                 // validate volunteer_contact_phone_number
                 if (data.activity.volunteer_contact_phone_number === 'yes') {
-                    rule.volunteer_contact_phone_number = ['required', 'phone number'];
+                    rule.volunteer_contact_phone_number = ['required', 'phone number', {max: 17}];
                 }
                 // validate other_response_required
                 if (!utils.isEmptyVar(data.activity.other_response_required)) {

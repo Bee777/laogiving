@@ -56,7 +56,7 @@ export const createActions = (utils) => {
         /*** @UserProfile **/
         fetchOptionProfileData(c, data) {
             return new Promise((r, n) => {
-                client.get(`${apiUrl}/users/profile-options?type=organize`, ajaxToken(c))
+                client.get(`${apiUrl}/users/profile-options?type=organize&user_id=${data || ''}`, ajaxToken(c))
                     .then(res => {
                         c.commit('setClearMsg');
                         r(res.data);
@@ -89,7 +89,7 @@ export const createActions = (utils) => {
                     'profile_image': [{mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
                     'display_name': ['required', {max: 191}],
                     'public_email': ['email', {max: 191}],
-                    'phone_number': ['phone number', {max: 191}],
+                    'phone_number': ['phone number', {max: 17}],
                     'user_causes': ['required'],
                     'contact_person': [{max: 191}],
                     'facebook': [{max: 191}],
@@ -490,8 +490,8 @@ export const createActions = (utils) => {
             });
         },
         /*** @postSaveBookMark **/
-        /***@AutoUserLogin */
-        postAutoUserLogin(c, i) {
+          /***@AutoUserLogin */
+          postAutoUserLogin(c, i) {
             return new Promise((r, n) => {
                 c.commit('setValidated', {errors: {loading_download_export: true}});
                 client.post(`${apiUrl}/users/auto-login`, {}, ajaxToken(c))

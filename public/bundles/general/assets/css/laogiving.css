@@ -6419,6 +6419,11 @@ hr.grey {
     width: 106px;
     height: 91px;
 }
+.lfr-change-logo > img.img-placeholder {
+    max-width: 106px;
+    width: auto;
+    height: auto;
+}
 
 .laogiving a.file-upload__cancel {
     position: absolute;

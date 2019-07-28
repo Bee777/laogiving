@@ -49,7 +49,7 @@ class ContactInfoResponse implements Responsable
                         $exist = new Site();
                         $exist->key = $item;
                     }
-                    $exist->value = $request->get($item);
+                    $exist->value = $request->get($item)??'';
                     $exist->save();
                 }
             }

@@ -44,7 +44,7 @@ export const createActions = (utils) => {
                 utils.Validate(data, {
                     'first_name': ['required', {max: 191}],
                     'last_name': ['required', {max: 191}],
-                    'phone_number': ['phone number', {max: 191}],
+                    'phone_number': ['phone number', {max: 17}],
                     'profile_image': [{mimes: 'jpeg,jpg,png,gif,svg'}, {max: 3000}],
                 }).then(v => {
                     let info = utils.clone(data);

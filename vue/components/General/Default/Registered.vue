@@ -48,11 +48,16 @@
         name: "registered",
         mounted() {
             this.setPageTitle('Registered');
-
-            if (this.$utils.hasSession('registered', true))
-                this.$utils.Location('/', 2000);
-            else
+            if (this.$utils.hasSession('registered', true)) {
+                let url_session = this.$utils.getSession('registered_url_login_session');
+                let req = `?redirect_url=${encodeURIComponent('/')}`;
+                this.$utils.removeSession('registered_url_login_session');
+                setTimeout(() => {
+                    window.location.href = url_session + req
+                }, 2000);
+            } else {
                 this.Route({name: 'home'});
+            }
         }
     })
 </script>

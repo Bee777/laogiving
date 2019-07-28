@@ -294,8 +294,14 @@
                                     <!--Card Body-->
                                     <!--Card Link-->
                                     <div>
-                                        <a class="card__link" :href="`/posts/volunteer-activity/${item.id}`"
-                                           target="_blank"></a>
+                                        <template v-if="activityNewTap">
+                                            <a class="card__link" :href="`/posts/volunteer-activity/${item.id}`"
+                                               target="_blank"></a>
+                                        </template>
+                                        <template v-else>
+                                            <a class="card__link" href=""
+                                               @click.prevent="openVolunteeringTab(item.id)"></a>
+                                        </template>
                                     </div>
                                     <!--Card Link-->
                                 </div>
@@ -435,8 +441,13 @@
                             <!--Card Body-->
                             <!--Card Link-->
                             <div>
-                                <a class="card__link" :href="`/posts/volunteer-activity/${item.id}`"
-                                   target="_blank"></a>
+                                <template v-if="activityNewTap">
+                                    <a class="card__link" :href="`/posts/volunteer-activity/${item.id}`"
+                                       target="_blank"></a>
+                                </template>
+                                <template v-else>
+                                    <a class="card__link" href="" @click.prevent="openVolunteeringTab(item.id)"></a>
+                                </template>
                             </div>
                             <!--Card Link-->
                         </div>
@@ -523,6 +534,9 @@
     export default {
         name: "VolunteeringFilter",
         props: {
+            activityNewTap: {
+                default: true
+            },
             displayType: {
                 default: ''
             },
@@ -632,7 +646,11 @@
                 this.$emit('onRemoveAction', item);
             },
             openVolunteeringTab(id) {
-                window.open(`/posts/volunteer-activity/${id}`);
+                if (this.activityNewTap) {
+                    window.open(`/posts/volunteer-activity/${id}`);
+                } else {
+                    this.Route({name: 'activity-single', params: {id: id}})
+                }
             },
             openOrganizeTab(id) {
                 window.open(`/organisation/profile/${id}`);

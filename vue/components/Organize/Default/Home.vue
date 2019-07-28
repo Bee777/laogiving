@@ -328,10 +328,10 @@
                 }
             },
             setRouteTab(n) {
-                this.Route({name: 'home', query: {active_page: n}});
+                this.Route({name: 'home', query: {active_page: n, user_id: this.$route.query.user_id}});
             },
             setRouteProfile(n) {
-                this.Route({name: 'home', query: {active_page: 'profile', edit: n}});
+                this.Route({name: 'home', query: {active_page: 'profile', edit: n, user_id: this.$route.query.user_id}});
             },
             changeUserVisibility() {
                 let visibility = this.userProfile.visibility;
