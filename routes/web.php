@@ -65,6 +65,7 @@ Route::get('/users/me/auto-login/{confirmation_token}', 'Auth\LoginController@us
 
 
 Route::get('/general/guest/auth/callback', function (Request $request) {
+    dd($request->all());
     $http = new GuzzleHttp\Client;
     $response = $http->post('http://localhost/oauth/token', [
         'form_params' => [
