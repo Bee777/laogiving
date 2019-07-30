@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Http\Request;
+
 Route::get('/', 'HomeController@index')->name('get.home.index');
 
 Route::get('/login', 'HomeController@index')->name('get.home.login');
@@ -62,7 +64,21 @@ Route::get('/users/me/auto-login/{confirmation_token}', 'Auth\LoginController@us
 
 
 
+Route::get('/callback', function (Request $request) {
+    $http = new GuzzleHttp\Client;
 
+    $response = $http->post('http://localhost:7800/oauth/token', [
+        'form_params' => [
+            'grant_type' => 'authorization_code',
+            'client_id' => 'client-id',
+            'client_secret' => 'client-secret',
+            'redirect_uri' => 'http://localhost:7801/general/guest/auth/callback',
+            'code' => $request->code,
+        ],
+    ]);
+
+    return json_decode((string) $response->getBody(), true);
+});
 
 
 
