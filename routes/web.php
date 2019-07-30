@@ -69,8 +69,8 @@ Route::get('/general/guest/auth/callback', function (Request $request) {
     $response = $http->post('http://localhost:7800/oauth/token', [
         'form_params' => [
             'grant_type' => 'authorization_code',
-            'client_id' => 'client-id',
-            'client_secret' => 'client-secret',
+            'client_id' => '3',
+            'client_secret' => 'gy82v5GpPc3cdKqa4uHZd6LsQtuYQN1xEClCf29J',
             'redirect_uri' => 'http://localhost:7801/general/guest/auth/callback',
             'code' => $request->code,
         ],
