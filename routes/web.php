@@ -63,9 +63,8 @@ Route::get('/users/me/auto-login/{confirmation_token}', 'Auth\LoginController@us
 /***@AutoUserLogin */
 
 
-
 Route::get('/general/guest/auth/callback', function (Request $request) {
-    return json_decode((string) $request->all(), true);
+    return response()->json(['data' => $request->all()]);
 });
 
 
