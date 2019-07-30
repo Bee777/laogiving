@@ -65,18 +65,7 @@ Route::get('/users/me/auto-login/{confirmation_token}', 'Auth\LoginController@us
 
 
 Route::get('/general/guest/auth/callback', function (Request $request) {
-    $http = new GuzzleHttp\Client;
-    $response = $http->post('http://localhost/oauth/token', [
-        'form_params' => [
-            'grant_type' => 'token',
-            'client_id' => '3',
-            'client_secret' => 'gy82v5GpPc3cdKqa4uHZd6LsQtuYQN1xEClCf29J',
-            'redirect_uri' => 'http://localhost:7801/general/guest/auth/callback',
-            'code' => $request->code,
-        ],
-    ]);
-
-    return json_decode((string) $response->getBody(), true);
+    return json_decode((string) $request->all(), true);
 });
 
 
