@@ -68,7 +68,7 @@ Route::get('/general/guest/auth/callback', function (Request $request) {
     $http = new GuzzleHttp\Client;
     $response = $http->post('http://localhost/oauth/token', [
         'form_params' => [
-            'grant_type' => 'authorization_code',
+            'grant_type' => 'token',
             'client_id' => '3',
             'client_secret' => 'gy82v5GpPc3cdKqa4uHZd6LsQtuYQN1xEClCf29J',
             'redirect_uri' => 'http://localhost:7801/general/guest/auth/callback',
