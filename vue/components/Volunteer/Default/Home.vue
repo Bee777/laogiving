@@ -191,6 +191,7 @@
                 from: {monthFilter: 0, yearFilter: new Date().getFullYear()},
                 to: {monthFilter: 0, yearFilter: new Date().getFullYear()},
             },
+            firstLoad: true,
         }),
         watch: {
             '$route.query': function (n, o) {
@@ -202,6 +203,12 @@
                     if (n !== 'customMonth') {
                         this.fetchDashboardData({filters: this.volunteering});
                     }
+                }
+            },
+            authUserInfo: function (n) {
+                if (this.firstLoad && n.decodedType === 'volunteer' && this.$utils.isEmptyVar(n.profile)) {
+                    this.setRouteTab('account');
+                    this.firstLoad = false;
                 }
             }
         },
