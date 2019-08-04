@@ -25,7 +25,7 @@
                         <div>{{ i.name }}</div>
                     </a>
                     <div class="sqr-panel-item__last-panel">
-                        <a class="text-link font-bold nowrap">VIEW ALL CAUSES<i
+                        <a :href="`/posts/activities?q=&search=yes`" class="text-link font-bold nowrap">VIEW ALL CAUSES<i
                             class="ico ico-arrow-next-alt ml-8 mt-2neg"></i></a>
                     </div>
                 </div>

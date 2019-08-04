@@ -148,7 +148,7 @@
     </script>
     {{-- @GeneratedResourcesBottom--}}
     <script type="text/javascript"
-            src="{{url('/bundles/generated/general')}}/general.1582d9fbdc71aef8c064.bundle.js"></script>
+            src="{{url('/bundles/generated/general')}}/general.42ae6f9a81c415589b48.bundle.js"></script>
     {{-- @GeneratedResourcesBottom--}}
 @endsection
 

@@ -89,9 +89,11 @@ class HomeController extends Controller
      */
     public function getHomeData($request): array
     {
+        $request->request->set('limit', 4);
         $data = [];
         $data['banners'] = Banner::getBanners(8);
         $data['latest_news'] = Posts::getPosts('news', 3);
+        $data['activities'] = (new PostsResponse([], 'activities'))->postsPaginator($request);
         $data['states'] = $this->getStates();
 
         $data['all_causes'] = Cause::getCauses('all');

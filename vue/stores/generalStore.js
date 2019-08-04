@@ -26,6 +26,7 @@ export default new Vuex.Store({
         homeData: {
             banners: banners,
             latest_news: latest_news,
+            activities: activities,
             states: states,
             all_causes: all_causes,
             all_suitables: all_suitables,

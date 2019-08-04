@@ -20,32 +20,45 @@
             </template>
         </Carousel>
         <!--Portlet -->
+
+        <!--Activities-->
+        <main class="activity  pad clearfix objectfit school-classes">
+            <div class="cWidth-1200">
+                <h3><span>Our</span> Activities</h3>
+                <ul>
+                    <li>Signup volunteer activity or find the latest activity from us.</li>
+                </ul>
+                <InHomeActivities/>
+            </div>
+        </main>
         <section class="about-with-slide">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xs-12 aboutus">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-7">
-                                <h3>All-in-one Giving</h3>
-                                <h4><span>We want to make giving simple, fun and meaningful for you. The possibilities are endless!</span>
-                                </h4>
-                                <p>Find a volunteer activity that you're interested in, to use the skills you have,
-                                    right here in Laos.</p>
-                                <a @click="Route({name:'activities', query: {type: 'volunteer'}})" class="btn btn-medium btn-blue">BE A VOLUNTEER <i
-                                    class="lnr lnr-arrow-right"></i></a>
-                            </div>
-                            <div class="col-xs-12 col-sm-5">
-                                <div class="about-slide">
-                                    <ul class="slides">
-                                        <li><a><img :src="`${baseRes}assets/svg/ic-volunteer-db.svg`" alt=""></a></li>
-                                    </ul>
-                                </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 aboutus">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-7">
+                            <h3>All-in-one Giving</h3>
+                            <h4><span>We want to make giving simple, fun and meaningful for you. The possibilities are endless!</span>
+                            </h4>
+                            <p>Find a volunteer activity that you're interested in, to use the skills you have,
+                                right here in Laos.</p>
+                            <a @click="Route({name:'activities', query: {type: 'volunteer'}})"
+                               class="btn btn-medium btn-blue">BE A VOLUNTEER <i
+                                class="lnr lnr-arrow-right"></i></a>
+                        </div>
+                        <div class="col-xs-12 hide-xs col-sm-5">
+                            <div class="about-slide">
+                                <ul class="slides">
+                                    <li><a><img :src="`${baseRes}assets/svg/ic-volunteer-db.svg`" alt=""></a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+        <!--Activities-->
         <!--Portlet -->
         <!--News-->
         <InHomeNews/>
@@ -104,6 +117,7 @@
     import Base from "@com/Bases/GeneralBase.js";
     import {mapActions} from 'vuex'
     import Carousel from '@com/General/Partial/Carousel.vue'
+    import InHomeActivities from '@com/General/Default/Includes/HomeActivities.vue'
     import InHomeNews from '@com/General/Default/Includes/HomeNews.vue'
     import InHomeCauses from '@com/General/Default/Includes/HomeExploreCauses.vue'
 
@@ -114,6 +128,7 @@
         }),
         components: {
             Carousel,
+            InHomeActivities,
             InHomeNews,
             InHomeCauses
         },

@@ -132,7 +132,6 @@
                     .then(res => {
                         this.Route({name: 'registered'}, 1000);
                     }).catch(e => {
-                    console.log(e);
                 });
             },
             getTypeRegister() {

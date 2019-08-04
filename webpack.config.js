@@ -307,7 +307,7 @@ if (process.env.NODE_ENV === 'development') {
             }),
             new webpack.optimize.UglifyJsPlugin({
                 minimize: true,
-                sourceMap: true,
+                sourceMap: false,
                 compress: {
                     warnings: false
                 },

@@ -164,7 +164,7 @@ export const defaultGetters = {
                 return decipher($utils.getLocalStorage(r));
             }
         }
-        return r;
+        return r || '';
     },
     /**
      * @return {boolean}

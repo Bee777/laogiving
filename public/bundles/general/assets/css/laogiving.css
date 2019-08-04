@@ -266,6 +266,7 @@ a:hover.read-more {
     color: #333;
     font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
+
 .footer-widget .menu {
     font-family: Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
@@ -604,21 +605,32 @@ a:hover.read-more {
     border: 1px solid #ff5722
 }
 
-.school-classes {
-    padding: 80px 0;
-    margin-bottom: 100px;
-    background: url(../images/classes-bg.jpg) no-repeat center;
+.flexslider {
+    margin-bottom: 30px;
+}
+
+.school-classes, main.activity.school-classes {
+    padding: 0 1rem 30px;
+    margin-bottom: 0;
     background-size: cover
 }
+main.activity.school-classes .swiper-slide {
+    background-color: transparent;
+}
+
+main.activity.school-classes .card.card--flex {
+    background-color: #ffffff;
+}
+
 
 .school-classes h3 {
     margin-top: 0;
-    color: #fff;
+    color: #262c38;
     font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .school-classes h3 span {
-    color: #03a9f4;
+    color: #262c38;
     display: block;
     margin-bottom: -14px;
     font: 700 18px Montserrat, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
@@ -631,12 +643,12 @@ a:hover.read-more {
 }
 
 .school-classes ul li {
-    margin: 0;
-    padding: 0 0 0 10px;
     font-size: 15px;
-    color: #fff;
     list-style: none;
-    background: url(../images/bullet_arrow.png) no-repeat left 11px
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    list-style: none;
 }
 
 .inner-classes {
@@ -4656,12 +4668,20 @@ card__body > div > *, .activity .card__body > div > * {
 .activity .swiper-pad, .swiper-pad {
     padding-left: 0rem;
     padding-right: 0rem;
+    overflow-x: hidden;
 }
 
 .js-cards-swiper .swiper-slide, .js-cards-swiper-2 .swiper-slide {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    height: auto;
+}
+
+.js-cards-swiper .swiper-wrapper, .js-cards-swiper-2 .swiper-wrapper {
+    -webkit-box-align: stretch;
+    -ms-flex-align: stretch;
+    align-items: stretch;
     height: auto;
 }
 
@@ -6419,6 +6439,7 @@ hr.grey {
     width: 106px;
     height: 91px;
 }
+
 .lfr-change-logo > img.img-placeholder {
     max-width: 106px;
     width: auto;
@@ -7761,7 +7782,14 @@ a.sqr-panel-item:focus {
     background-image: url(../svg/ic-remove-gray.svg);
 }
 
+
 /**@Media Screen */
+
+@media screen and (max-width: 767px) {
+    .hide-xs {
+        display: none;
+    }
+}
 
 @media (min-width: 1200px) {
     .laogiving .row-fluid {
@@ -8946,7 +8974,7 @@ a.sqr-panel-item:focus {
         right: 16px;
     }
 
-    .swiper-button-prev {
+    .swiper-button-prev.rotage {
         left: 16px;
     }
 
@@ -9283,6 +9311,11 @@ a.sqr-panel-item:focus {
     .laogiving .profile-pic--small-all {
         width: 40px;
         height: 40px;
+    }
+
+    .activity .swiper-pad, .swiper-pad {
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
 }
 
