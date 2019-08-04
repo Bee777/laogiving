@@ -626,7 +626,7 @@ main.activity.school-classes .card.card--flex {
 .school-classes h3 {
     margin-top: 0;
     color: #262c38;
-    font: 28px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .school-classes h3 span {
@@ -782,7 +782,7 @@ main.activity.school-classes .card.card--flex {
 .school-events h3 {
     margin-top: 0;
     color: #262c38;
-    font: 28px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
+    font: 48px Knewave, roboto, 'Roboto', 'noto-regular', 'Google Sans', arial, serif, sans-serif;
 }
 
 .school-events h3 span {
@@ -8264,7 +8264,7 @@ a.sqr-panel-item:focus {
         width: 95px
     }
 
-    .our-features h3, .aboutus h3, .fun-gallery h3 {
+    .our-features h3, .aboutus h3, .fun-gallery h3, .school-classes h3, .school-events h3 {
         font-size: 28px;
         line-height: normal
     }
