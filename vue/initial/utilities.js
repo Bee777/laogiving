@@ -555,6 +555,7 @@ export default {
         //first check if the domain is an ip
         if (this.ipv4Url(origin)) {
             document.cookie = cname + "=" + cvalue + ";" + expires + ";domain=" + domain + ";path=" + path;
+            return;
         }
         //check another, if the domain is a sub domain
         if (host.split('.').length === 1) {
@@ -909,7 +910,7 @@ export default {
         //am pm
         var ampm = hrs >= 12 ? 'PM' : 'AM';
         var hours = hrs % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours ? hours : 12; // the hour '0' should be '12'
 
         return {
             hours: hrs,
