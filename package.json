@@ -45,7 +45,7 @@
         "vue-toasted": "^1.1.26"
     },
     "devDependencies": {
-        "axios": "^0.18.0",
+        "axios": "^0.21.1",
         "babel-core": "^6.26.0",
         "babel-loader": "^7.1.2",
         "babel-preset-env": "^1.5.1",
